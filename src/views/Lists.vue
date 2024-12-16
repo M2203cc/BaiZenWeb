@@ -1,0 +1,174 @@
+<template>
+  <div class="px-8 py-4">
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">My Lists</h2>
+    
+    <!-- Lists Table -->
+    <div v-if="!selectedList" class="relative overflow-x-auto rounded-sm border border-secondary-100 bg-white">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b">
+            <th class="p-3 text-left">Name</th>
+            <th class="p-3 text-left">Creators</th>
+            <th class="p-3 text-left">Type</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left">Created Time</th>
+            <th class="p-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="list in lists" :key="list.name" class="border-b hover:bg-secondary-100">
+            <td class="p-3">{{ list.name }}</td>
+            <td class="p-3">{{ list.creators.length }}</td>
+            <td class="p-3">{{ list.type }}</td>
+            <td class="p-3">{{ list.description }}</td>
+            <td class="p-3">{{ list.createdOn }}</td>
+            <td class="p-3">
+              <button 
+                @click="viewList(list)"
+                class="text-primary-600 hover:underline"
+              >
+                View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- List Detail View -->
+    <div v-else class="bg-white rounded-lg p-6 border border-secondary-100">
+      <!-- Header with back button -->
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-semibold">{{ selectedList.name }}</h3>
+        <button 
+          @click="selectedList = null"
+          class="text-gray-600 hover:text-gray-800 px-3 py-1 rounded hover:bg-gray-100"
+        >
+          Back to Lists
+        </button>
+      </div>
+
+      <!-- List Details -->
+      <div class="space-y-4">
+        <div>
+          <div class="text-gray-600">List Type</div>
+          <div class="text-gray-900">{{ selectedList.type }}</div>
+        </div>
+
+        <div>
+          <div class="text-gray-600">Description</div>
+          <div class="text-gray-900">{{ selectedList.description }}</div>
+        </div>
+
+        <div>
+          <div class="text-gray-600">Created On</div>
+          <div class="text-gray-900">{{ selectedList.createdOn }}</div>
+        </div>
+
+        <div>
+          <div class="text-gray-600">
+            Creators ({{ selectedList.creators.length }} total, {{ notFoundCount }} not found)
+          </div>
+          
+          <!-- Creators List -->
+          <div class="mt-2">
+            <ul class="space-y-2">
+              <li v-for="(creator, index) in selectedList.creators" 
+                  :key="index"
+                  class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+              >
+                <div class="flex items-center space-x-4">
+                  <span class="text-gray-500">{{ index + 1 }}.</span>
+                  <a 
+                    :href="getCreatorProfileUrl(creator)"
+                    target="_blank"
+                    class="text-blue-600 hover:text-blue-800 hover:underline"
+                  >
+                    {{ creator }}
+                  </a>
+                </div>
+                <button 
+                  @click="removeCreator(index)"
+                  class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  computed: {
+    lists() {
+      return this.$store.state.lists;
+    },
+    allInfluencers() {
+      return this.$store.state.influencers;
+    }
+  },
+  data() {
+    return {
+      selectedList: null,
+      notFoundCount: 0
+    }
+  },
+  methods: {
+    viewList(list) {
+      this.selectedList = list;
+      this.notFoundCount = list.creators.filter(creator => 
+        !this.isCreatorFound(creator)
+      ).length;
+    },
+    isCreatorFound(creator) {
+      return true;
+    },
+    removeCreator(index) {
+      if (this.selectedList) {
+        this.selectedList.creators.splice(index, 1);
+        this.updateList();
+      }
+    },
+    async updateList() {
+      try {
+        await this.$store.dispatch('updateList', this.selectedList);
+      } catch (error) {
+        console.error('Failed to update list:', error);
+      }
+    },
+    getCreatorProfileUrl(handle) {
+      const influencer = this.allInfluencers.find(inf => inf.handle === handle);
+      return influencer ? influencer.profileUrl : '#';
+    }
+  }
+}
+</script>
+
+<style scoped>
+.creator-list {
+  @apply mt-4 space-y-2;
+}
+
+.creator-item {
+  @apply flex items-center justify-between py-2 px-3 bg-white rounded-lg hover:bg-gray-50;
+}
+
+.creator-number {
+  @apply text-gray-500;
+}
+
+.creator-handle {
+  @apply text-gray-900;
+}
+
+.delete-button {
+  @apply text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50;
+}
+</style>

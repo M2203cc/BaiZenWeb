@@ -1,0 +1,9 @@
+/* 为清除符号添加右边距 */
+.clear-icon {
+  margin-right: 8px;  /* 或者根据需要调整数值 */
+}
+
+/* 或者为下拉图标添加左边距 */
+.dropdown-icon {
+  margin-left: 8px;  /* 或者根据需要调整数值 */
+} 
