@@ -200,10 +200,8 @@
           <!-- Gender Dropdown -->
           <select v-model="selectedGender" class="filter-select text-secondary-500">
             <option value="" class="text-secondary-500">Gender</option>
-            <option value="all" class="text-secondary-500">All</option>
             <option value="male" class="text-secondary-500">Male</option>
             <option value="female" class="text-secondary-500">Female</option>
-            <option value="unknown" class="text-secondary-500">Unknown</option>
           </select>
 
           <!-- Creator Language Dropdown -->
@@ -303,7 +301,7 @@
           <thead>
             <tr class="border-b">
               <th class="p-3 text-left">Handle</th>
-              <th class="p-3 text-left">Bio</th>
+              <th class="p-3 text-left">Nick name</th>
               <th class="p-3 text-left">Product Category</th>
               <th class="p-3 text-left">Follower Count</th>
               <th class="p-3 text-left">GMV (Last 30 Days)</th>
@@ -312,16 +310,19 @@
           </thead>
           <tbody>
             <tr v-for="influencer in paginatedInfluencers" :key="influencer.handle" class="border-b hover:bg-secondary-100">
-              <td class="p-3">
+              <td class="min-h-16 py-3 px-2 align-middle">
                 <div class="flex items-center">
                   <img 
-                    :src="`https://api.dicebear.com/7.x/pixel-art/svg?seed=${influencer.handle}`" 
-                    class="w-10 h-10 rounded-full mr-3 bg-gray-100 object-cover"
+                    :src="influencer.avatar" 
                     :alt="influencer.handle"
-                  />
+                    class="w-10 h-10 rounded-full mr-3 object-cover"
+                    @error="handleImageError"
+                  >
                   <div>
                     <div>{{ influencer.handle }}</div>
-                    <div class="text-xs text-gray-500">{{ influencer.email }}</div>
+                    <div v-if="influencer.email" class="text-xs text-gray-500">
+                      {{ influencer.email }}
+                    </div>
                   </div>
                 </div>
               </td>
@@ -415,10 +416,21 @@
       @close="showExportModal = false"
       @create="handleCreateList"
     />
+
+    <!-- 添加 loading 状态显示 -->
+    <div v-if="loading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+    </div>
+
+    <!-- 添加错误提示 -->
+    <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+      {{ error }}
+    </div>
   </div>
 </template>
 
 <script>
+import { influencersAPI } from '../services/api'
 import ExportModal from '../components/ExportModal.vue'
 
 export default {
@@ -498,298 +510,14 @@ export default {
         'Korean'
       ],
 
-      influencers: [
-        {
-          handle: 'techie_sarah',
-          email: 'sarah.tech@email.com',
-          bio: '📱 Tech Reviews | 🎮 Gaming | 💻 Best Deals | She/Her',
-          categories: ['Electronics', 'Phones & Electronics', 'Computers & Office Equipment'],
-          followers: '328K',
-          gmv: '$2.8M',
-          gender: 'female',
-          language: 'English',
-          engagement: '4.2%',
-          profile: '@techie_sarah',
-          profileUrl: 'https://example.com/techie_sarah'
-        },
-        {
-          handle: 'beauty_queen_lisa',
-          email: 'lisa.beauty@email.com',
-          bio: '💄 Beauty Tips | 💅 Skincare | 💋 Lifestyle | DM for collabs',
-          categories: ['Beauty & Personal Care', 'Fashion Accessories'],
-          followers: '464K',
-          gmv: '$3.2M',
-          gender: 'female',
-          language: 'English',
-          engagement: '5.1%',
-          profile: '@beauty_queen_lisa',
-          profileUrl: 'https://example.com/beauty_queen_lisa'
-        },
-        {
-          handle: 'home_style_master',
-          email: '',
-          bio: ' 🖼️ Home Decor  |  Interior Design | 🎨 DIY Projects',
-          categories: ['Home Supplies', 'Furniture', 'Home Improvement'],
-          followers: '223K',
-          gmv: '$1.6M',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '3.8%',
-          profile: '@home_style_master',
-          profileUrl: 'https://example.com/home_style_master'
-        },
-        {
-          handle: 'fitness_mike',
-          email: 'mike.fit@email.com',
-          bio: '💪 Fitness Coach | 🥗 Nutrition | 🏃‍♂️ Running Tips | He/Him',
-          categories: ['Sports & Outdoor', 'Health'],
-          followers: '156K',
-          gmv: '$980K',
-          gender: 'male',
-          language: 'English',
-          engagement: '4.5%',
-          profile: '@fitness_mike',
-          profileUrl: 'https://example.com/fitness_mike'
-        },
-        {
-          handle: 'cooking_with_maria',
-          email: 'maria.cook@email.com',
-          bio: '👩‍🍳 Chef | 🍳 Recipe Creator | 🥘 Kitchen Tips | Español/English',
-          categories: ['Kitchenware', 'Food & Beverages'],
-          followers: '289K',
-          gmv: '$1.9M',
-          gender: 'female',
-          language: 'Spanish',
-          engagement: '6.2%',
-          profile: '@cooking_with_maria',
-          profileUrl: 'https://example.com/cooking_with_maria'
-        },
-        {
-          handle: 'pet_paradise',
-          email: 'pets@email.com',
-          bio: '🐶 Pet Care | 🐶 Training Tips | 🦮 Pet Products Reviews',
-          categories: ['Pet Supplies', 'Toys & Hobbies'],
-          followers: '198K',
-          gmv: '$1.1M',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '4.8%',
-          profile: '@pet_paradise',
-          profileUrl: 'https://example.com/pet_paradise'
-        },
-        {
-          handle: 'fashion_david',
-          email: 'david.style@email.com',
-          bio: '👔 Men\'s Fashion | 👞 Footwear | 🕶️ Accessories | For Him',
-          categories: ['Menswear & Underwear', 'Shoes', 'Fashion Accessories'],
-          followers: '175K',
-          gmv: '$2.1M',
-          gender: 'male',
-          language: 'English',
-          engagement: '3.9%',
-          profile: '@fashion_david',
-          profileUrl: 'https://example.com/fashion_david'
-        },
-        {
-          handle: 'baby_expert_anna',
-          email: 'anna.baby@email.com',
-          bio: '👶 Baby Care | 🍼 Parenting Tips | 🧸 Baby Products | Mom of 2',
-          categories: ['Baby & Maternity', 'Toys & Hobbies'],
-          followers: '312K',
-          gmv: '$2.4M',
-          gender: 'female',
-          language: 'English',
-          engagement: '5.7%',
-          profile: '@baby_expert_anna',
-          profileUrl: 'https://example.com/baby_expert_anna'
-        },
-        {
-          handle: 'books_and_beyond',
-          email: '',
-          bio: '📚 Book Reviews | 🎧 Audiobooks | 📖 Reading Lists',
-          categories: ['Books, Magazines & Audio', 'Collectibles'],
-          followers: '145K',
-          gmv: '$670K',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '4.1%',
-          profile: '@books_and_beyond',
-          profileUrl: 'https://example.com/books_and_beyond'
-        },
-        {
-          handle: 'craft_master_jen',
-          email: 'jen.crafts@email.com',
-          bio: 'DIY Crafts | ✂️ Art Supplies | 🖼️ Home Decor | She/Her',
-          categories: ['Art Supplies', 'Home Improvement', 'Toys & Hobbies'],
-          followers: '234K',
-          gmv: '$1.5M',
-          gender: 'female',
-          language: 'English',
-          engagement: '5.3%',
-          profile: '@craft_master_jen',
-          profileUrl: 'https://example.com/craft_master_jen'
-        },
-        {
-          handle: 'auto_expert_tom',
-          email: 'tom.auto@email.com',
-          bio: '🚗 Car Reviews | 🔧 Auto Tips | 🏍️ Motorcycle Gear | He/Him',
-          categories: ['Automotive & Motorcycle', 'Tools & Hardware'],
-          followers: '187K',
-          gmv: '$1.8M',
-          gender: 'male',
-          language: 'English',
-          engagement: '4.4%',
-          profile: '@auto_expert_tom',
-          profileUrl: 'https://example.com/auto_expert_tom'
-        },
-        {
-          handle: 'travel_gear_pro',
-          email: 'travel.pro@email.com',
-          bio: '✈️ Travel Gear | 🎒 Bags | 🧳 Luggage Reviews | Global',
-          categories: ['Luggage & Bags', 'Travel Accessories'],
-          followers: '256K',
-          gmv: '$2.2M',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '4.7%',
-          profile: '@travel_gear_pro',
-          profileUrl: 'https://example.com/travel_gear_pro'
-        },
-        {
-          handle: 'smart_home_tech',
-          email: 'smart.home@email.com',
-          bio: '🏠 Smart Home Reviews | 💡 IoT Devices | 🔌 Tech Tips',
-          categories: ['Electronics', 'Home Improvement', 'Household Appliances'],
-          followers: '167K',
-          gmv: '$1.3M',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '3.8%',
-          profile: '@smart_home_tech',
-          profileUrl: 'https://example.com/smart_home_tech'
-        },
-        {
-          handle: 'garden_guru',
-          email: 'garden@email.com',
-          bio: '🌺 Garden Design | 🌱 Plant Care | 🏡 Outdoor Living',
-          categories: ['Home Supplies', 'Tools & Hardware'],
-          followers: '143K',
-          gmv: '$890K',
-          gender: 'female',
-          language: 'English',
-          engagement: '4.9%',
-          profile: '@garden_guru',
-          profileUrl: 'https://example.com/garden_guru'
-        },
-        {
-          handle: 'sports_gear_pro',
-          email: 'sports@email.com',
-          bio: '⚽ Sports Equipment | 🎒 Reviews | 🏃‍♂️ Fitness Gear',
-          categories: ['Sports & Outdoor', 'Shoes'],
-          followers: '278K',
-          gmv: '$2.5M',
-          gender: 'male',
-          language: 'English',
-          engagement: '5.2%',
-          profile: '@sports_gear_pro',
-          profileUrl: 'https://example.com/sports_gear_pro'
-        },
-        {
-          handle: 'jewelry_queen',
-          email: 'jewelry@email.com',
-          bio: '💎 Jewelry Reviews | 💎 Accessories | ✨ Style Tips',
-          categories: ['Jewelry Accessories & Derivatives', 'Fashion Accessories'],
-          followers: '198K',
-          gmv: '$3.1M',
-          gender: 'female',
-          language: 'English',
-          engagement: '6.1%',
-          profile: '@jewelry_queen',
-          profileUrl: 'https://example.com/jewelry_queen'
-        },
-        {
-          handle: 'office_setup',
-          email: 'office.pro@email.com',
-          bio: '💼 Office Equipment | 💻 WFH Setup | 🖨️ Tech Reviews',
-          categories: ['Computers & Office Equipment', 'Furniture'],
-          followers: '134K',
-          gmv: '$950K',
-          gender: 'unknown',
-          language: 'English',
-          engagement: '3.7%',
-          profile: '@office_setup',
-          profileUrl: 'https://example.com/office_setup'
-        },
-        {
-          handle: 'kitchen_master',
-          email: 'kitchen.pro@email.com',
-          bio: '🍳 Kitchen Gadgets | 🔪 Cookware | 🍽️ Reviews',
-          categories: ['Kitchenware', 'Home Supplies'],
-          followers: '245K',
-          gmv: '$1.7M',
-          gender: 'male',
-          language: 'English',
-          engagement: '4.8%',
-          profile: '@kitchen_master',
-          profileUrl: 'https://example.com/kitchen_master'
-        },
-        {
-          handle: 'art_supplies_guru',
-          email: 'art.guru@email.com',
-          bio: '🎨 Art Supplies | ✏️ Drawing Tools | 🖼️ Reviews',
-          categories: ['Art Supplies', 'Books, Magazines & Audio'],
-          followers: '167K',
-          gmv: '$780K',
-          gender: 'female',
-          language: 'English',
-          engagement: '5.4%',
-          profile: '@art_supplies_guru',
-          profileUrl: 'https://example.com/art_supplies_guru'
-        },
-        {
-          handle: 'baby_fashion',
-          email: 'baby.style@email.com',
-          bio: '👶 Baby Fashion | 🧸 Kids Wear | 🎀 Accessories',
-          categories: ['Baby & Maternity', 'Fashion Accessories'],
-          followers: '189K',
-          gmv: '$1.4M',
-          gender: 'female',
-          language: 'English',
-          engagement: '4.7%',
-          profile: '@baby_fashion',
-          profileUrl: 'https://example.com/baby_fashion'
-        },
-        {
-          handle: 'pet_fashion',
-          email: 'pet.style@email.com',
-          bio: '🐱 Pet Fashion | 🐶 Pet Accessories | 🦮 Reviews',
-          categories: ['Pet Supplies', 'Fashion Accessories'],
-          followers: '156K',
-          gmv: '$920K',
-          gender: 'female',
-          language: 'English',
-          engagement: '5.3%',
-          profile: '@pet_fashion',
-          profileUrl: 'https://example.com/pet_fashion'
-        },
-        {
-          handle: 'mens_grooming',
-          email: 'grooming@email.com',
-          bio: '💈 Men\'s Grooming | 🧔 Beard Care | ✨ Style Tips',
-          categories: ['Beauty & Personal Care', 'Menswear & Underwear'],
-          followers: '212K',
-          gmv: '$1.6M',
-          gender: 'male',
-          language: 'English',
-          engagement: '4.6%',
-          profile: '@mens_grooming',
-          profileUrl: 'https://example.com/mens_grooming'
-        }
-      ],
+      influencers: [],
+      loading: false,
+      error: null,
 
       currentPage: 1,
-      pageSize: 10,
-      showExportModal: false
+      pageSize: 12,
+      showExportModal: false,
+      total: 0
     }
   },
   computed: {
@@ -882,7 +610,6 @@ export default {
           );
 
         const genderMatch = !this.selectedGender || 
-          this.selectedGender === 'all' || 
           influencer.gender === this.selectedGender;
 
         const languageMatch = this.selectedLanguages.length === 0 || 
@@ -896,7 +623,7 @@ export default {
     },
 
     totalPages() {
-      return Math.ceil(this.filteredInfluencers.length / this.pageSize);
+      return Math.ceil(this.total / this.pageSize);
     },
     
     paginatedInfluencers() {
@@ -908,7 +635,7 @@ export default {
     displayedPages() {
       const total = this.totalPages;
       const current = this.currentPage;
-      const delta = 1; // 当前页码前后显示的页码数
+      const delta = 1; // 当前码前后显示的页码数
 
       let pages = [];
       const left = current - delta;
@@ -935,12 +662,22 @@ export default {
   },
   methods: {
     matchFollowerRange(followers, range) {
-      const count = parseInt(followers.replace(/[K,M]/g, ''))
+      // 将 followers 字符串转换为数字(以千为单位)
+      const value = followers.toLowerCase()
+      let count
+      if (value.includes('m')) {
+        count = parseFloat(value) * 1000 // 将M转换为K
+      } else if (value.includes('k')) {
+        count = parseFloat(value)
+      } else {
+        count = parseFloat(value) / 1000 // 将原始数字转换为K
+      }
+
       switch(range) {
-        case '0-20K': return count < 20
-        case '20K-100K': return count >= 20 && count < 100
-        case '100K-1M': return count >= 100 && count < 1000
-        case '1M+': return count >= 1000
+        case '0-20K': return count <= 20
+        case '20K-100K': return count > 20 && count <= 100
+        case '100K-1M': return count > 100 && count <= 1000
+        case '1M+': return count > 1000
         default: return true
       }
     },
@@ -1062,6 +799,130 @@ export default {
     handleCreateList(listData) {
       this.$store.dispatch('createList', listData);
       this.$router.push('/lists');
+    },
+    async fetchInfluencers() {
+      try {
+        this.loading = true
+        this.error = null
+        
+        const response = await influencersAPI.getInfluencers(this.currentPage, this.pageSize)
+        
+        if (response.code === 0 && response.data) {
+          // 处理用户数据
+          this.influencers = await Promise.all(response.data.map(async (item) => {
+            // 解析 category
+            let categories = []
+            try {
+              if (item.category && item.category !== 'None') {
+                const categoryArray = JSON.parse(item.category.replace(/'/g, '"'))
+                categories = categoryArray.map(cat => cat.name)
+              }
+            } catch (e) {
+              console.error('Error parsing category:', e)
+              categories = []
+            }
+
+            // 获取邮箱
+            let email = null
+            try {
+              const emailResponse = await influencersAPI.getEmail(item.handle)
+              if (emailResponse.code === 0 && emailResponse.data && emailResponse.data.length > 0) {
+                email = emailResponse.data[0].email
+              }
+            } catch (e) {
+              console.error('Error fetching email:', e)
+            }
+
+            return {
+              handle: item.handle,
+              email: email,
+              bio: item.nickname || '',
+              categories: categories,
+              followers: this.formatFollowers(item.follower_cnt),
+              gmv: this.formatGMV(item.med_gmv_revenue, item.med_gmv_revenue_range),
+              gender: item.top_follower_gender?.toLowerCase() || 'unknown',
+              language: 'English',
+              profile: `@${item.handle}`,
+              profileUrl: `https://www.tiktok.com/@${item.handle}`,
+              avatar: item.avatar || ''
+            }
+          }))
+          
+          this.total = response.total || 0
+        } else {
+          throw new Error(response.message || 'Failed to fetch data')
+        }
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch influencers data'
+        console.error('Error:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    // 解析类别字符串为数组
+    parseCategories(categoryStr) {
+      if (!categoryStr) return []
+      try {
+        // 如果已经是数组，直接返回
+        if (Array.isArray(categoryStr)) {
+          return categoryStr.map(cat => cat.name || cat).filter(Boolean)
+        }
+        
+        // 如果是字符串，尝试解析
+        if (typeof categoryStr === 'string') {
+          // 处理可能的特殊字符
+          const cleanStr = categoryStr.replace(/[\u0000-\u0019]+/g, '')
+          try {
+            const categoryData = JSON.parse(cleanStr)
+            if (Array.isArray(categoryData)) {
+              return categoryData.map(cat => cat.name || cat).filter(Boolean)
+            }
+            return []
+          } catch (e) {
+            // 如果解析失败，尝试直接分割字符串
+            return categoryStr.split(',').map(cat => cat.trim()).filter(Boolean)
+          }
+        }
+        
+        // 如果是其他类型，返回空数组
+        return []
+      } catch (e) {
+        console.error('Failed to parse categories:', e, 'Original value:', categoryStr)
+        return []
+      }
+    },
+    // 格式化粉丝数
+    formatFollowers(count) {
+      if (!count) return '0'
+      count = parseInt(count)
+      if (count >= 1000000) {
+        return `${(count / 1000000).toFixed(1)}M`
+      } else if (count >= 1000) {
+        return `${(count / 1000).toFixed(1)}K`
+      }
+      return count.toString()
+    },
+    // 格式化 GMV
+    formatGMV(value, range) {
+      // 如果有具体的 GMV 值
+      if (value && !isNaN(value)) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(value)
+      }
+      
+      // 如果没有具体值但有范围，则返回范围
+      if (range) {
+        return range
+      }
+      
+      // 如果既没有具体值也没有范围，返回默认值
+      return '$0'
+    },
+    // 添加图片加载失败的处理方法
+    handleImageError(e) {
+      e.target.src = 'https://via.placeholder.com/40' // 设���默认头像
     }
   },
   directives: {
@@ -1080,45 +941,13 @@ export default {
     }
   },
   watch: {
-    searchQuery() {
-      this.currentPage = 1;
-    },
-    selectedCategories: {
-      handler() {
-        this.currentPage = 1;
-      },
-      deep: true
-    },
-    selectedFollowerRanges: {
-      handler() {
-        this.currentPage = 1;
-      },
-      deep: true
-    },
-    selectedGMVs: {
-      handler() {
-        this.currentPage = 1;
-      },
-      deep: true
-    },
-    selectedGender() {
-      this.currentPage = 1;
-    },
-    selectedLanguages: {
-      handler() {
-        this.currentPage = 1;
-      },
-      deep: true
-    },
-    onlyWithEmail() {
-      this.currentPage = 1;
+    currentPage() {
+      this.fetchInfluencers()
     }
   },
   created() {
-    // 确保初始数据被加载到 store 中
-    if (this.influencers.length) {
-      this.$store.dispatch('setInfluencers', this.influencers)
-    }
+    // 组件创建时获取数据
+    this.fetchInfluencers()
   }
 }
 </script>
