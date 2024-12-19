@@ -15,7 +15,10 @@ const routes = [
   {
     path: '/influencers',
     name: 'Influencers',
-    component: Influencers
+    component: () => import('../views/Influencers.vue'),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/lists',

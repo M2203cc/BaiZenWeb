@@ -4,7 +4,11 @@
     <div class="sm:ml-52">
       <TopNav @toggle-sidebar="toggleSidebar" />
       <main class="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)]">
-        <router-view></router-view>
+        <keep-alive include="Influencers">
+          <router-view v-slot="{ Component }">
+            <component :is="Component" />
+          </router-view>
+        </keep-alive>
       </main>
     </div>
   </div>

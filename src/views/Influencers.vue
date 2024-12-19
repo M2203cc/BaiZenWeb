@@ -434,6 +434,7 @@ import { influencersAPI } from '../services/api'
 import ExportModal from '../components/ExportModal.vue'
 
 export default {
+  name: 'Influencers',
   components: {
     ExportModal
   },
@@ -517,7 +518,9 @@ export default {
       currentPage: 1,
       pageSize: 12,
       showExportModal: false,
-      total: 0
+      total: 0,
+      needRefresh: false,
+      isFirstLoad: true,
     }
   },
   computed: {
@@ -656,8 +659,8 @@ export default {
       return pages;
     },
 
-    storeInfluencers() {
-      return this.$store.getters.getInfluencers
+    influencersData() {
+      return this.$store.state.influencers || []
     }
   },
   methods: {
@@ -771,16 +774,20 @@ export default {
       }
     },
     handlePageChange(page) {
+      if (this.currentPage === page) return;
       this.currentPage = page;
+      this.fetchInfluencers();
     },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
+        this.fetchInfluencers();
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
+        this.fetchInfluencers();
       }
     },
     resetFilters() {
@@ -801,17 +808,24 @@ export default {
       this.$router.push('/lists');
     },
     async fetchInfluencers() {
+      if (this.loading) return;
+      
       try {
-        this.loading = true
-        this.error = null
+        this.loading = true;
+        this.error = null;
         
-        const response = await influencersAPI.getInfluencers(this.currentPage, this.pageSize)
+        // 如果 store 中已有数据，直接使用
+        if (this.influencersData.length > 0) {
+          this.influencers = this.influencersData;
+          return;
+        }
+        
+        const response = await influencersAPI.getInfluencers(this.currentPage, this.pageSize);
         
         if (response.code === 0 && response.data) {
-          // 处理用户数据
-          this.influencers = await Promise.all(response.data.map(async (item) => {
+          const processedData = await Promise.all(response.data.map(async (item) => {
             // 解析 category
-            let categories = []
+            let categories = [];
             try {
               if (item.category && item.category !== 'None') {
                 const categoryArray = JSON.parse(item.category.replace(/'/g, '"'))
@@ -846,17 +860,20 @@ export default {
               profileUrl: `https://www.tiktok.com/@${item.handle}`,
               avatar: item.avatar || ''
             }
-          }))
+          }));
           
-          this.total = response.total || 0
+          // 将数据保存到 Vuex store
+          this.$store.commit('setInfluencers', processedData);
+          this.influencers = processedData;
+          this.total = response.total || 0;
         } else {
-          throw new Error(response.message || 'Failed to fetch data')
+          throw new Error(response.message || 'Failed to fetch data');
         }
       } catch (error) {
-        this.error = error.message || 'Failed to fetch influencers data'
-        console.error('Error:', error)
+        this.error = error.message || 'Failed to fetch influencers data';
+        console.error('Error:', error);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     // 解析类别字符串为数组
@@ -922,7 +939,11 @@ export default {
     },
     // 添加图片加载失败的处理方法
     handleImageError(e) {
-      e.target.src = 'https://via.placeholder.com/40' // 设���默认头像
+      e.target.src = 'https://via.placeholder.com/40' // 设置默认头像
+    },
+    // 手动刷新数据的方法
+    refreshData() {
+      this.fetchInfluencers()
     }
   },
   directives: {
@@ -940,14 +961,23 @@ export default {
       }
     }
   },
-  watch: {
-    currentPage() {
-      this.fetchInfluencers()
+  created() {
+    // 只在没有数据时获取
+    if (!this.influencersData.length) {
+      this.fetchInfluencers();
+    } else {
+      this.influencers = this.influencersData;
     }
   },
-  created() {
-    // 组件创建时获取数据
-    this.fetchInfluencers()
+  activated() {
+    // 不做任何操作，除非明确需要刷新
+    if (this.needRefresh) {
+      this.fetchInfluencers()
+      this.needRefresh = false
+    }
+  },
+  deactivated() {
+    // 组件被缓存时的处理
   }
 }
 </script>
