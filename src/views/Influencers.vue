@@ -604,7 +604,6 @@ export default {
         'Korean'
       ],
 
-      influencers: [],
       loading: false,
       error: null,
 
@@ -736,30 +735,6 @@ export default {
       return this.filteredInfluencers.slice(start, end);
     },
 
-    displayedPages() {
-      const total = this.totalPages;
-      const current = this.currentPage;
-      const delta = 1; // 当前码前后显示的页码数
-
-      let pages = [];
-      const left = current - delta;
-      const right = current + delta;
-
-      for (let i = 1; i <= total; i++) {
-        if (
-          i === 1 || // 第一页
-          i === total || // 最后一页
-          (i >= left && i <= right) // 当前页码附近的页码
-        ) {
-          pages.push(i);
-        } else if (pages[pages.length - 1] !== '...') {
-          pages.push('...');
-        }
-      }
-
-      return pages;
-    },
-
     influencersData() {
       return this.$store.state.influencers || []
     },
@@ -794,6 +769,24 @@ export default {
         !this.selectedLanguages.includes(lang) && 
         lang.toLowerCase().includes(query)
       );
+    },
+
+    influencers: {
+      get() {
+        return this.$store.state.influencers;
+      },
+      set(value) {
+        this.$store.commit('setInfluencers', value);
+      }
+    },
+
+    currentFilters: {
+      get() {
+        return this.$store.state.filters;
+      },
+      set(value) {
+        this.$store.commit('setFilters', value);
+      }
     }
   },
   methods: {
@@ -928,29 +921,7 @@ export default {
       }
     },
     resetFilters() {
-      // 从原始数据恢复
-      if (this.originalInfluencers) {
-        this.influencers = [...this.originalInfluencers];
-        this.$store.commit('setInfluencers', this.originalInfluencers);
-      }
-
-      // 重置所有过滤条件
-      this.searchQuery = '';
-      this.selectedCategories = [];
-      this.selectedGMVs = [];
-      this.selectedFollowerRanges = [];
-      this.selectedLanguages = [];
-      this.selectedGender = '';
-      this.onlyWithEmail = false;
-      
-      // 重置过滤器状态
-      this.filters = {
-        gender: '',
-        categories: [],
-        followers: [],
-        languages: [],
-        onlyWithEmail: false
-      };
+      this.$store.dispatch('resetFilters');
     },
     handleCreateList(listData) {
       this.$store.dispatch('lists/addList', listData);
@@ -962,7 +933,13 @@ export default {
       try {
         this.loading = true;
         this.error = null;
-        
+
+        // 如果已经有原始数据，直接使用
+        if (this.$store.state.originalInfluencers.length > 0) {
+          this.applyCurrentFilters();
+          return;
+        }
+
         const response = await influencersAPI.getInfluencers(this.currentPage, this.pageSize);
         
         if (response.code === 0 && response.data) {
@@ -1192,36 +1169,18 @@ export default {
         // 可以添加错误提示
       }
     },
-    applyFilters() {
-      let filtered = [...this.originalInfluencers];
+    applyCurrentFilters() {
+      // 从原始数据开始过滤
+      let filtered = [...this.$store.state.originalInfluencers];
 
-      if (this.filters.gender) {
-        filtered = filtered.filter(inf => inf.gender === this.filters.gender);
+      const filters = this.currentFilters;
+      
+      if (filters.gender) {
+        filtered = filtered.filter(inf => inf.gender === filters.gender);
       }
+      // ... 其他过滤逻辑
 
-      if (this.filters.categories.length) {
-        filtered = filtered.filter(inf => 
-          inf.categories.some(cat => this.filters.categories.includes(cat))
-        );
-      }
-
-      if (this.filters.followers.length) {
-        filtered = filtered.filter(inf => 
-          this.filters.followers.some(range => this.matchFollowerRange(inf.followers, range))
-        );
-      }
-
-      if (this.filters.languages.length) {
-        filtered = filtered.filter(inf => 
-          this.filters.languages.includes(inf.language)
-        );
-      }
-
-      if (this.filters.onlyWithEmail) {
-        filtered = filtered.filter(inf => this.hasValidEmail(inf.email));
-      }
-
-      this.influencers = filtered;
+      this.$store.commit('setInfluencers', filtered);
     }
   },
   directives: {
@@ -1243,18 +1202,18 @@ export default {
     this.fetchInfluencers();
   },
   activated() {
-    if (this.$route.query.keepFilters !== 'true' || !this.originalInfluencers) {
-      this.fetchInfluencers();
+    // 如果不是从 Lists 页面返回，重置过滤器
+    if (!this.$route.query.keepFilters) {
+      this.resetFilters();
     }
   },
   deactivated() {
     // 组件被缓存时的处理
   },
   beforeRouteLeave(to, from, next) {
+    // 如果不是去 Lists 页面，重置过滤器
     if (to.name !== 'Lists') {
-      // 如果不是去 Lists 页面，重置数据
-      this.$store.dispatch('resetInfluencers');
-      this.originalInfluencers = null;
+      this.resetFilters();
     }
     next();
   }

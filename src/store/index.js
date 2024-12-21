@@ -4,14 +4,38 @@ import router from '../router'
 export default createStore({
   state: {
     influencers: [],
-    lists: []
+    originalInfluencers: [],
+    lists: [],
+    filters: {
+      gender: '',
+      categories: [],
+      followers: [],
+      languages: [],
+      onlyWithEmail: false
+    }
   },
   mutations: {
     setInfluencers(state, data) {
-      state.influencers = data
+      state.influencers = data;
+      if (!state.originalInfluencers.length) {
+        state.originalInfluencers = [...data];
+      }
     },
     resetInfluencers(state) {
-      state.influencers = [];
+      state.influencers = [...state.originalInfluencers];
+    },
+    setFilters(state, filters) {
+      state.filters = filters;
+    },
+    resetFilters(state) {
+      state.filters = {
+        gender: '',
+        categories: [],
+        followers: [],
+        languages: [],
+        onlyWithEmail: false
+      };
+      state.influencers = [...state.originalInfluencers];
     },
     ADD_LIST(state, list) {
       const newList = {
@@ -45,6 +69,12 @@ export default createStore({
     },
     resetInfluencers({ commit }) {
       commit('resetInfluencers');
+    },
+    setFilters({ commit }, filters) {
+      commit('setFilters', filters);
+    },
+    resetFilters({ commit }) {
+      commit('resetFilters');
     },
     
     async createList({ commit }, listData) {
@@ -96,6 +126,8 @@ export default createStore({
   },
   getters: {
     getLists: state => state.lists,
-    getInfluencers: state => state.influencers
+    getInfluencers: state => state.influencers,
+    getOriginalInfluencers: state => state.originalInfluencers,
+    getFilters: state => state.filters
   }
 }) 
