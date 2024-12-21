@@ -754,18 +754,16 @@ export default {
         // 从视频列表中提取创建者信息
         const creators = this.productVideos.map(video => ({
           handle: video.creator,
-          profileUrl: video.profileUrl
+          profileUrl: `https://www.tiktok.com/@${video.creator}`,
+          avatar: video.creatorAvatar || '',
+          bio: video.description || ''
         }));
         
         const listData = {
           name: this.listName,
-          type: 'Filters',
-          description: 'Exported from Product',
-          creators: creators.map(c => c.handle),
-          creatorUrls: creators.reduce((acc, c) => {
-            acc[c.handle] = c.profileUrl;
-            return acc;
-          }, {})
+          type: 'Product List',
+          description: 'Created from product page',
+          creators: creators.map(c => c.handle) // 只传递 handle
         };
         
         await this.$store.dispatch('createList', listData);
@@ -774,6 +772,7 @@ export default {
         this.$router.push('/lists');
       } catch (error) {
         console.error('Failed to create list:', error);
+        alert('Failed to create list. Please try again.');
       }
     },
     changePage(page) {

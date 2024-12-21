@@ -25,16 +25,35 @@
           
           <!-- Category Dropdown -->
           <div class="relative" v-click-outside="closeCategoryDropdown">
-            <button 
+            <div 
               @click="toggleCategoryDropdown"
-              class="filter-select flex justify-between items-center w-full appearance-none bg-no-repeat bg-right pr-8"
-              style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E'); background-position: right 0.5rem center;"
+              class="filter-select flex items-center min-h-[45px] cursor-pointer px-3"
             >
-              <span v-if="selectedCategories.length === 0" class="text-secondary-500">Category</span>
-              <span v-else>{{ selectedCategories.length }} categories selected</span>
-            </button>
+              <div class="flex flex-wrap gap-1.5 flex-1 py-2">
+                <span v-if="selectedCategories.length === 0" class="text-gray-500">Category</span>
+                <span v-else>{{ selectedCategories.length }} categories selected</span>
+              </div>
 
-            <div v-if="showCategoryDropdown" class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg">
+              <!-- 右侧按钮组 -->
+              <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
+                <button 
+                  v-if="selectedCategories.length" 
+                  @click.stop="clearCategories"
+                  class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 下拉面板 -->
+            <div v-if="showCategoryDropdown" class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
               <div class="p-2">
                 <input 
                   type="text"
@@ -44,7 +63,7 @@
                 >
                 
                 <div class="max-h-60 overflow-y-auto">
-                  <label class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer">
+                  <label class="flex items-center p-2 hover:bg-gray-100 cursor-pointer">
                     <input 
                       type="checkbox"
                       v-model="selectAllCategories"
@@ -57,7 +76,7 @@
                   <label 
                     v-for="category in filteredCategories" 
                     :key="category"
-                    class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer"
+                    class="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
                   >
                     <input 
                       type="checkbox"
@@ -73,7 +92,7 @@
               <div class="border-t p-2 flex justify-center">
                 <button 
                   @click="closeCategoryDropdown"
-                  class="px-4 py-2 text-sm text-primary-600 hover:bg-secondary-100 rounded"
+                  class="px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 rounded"
                 >
                   Close
                 </button>
@@ -83,181 +102,253 @@
 
           <!-- Followers Dropdown -->
           <div class="relative" v-click-outside="closeFollowersDropdown">
-            <button 
+            <div 
               @click="toggleFollowersDropdown"
-              class="filter-select flex justify-between items-center w-full appearance-none bg-no-repeat bg-right pr-8"
-              style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E'); background-position: right 0.5rem center;"
+              class="filter-select flex items-center min-h-[45px] cursor-pointer px-3"
             >
-              <span v-if="selectedFollowerRanges.length === 0" class="text-secondary-500">Followers</span>
-              <span v-else>{{ selectedFollowerRanges.length }} ranges selected</span>
-            </button>
-
-            <div v-if="showFollowersDropdown" class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg">
-              <div class="p-2">
-                <input 
-                  type="text"
-                  placeholder="Search..."
-                  class="search-input mb-2"
-                  v-model="followersSearchQuery"
-                >
-                
-                <div class="max-h-60 overflow-y-auto">
-                  <label class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      v-model="selectAllFollowers"
-                      @change="toggleAllFollowers"
-                      class="mr-2"
-                    >
-                    <span>(Select All)</span>
-                  </label>
-                  
-                  <label 
-                    v-for="range in filteredFollowerRanges" 
-                    :key="range"
-                    class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer"
+              <!-- 已选标签区域 -->
+              <div class="flex flex-wrap gap-1.5 flex-1 py-2">
+                <template v-if="selectedFollowerRanges.length">
+                  <span v-for="range in selectedFollowerRanges" 
+                    :key="range" 
+                    class="inline-flex items-center px-2 py-0.5 text-sm bg-blue-50 text-blue-700 rounded-md"
                   >
-                    <input 
-                      type="checkbox"
-                      v-model="selectedFollowerRanges"
-                      :value="range"
-                      class="mr-2"
+                    {{ range }}
+                    <button 
+                      @click.stop="removeFollowerRange(range)" 
+                      class="ml-1.5 text-blue-400 hover:text-blue-600 transition-colors"
                     >
-                    <span>{{ range }}</span>
-                  </label>
-                </div>
+                      ×
+                    </button>
+                  </span>
+                </template>
+                <span v-else class="text-gray-500">Followers</span>
               </div>
-              
-              <div class="border-t p-2 flex justify-center">
+
+              <!-- 右侧按钮组 -->
+              <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
                 <button 
-                  @click="closeFollowersDropdown"
-                  class="px-4 py-2 text-sm text-primary-600 hover:bg-secondary-100 rounded"
+                  v-if="selectedFollowerRanges.length" 
+                  @click.stop="clearFollowerRanges"
+                  class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear all"
                 >
-                  Close
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
                 </button>
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 下拉面板 -->
+            <div v-if="showFollowersDropdown" 
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-hidden"
+            >
+              <!-- 选项列表 -->
+              <div class="max-h-60 overflow-y-auto py-1">
+                <div v-for="range in availableFollowerRanges" 
+                  :key="range"
+                  @click="toggleFollowerRange(range)"
+                  class="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex items-center space-x-2"
+                  :class="{'text-blue-600': selectedFollowerRanges.includes(range)}"
+                >
+                  <span v-if="selectedFollowerRanges.includes(range)" class="text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span v-else class="w-4"></span>
+                  <span>{{ range }}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- GMV Dropdown -->
           <div class="relative" v-click-outside="closeGMVDropdown">
-            <button 
+            <div 
               @click="toggleGMVDropdown"
-              class="filter-select flex justify-between items-center w-full appearance-none bg-no-repeat bg-right pr-8"
-              style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E'); background-position: right 0.5rem center;"
+              class="filter-select flex items-center min-h-[45px] cursor-pointer px-3"
             >
-              <span v-if="selectedGMVs.length === 0" class="text-secondary-500">GMV</span>
-              <span v-else>{{ selectedGMVs.length }} ranges selected</span>
-            </button>
-
-            <div v-if="showGMVDropdown" class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg">
-              <div class="p-2">
-                <input 
-                  type="text"
-                  placeholder="Search..."
-                  class="search-input mb-2"
-                  v-model="gmvSearchQuery"
-                >
-                
-                <div class="max-h-60 overflow-y-auto">
-                  <label class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      v-model="selectAllGMV"
-                      @change="toggleAllGMV"
-                      class="mr-2"
-                    >
-                    <span>(Select All)</span>
-                  </label>
-                  
-                  <label 
-                    v-for="range in filteredGMVRanges" 
-                    :key="range"
-                    class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer"
+              <!-- 已选标签区域 -->
+              <div class="flex flex-wrap gap-1.5 flex-1 py-2">
+                <template v-if="selectedGMVs.length">
+                  <span v-for="range in selectedGMVs" 
+                    :key="range" 
+                    class="inline-flex items-center px-2 py-0.5 text-sm bg-blue-50 text-blue-700 rounded-md"
                   >
-                    <input 
-                      type="checkbox"
-                      v-model="selectedGMVs"
-                      :value="range"
-                      class="mr-2"
+                    {{ range }}
+                    <button 
+                      @click.stop="removeGMV(range)" 
+                      class="ml-1.5 text-blue-400 hover:text-blue-600 transition-colors"
                     >
-                    <span>{{ range }}</span>
-                  </label>
-                </div>
+                      ×
+                    </button>
+                  </span>
+                </template>
+                <span v-else class="text-gray-500">GMV</span>
               </div>
-              
-              <div class="border-t p-2 flex justify-center">
+
+              <!-- 右侧按钮组 -->
+              <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
                 <button 
-                  @click="closeGMVDropdown"
-                  class="px-4 py-2 text-sm text-primary-600 hover:bg-secondary-100 rounded"
+                  v-if="selectedGMVs.length" 
+                  @click.stop="clearGMV"
+                  class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear all"
                 >
-                  Close
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
                 </button>
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 下拉面板 -->
+            <div v-if="showGMVDropdown" 
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-hidden"
+            >
+              <!-- 选项列表 -->
+              <div class="max-h-60 overflow-y-auto py-1">
+                <div v-for="range in availableGMVRanges" 
+                  :key="range"
+                  @click="toggleGMV(range)"
+                  class="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex items-center space-x-2"
+                  :class="{'text-blue-600': selectedGMVs.includes(range)}"
+                >
+                  <span v-if="selectedGMVs.includes(range)" class="text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span v-else class="w-4"></span>
+                  <span>{{ range }}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Gender Dropdown -->
-          <select v-model="selectedGender" class="filter-select text-secondary-500">
-            <option value="" class="text-secondary-500">Gender</option>
-            <option value="male" class="text-secondary-500">Male</option>
-            <option value="female" class="text-secondary-500">Female</option>
-          </select>
+          <div class="relative" v-click-outside="closeGenderDropdown">
+            <div 
+              @click="toggleGenderDropdown"
+              class="filter-select flex items-center min-h-[45px] cursor-pointer px-3"
+            >
+              <div class="flex flex-wrap gap-1.5 flex-1 py-2">
+                <span v-if="!selectedGender" class="text-gray-500">Gender</span>
+                <span v-else class="text-gray-900">{{ selectedGender.charAt(0).toUpperCase() + selectedGender.slice(1) }}</span>
+              </div>
+
+              <!-- 右侧按钮组 -->
+              <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
+                <button 
+                  v-if="selectedGender" 
+                  @click.stop="clearGender"
+                  class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 下拉面板 -->
+            <div v-if="showGenderDropdown" 
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-hidden"
+            >
+              <div class="py-1">
+                <div v-for="gender in genderOptions" 
+                  :key="gender"
+                  @click="selectGender(gender)"
+                  class="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex items-center space-x-2"
+                  :class="{'text-blue-600': selectedGender === gender}"
+                >
+                  <span v-if="selectedGender === gender" class="text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span v-else class="w-4"></span>
+                  <span>{{ gender.charAt(0).toUpperCase() + gender.slice(1) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- Creator Language Dropdown -->
           <div class="relative" v-click-outside="closeLanguageDropdown">
-            <button 
+            <div 
               @click="toggleLanguageDropdown"
-              class="filter-select flex justify-between items-center w-full appearance-none bg-no-repeat bg-right pr-8"
-              style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E'); background-position: right 0.5rem center;"
+              class="filter-select flex items-center min-h-[45px] cursor-pointer px-3"
             >
-              <span v-if="selectedLanguages.length === 0" class="text-secondary-500">Creator Language</span>
-              <span v-else>{{ selectedLanguages.length }} languages selected</span>
-            </button>
-
-            <div v-if="showLanguageDropdown" class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg">
-              <div class="p-2">
-                <input 
-                  type="text"
-                  placeholder="Search..."
-                  class="search-input mb-2"
-                  v-model="languageSearchQuery"
-                >
-                
-                <div class="max-h-60 overflow-y-auto">
-                  <label class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      v-model="selectAllLanguages"
-                      @change="toggleAllLanguages"
-                      class="mr-2"
-                    >
-                    <span>(Select All)</span>
-                  </label>
-                  
-                  <label 
-                    v-for="lang in filteredLanguages" 
-                    :key="lang"
-                    class="flex items-center p-2 hover:bg-secondary-100 cursor-pointer"
+              <!-- 已选标签区域 -->
+              <div class="flex flex-wrap gap-1.5 flex-1 py-2">
+                <template v-if="selectedLanguages.length">
+                  <span v-for="lang in selectedLanguages" 
+                    :key="lang" 
+                    class="inline-flex items-center px-2 py-0.5 text-sm bg-blue-50 text-blue-700 rounded-md"
                   >
-                    <input 
-                      type="checkbox"
-                      v-model="selectedLanguages"
-                      :value="lang"
-                      class="mr-2"
+                    {{ lang }}
+                    <button 
+                      @click.stop="removeLanguage(lang)" 
+                      class="ml-1.5 text-blue-400 hover:text-blue-600 transition-colors"
                     >
-                    <span>{{ lang }}</span>
-                  </label>
-                </div>
+                      ×
+                    </button>
+                  </span>
+                </template>
+                <span v-else class="text-gray-500">Language</span>
               </div>
-              
-              <div class="border-t p-2 flex justify-center">
+
+              <!-- 右侧按钮组 -->
+              <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
                 <button 
-                  @click="closeLanguageDropdown"
-                  class="px-4 py-2 text-sm text-primary-600 hover:bg-secondary-100 rounded"
+                  v-if="selectedLanguages.length" 
+                  @click.stop="clearLanguages"
+                  class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Clear all"
                 >
-                  Close
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
                 </button>
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- 下拉面板 -->
+            <div v-if="showLanguageDropdown" 
+              class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-hidden"
+            >
+              <!-- 选项列表 -->
+              <div class="max-h-60 overflow-y-auto py-1">
+                <div v-for="lang in availableLanguages" 
+                  :key="lang"
+                  @click="toggleLanguage(lang)"
+                  class="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex items-center space-x-2"
+                  :class="{'text-blue-600': selectedLanguages.includes(lang)}"
+                >
+                  <span v-if="selectedLanguages.includes(lang)" class="text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <span v-else class="w-4"></span>
+                  <span>{{ lang }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -269,7 +360,7 @@
                 type="checkbox" 
                 id="withEmail" 
                 v-model="onlyWithEmail"
-                class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               >
               <label for="withEmail" class="ml-2 text-sm text-gray-700">
                 Only show creators with an email
@@ -284,7 +375,7 @@
           <div class="flex justify-end">
             <button 
               @click="resetFilters"
-              class="reset-button flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 bg-white border border-primary-600 rounded-md hover:bg-primary-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              class="reset-button flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -296,7 +387,7 @@
       </div>
 
       <!-- Results Table -->
-      <div class="relative w-full overflow-x-auto rounded-sm border border-secondary-100 bg-white">
+      <div class="relative w-full overflow-x-auto rounded-sm border border-gray-100 bg-white">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b">
@@ -309,7 +400,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="influencer in paginatedInfluencers" :key="influencer.handle" class="border-b hover:bg-secondary-100">
+            <tr v-for="influencer in paginatedInfluencers" :key="influencer.handle" class="border-b hover:bg-gray-100">
               <td class="min-h-16 py-3 px-2 align-middle">
                 <div class="flex items-center">
                   <img 
@@ -330,7 +421,7 @@
               <td class="p-3">
                 <div class="flex flex-wrap gap-1">
                   <span v-for="cat in influencer.categories" :key="cat" 
-                    class="px-2 py-1 text-xs bg-secondary-100 rounded-md border">
+                    class="px-2 py-1 text-xs bg-gray-100 rounded-md border">
                     {{ cat }}
                   </span>
                 </div>
@@ -364,7 +455,7 @@
             <button 
               @click="prevPage"
               :disabled="currentPage === 1"
-              class="px-2 py-1 text-gray-600 hover:text-primary-600"
+              class="px-2 py-1 text-gray-600 hover:text-blue-600"
             >
               <span class="text-sm">‹</span>
             </button>
@@ -376,7 +467,7 @@
                 @click="handlePageChange(n)"
                 :class="[
                   'px-3 py-1 rounded',
-                  currentPage === n ? 'bg-primary-500 text-white' : 'text-gray-600 hover:text-primary-600'
+                  currentPage === n ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-blue-600'
                 ]"
               >
                 {{ n }}
@@ -387,14 +478,14 @@
             <button 
               @click="nextPage"
               :disabled="currentPage === totalPages"
-              class="px-2 py-1 text-gray-600 hover:text-primary-600"
+              class="px-2 py-1 text-gray-600 hover:text-blue-600"
             >
               <span class="text-sm">›</span>
             </button>
           </div>
         </div>
 
-        <!-- 空的 div 用于保持布局平衡 -->
+        <!-- 空的 div 用于持布局平衡 -->
         <div class="invisible text-sm text-gray-700">
           Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, filteredInfluencers.length) }} of {{ filteredInfluencers.length }}
         </div>
@@ -419,7 +510,7 @@
 
     <!-- 添加 loading 状态显示 -->
     <div v-if="loading" class="flex justify-center items-center py-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
     </div>
 
     <!-- 添加错误提示 -->
@@ -445,6 +536,7 @@ export default {
       showGMVDropdown: false,
       showFollowersDropdown: false,
       showLanguageDropdown: false,
+      showGenderDropdown: false,
       
       categorySearchQuery: '',
       gmvSearchQuery: '',
@@ -456,6 +548,7 @@ export default {
       selectedFollowerRanges: [],
       selectedLanguages: [],
       selectedGender: '',
+      genderOptions: ['male', 'female'],
       
       onlyWithEmail: false,
 
@@ -521,6 +614,14 @@ export default {
       total: 0,
       needRefresh: false,
       isFirstLoad: true,
+      originalInfluencers: null,
+      filters: {
+        gender: '',
+        categories: [],
+        followers: [],
+        languages: [],
+        onlyWithEmail: false
+      }
     }
   },
   computed: {
@@ -661,6 +762,38 @@ export default {
 
     influencersData() {
       return this.$store.state.influencers || []
+    },
+
+    availableCategories() {
+      const query = this.categorySearchQuery.toLowerCase();
+      return this.categories.filter(category => 
+        !this.selectedCategories.includes(category) && 
+        category.toLowerCase().includes(query)
+      );
+    },
+
+    availableFollowerRanges() {
+      const query = this.followersSearchQuery.toLowerCase();
+      return this.followerRanges.filter(range => 
+        !this.selectedFollowerRanges.includes(range) && 
+        range.toLowerCase().includes(query)
+      );
+    },
+    
+    availableGMVRanges() {
+      const query = this.gmvSearchQuery.toLowerCase();
+      return this.gmvRanges.filter(range => 
+        !this.selectedGMVs.includes(range) && 
+        range.toLowerCase().includes(query)
+      );
+    },
+    
+    availableLanguages() {
+      const query = this.languageSearchQuery.toLowerCase();
+      return this.languages.filter(lang => 
+        !this.selectedLanguages.includes(lang) && 
+        lang.toLowerCase().includes(query)
+      );
     }
   },
   methods: {
@@ -695,7 +828,7 @@ export default {
       }
     },
     inferGender(handle, bio) {
-      const femaleIndicators = ['she', 'her', 'girl', 'mom', 'mama', 'wife', 'sister', '💄', '👗', '👚'];
+      const femaleIndicators = ['she', 'her', 'girl', 'mom', 'mama', 'wife', 'sister', '👗', ''];
       const maleIndicators = ['he', 'his', 'guy', 'dad', 'papa', 'husband', 'brother', '👨'];
       
       const text = (handle + ' ' + bio).toLowerCase();
@@ -733,6 +866,10 @@ export default {
       } else {
         this.selectedCategories = [];
       }
+    },
+    clearCategories() {
+      this.selectedCategories = [];
+      this.selectAllCategories = false; // 确保全选复选框也被清除
     },
     toggleFollowersDropdown() {
       this.showFollowersDropdown = !this.showFollowersDropdown;
@@ -791,20 +928,32 @@ export default {
       }
     },
     resetFilters() {
+      // 从原始数据恢复
+      if (this.originalInfluencers) {
+        this.influencers = [...this.originalInfluencers];
+        this.$store.commit('setInfluencers', this.originalInfluencers);
+      }
+
+      // 重置所有过滤条件
       this.searchQuery = '';
-      this.categorySearchQuery = '';
-      this.gmvSearchQuery = '';
-      this.followersSearchQuery = '';
-      this.languageSearchQuery = '';
       this.selectedCategories = [];
       this.selectedGMVs = [];
       this.selectedFollowerRanges = [];
       this.selectedLanguages = [];
       this.selectedGender = '';
       this.onlyWithEmail = false;
+      
+      // 重置过滤器状态
+      this.filters = {
+        gender: '',
+        categories: [],
+        followers: [],
+        languages: [],
+        onlyWithEmail: false
+      };
     },
     handleCreateList(listData) {
-      this.$store.dispatch('createList', listData);
+      this.$store.dispatch('lists/addList', listData);
       this.$router.push('/lists');
     },
     async fetchInfluencers() {
@@ -813,12 +962,6 @@ export default {
       try {
         this.loading = true;
         this.error = null;
-        
-        // 如果 store 中已有数据，直接使用
-        if (this.influencersData.length > 0) {
-          this.influencers = this.influencersData;
-          return;
-        }
         
         const response = await influencersAPI.getInfluencers(this.currentPage, this.pageSize);
         
@@ -844,12 +987,13 @@ export default {
                 email = emailResponse.data[0].email
               }
             } catch (e) {
-              console.error('Error fetching email:', e)
+              // 邮箱获取失败不影响整体数据展示
+              console.warn('Warning: Failed to fetch email for', item.handle)
             }
 
             return {
               handle: item.handle,
-              email: email,
+              email: email || '', // 如果获取失败则使用空字符串
               bio: item.nickname || '',
               categories: categories,
               followers: this.formatFollowers(item.follower_cnt),
@@ -862,16 +1006,17 @@ export default {
             }
           }));
           
-          // 将数据保存到 Vuex store
-          this.$store.commit('setInfluencers', processedData);
+          if (!this.originalInfluencers) {
+            this.originalInfluencers = [...processedData];
+          }
+          
           this.influencers = processedData;
+          this.$store.commit('setInfluencers', processedData);
           this.total = response.total || 0;
-        } else {
-          throw new Error(response.message || 'Failed to fetch data');
         }
       } catch (error) {
-        this.error = error.message || 'Failed to fetch influencers data';
-        console.error('Error:', error);
+        this.error = '加载数据失败，请稍后重试';
+        console.error('Error fetching influencers:', error);
       } finally {
         this.loading = false;
       }
@@ -880,12 +1025,12 @@ export default {
     parseCategories(categoryStr) {
       if (!categoryStr) return []
       try {
-        // 如果已经是数组，直接返回
+        // 果已经是数组，直接返回
         if (Array.isArray(categoryStr)) {
           return categoryStr.map(cat => cat.name || cat).filter(Boolean)
         }
         
-        // 如果是字符串，尝试解析
+        // 如果是字符串尝试解析
         if (typeof categoryStr === 'string') {
           // 处理可能的特殊字符
           const cleanStr = categoryStr.replace(/[\u0000-\u0019]+/g, '')
@@ -944,6 +1089,139 @@ export default {
     // 手动刷新数据的方法
     refreshData() {
       this.fetchInfluencers()
+    },
+    toggleCategory(category) {
+      const index = this.selectedCategories.indexOf(category);
+      if (index === -1) {
+        this.selectedCategories.push(category);
+      } else {
+        this.selectedCategories.splice(index, 1);
+      }
+    },
+    removeCategory(category) {
+      const index = this.selectedCategories.indexOf(category);
+      if (index !== -1) {
+        this.selectedCategories.splice(index, 1);
+      }
+    },
+    toggleFollowerRange(range) {
+      const index = this.selectedFollowerRanges.indexOf(range);
+      if (index === -1) {
+        this.selectedFollowerRanges.push(range);
+      } else {
+        this.selectedFollowerRanges.splice(index, 1);
+      }
+    },
+    removeFollowerRange(range) {
+      const index = this.selectedFollowerRanges.indexOf(range);
+      if (index !== -1) {
+        this.selectedFollowerRanges.splice(index, 1);
+      }
+    },
+    toggleGMV(range) {
+      const index = this.selectedGMVs.indexOf(range);
+      if (index === -1) {
+        this.selectedGMVs.push(range);
+      } else {
+        this.selectedGMVs.splice(index, 1);
+      }
+    },
+    removeGMV(range) {
+      const index = this.selectedGMVs.indexOf(range);
+      if (index !== -1) {
+        this.selectedGMVs.splice(index, 1);
+      }
+    },
+    toggleLanguage(lang) {
+      const index = this.selectedLanguages.indexOf(lang);
+      if (index === -1) {
+        this.selectedLanguages.push(lang);
+      } else {
+        this.selectedLanguages.splice(index, 1);
+      }
+    },
+    removeLanguage(lang) {
+      const index = this.selectedLanguages.indexOf(lang);
+      if (index !== -1) {
+        this.selectedLanguages.splice(index, 1);
+      }
+    },
+    clearFollowerRanges() {
+      this.selectedFollowerRanges = [];
+    },
+    clearGMV() {
+      this.selectedGMVs = [];
+    },
+    clearLanguages() {
+      this.selectedLanguages = [];
+    },
+    toggleGenderDropdown() {
+      this.showGenderDropdown = !this.showGenderDropdown;
+    },
+    closeGenderDropdown() {
+      this.showGenderDropdown = false;
+    },
+    selectGender(gender) {
+      this.selectedGender = gender.toLowerCase();
+      this.closeGenderDropdown();
+    },
+    clearGender() {
+      this.selectedGender = '';
+    },
+    async exportResults() {
+      const exportData = {
+        name: `Exported List ${new Date().toLocaleString()}`,
+        data: this.filteredInfluencers,
+        createdAt: new Date().toISOString(),
+        filters: {
+          categories: this.selectedCategories,
+          followers: this.selectedFollowerRanges,
+          gmv: this.selectedGMVs,
+          languages: this.selectedLanguages,
+          gender: this.selectedGender,
+          searchQuery: this.searchQuery
+        }
+      };
+
+      try {
+        await this.$store.dispatch('lists/addList', exportData);
+        this.showExportModal = false; // 关闭导出模态框
+        this.$router.push('/lists'); // 导出成功后跳转到列表页面
+      } catch (error) {
+        console.error('Export failed:', error);
+        // 可以添加错误提示
+      }
+    },
+    applyFilters() {
+      let filtered = [...this.originalInfluencers];
+
+      if (this.filters.gender) {
+        filtered = filtered.filter(inf => inf.gender === this.filters.gender);
+      }
+
+      if (this.filters.categories.length) {
+        filtered = filtered.filter(inf => 
+          inf.categories.some(cat => this.filters.categories.includes(cat))
+        );
+      }
+
+      if (this.filters.followers.length) {
+        filtered = filtered.filter(inf => 
+          this.filters.followers.some(range => this.matchFollowerRange(inf.followers, range))
+        );
+      }
+
+      if (this.filters.languages.length) {
+        filtered = filtered.filter(inf => 
+          this.filters.languages.includes(inf.language)
+        );
+      }
+
+      if (this.filters.onlyWithEmail) {
+        filtered = filtered.filter(inf => this.hasValidEmail(inf.email));
+      }
+
+      this.influencers = filtered;
     }
   },
   directives: {
@@ -962,68 +1240,79 @@ export default {
     }
   },
   created() {
-    // 只在没有数据时获取
-    if (!this.influencersData.length) {
-      this.fetchInfluencers();
-    } else {
-      this.influencers = this.influencersData;
-    }
+    this.fetchInfluencers();
   },
   activated() {
-    // 不做任何操作，除非明确需要刷新
-    if (this.needRefresh) {
-      this.fetchInfluencers()
-      this.needRefresh = false
+    if (this.$route.query.keepFilters !== 'true' || !this.originalInfluencers) {
+      this.fetchInfluencers();
     }
   },
   deactivated() {
     // 组件被缓存时的处理
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name !== 'Lists') {
+      // 如果不是去 Lists 页面，重置数据
+      this.$store.dispatch('resetInfluencers');
+      this.originalInfluencers = null;
+    }
+    next();
   }
 }
 </script>
 
 <style scoped>
 .search-input {
-  @apply flex min-h-10 w-full rounded-md border border-secondary-300 bg-white px-4 py-3 text-[16px] 
+  @apply flex min-h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-[16px] 
   leading-[19.2px] !ring-0 transition-all;
 }
 
 .search-input::placeholder {
-  @apply text-secondary-500;
+  @apply text-gray-500;
 }
 
 .filter-select {
-  @apply flex w-full min-h-[45px] rounded-md border border-secondary-300 bg-white px-4 py-1 
-  text-[16px] leading-[19.2px] !ring-0 cursor-pointer text-secondary-500 relative;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 1rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 4rem;
+  @apply flex w-full rounded-md border border-gray-300 bg-white 
+  text-sm transition-all hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
 }
 
-.filter-select::-ms-expand {
-  display: none;
+/* 自定义滚动条样式 */
+.max-h-60 {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 #F1F5F9;
 }
 
-.filter-select {
-  -moz-appearance: none;
-  text-indent: 0.01px;
-  text-overflow: '';
+.max-h-60::-webkit-scrollbar {
+  width: 6px;
 }
 
-.filter-select {
-  -webkit-appearance: none;
+.max-h-60::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+.max-h-60::-webkit-scrollbar-thumb {
+  background-color: #CBD5E1;
+  border-radius: 3px;
+}
+
+/* 标签动画 */
+.filter-select .inline-flex {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+/* 下拉面板动画 */
+.absolute {
+  @apply transition-all duration-200 ease-in-out;
 }
 
 .export-button {
   @apply py-2.5 px-6 text-sm leading-[19.2px] inline-flex items-center justify-center whitespace-nowrap 
   rounded-[10px] transition-all !ring-0 !ring-offset-0 border bg-transparent 
-  border-secondary-400 hover:bg-secondary-100 text-primary-500;
+  border-gray-400 hover:bg-gray-100 text-blue-500;
 }
 
 .info-button {
-  @apply p-2 text-gray-500 hover:bg-secondary-100 rounded-lg transition-all;
+  @apply p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-all;
 }
 
 .clear-button {
@@ -1040,8 +1329,28 @@ export default {
   margin-left: 0.5rem;  /* 给下拉箭头增加左侧间距 */
 }
 
-/* 确保容器有足够空间 */
+/* 确保容器足够空间 */
 .view-count-dropdown .flex {
-  padding-right: 3rem;  /* 增加右侧内边距，为图标留出空间 */
+  padding-right: 3rem;  /* 增加右内边距，图片留出空间 */
+}
+
+.filter-tags {
+  @apply flex flex-wrap gap-2;
+}
+
+.filter-tag {
+  @apply inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-blue-700 text-sm;
+}
+
+.filter-tag button {
+  @apply ml-1 text-blue-500 hover:text-blue-700;
+}
+
+.dropdown-item {
+  @apply px-4 py-2 hover:bg-gray-50 cursor-pointer rounded-md;
+}
+
+.dropdown-item.selected {
+  @apply text-blue-600;
 }
 </style> 

@@ -191,16 +191,14 @@
       </div>
     </div>
 
-    <!-- Add creators to list 按钮 -->
-    <div>
-      <div class="flex justify-end mt-4">
-        <button 
-          class="py-2.5 px-6 text-12xl leading-[19.2px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-white focus:opacity-[0.88] disabled:bg-secondary-200 disabled:text-secondary-1000 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 h-[46px]"
-          @click="addCreatorsToList"
-        >
-          Add creators to list
-        </button>
-      </div>
+    <!-- 修改导出按钮部分 -->
+    <div class="flex justify-end mt-6 mb-4">
+      <button 
+        @click="showExportModalHandler"
+        class="text-14xl leading-[21px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-white focus:opacity-[0.88] disabled:bg-secondary-200 disabled:text-secondary-1000 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 h-[48px] px-6"
+      >
+        Add creators to list
+      </button>
     </div>
 
     <!-- 视频列表表格 -->
@@ -307,12 +305,33 @@
         Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalVideos) }} of {{ totalVideos }}
       </div>
     </div>
+
+    <!-- 添加 ExportModal 组件 -->
+    <ExportModal
+      :show="showExportModal"
+      :filters="{
+        categories: [],
+        gmv: [],
+        followers: [],
+        gender: '',
+        languages: [],
+        onlyWithEmail: false
+      }"
+      :influencers="getCreatorsFromVideos"
+      @close="closeExportModal"
+      @create="handleCreateList"
+    />
   </div>
 </template>
 
 <script>
+import ExportModal from '../components/ExportModal.vue'
+
 export default {
   name: 'Videos',
+  components: {
+    ExportModal
+  },
   data() {
     return {
       searchQuery: '',
@@ -335,7 +354,7 @@ export default {
         'Product',
         'Brand'
       ],
-      videos: [], // 将从API获取
+      videos: [], // 将从 API 获取
       isViewCountOpen: false,
       brandSearch: '',
       showBrandDropdown: false,
@@ -345,8 +364,9 @@ export default {
       filteredProducts: [],
       currentPage: 1,
       pageSize: 10,
-      allVideos: [], // ���储所有视频数据
+      allVideos: [], // 储所有视频数据
       filteredVideos: [], // 只在 data 中定义
+      showExportModal: false,
     }
   },
   computed: {
@@ -373,7 +393,7 @@ export default {
     
     uniqueProducts() {
       if (!this.allVideos.length) return [];
-      // 使用 Set 去重，然后转换为所需的格式
+      // 使用 Set 去重，然后��换为所需的格式
       const productsSet = new Set(this.allVideos.map(video => JSON.stringify({
         name: video.product,
         image: video.productImage
@@ -405,7 +425,7 @@ export default {
     displayedPages() {
       const total = this.totalPages;
       const current = this.currentPage;
-      const delta = 1; // 当前页码前后显示的页码数
+      const delta = 1; // 前页码前后显示的页码数
 
       // 如果当前页超过了总页数，自动调整到最后一页
       if (current > total && total > 0) {
@@ -446,14 +466,21 @@ export default {
     totalVideos() {
       return this.filteredVideos.length;
     },
+
+    // 从视频列表中提取创作者信息
+    getCreatorsFromVideos() {
+      return this.filteredVideos.map(video => ({
+        handle: video.creator,
+        profileUrl: `https://www.tiktok.com/@${video.creator}`,
+        avatar: video.creatorAvatar,
+        bio: video.description || '',
+        email: ''
+      }));
+    }
   },
   methods: {
     searchVideos() {
       this.applyFilters();
-    },
-    addCreatorsToList() {
-      // 实现添加创作到列表的逻辑
-      console.log('Adding creators to list')
     },
     formatNumber(num) {
       if (num >= 1000000) {
@@ -507,7 +534,7 @@ export default {
         const product = getRandomItem(products);
         const brand = getRandomItem(brands);
         
-        // 生成随机视图数
+        // 生成机视图数
         const views = getRandomNumber(1000, 5000000); // 生成 1K 到 5M 之间的数字
         
         return {
@@ -526,8 +553,9 @@ export default {
         };
       });
       
-      // 初始化 filteredVideos
+      // 初始化 filteredVideos 和 videos
       this.filteredVideos = [...this.allVideos];
+      this.videos = [...this.allVideos];
     },
     toggleViewCountDropdown() {
       this.isViewCountOpen = !this.isViewCountOpen
@@ -597,7 +625,7 @@ export default {
     viewVideoDetail(video) {
       // 将选中的视频数据存储到 localStorage
       localStorage.setItem('selectedVideo', JSON.stringify(video))
-      // 跳转到详情页
+      // 跳到详情页
       this.$router.push(`/videos/${video.id}`)
     },
     // 添加清除方法
@@ -679,11 +707,37 @@ export default {
       this.filteredVideos = result;
       this.currentPage = 1; // 重置页码
     },
+    async handleCreateList(listData) {
+      try {
+        // 从当前过滤后的视频中提取创作者信息
+        const creators = this.filteredVideos.map(video => video.creator);
+        
+        const newListData = {
+          name: listData.name,
+          type: 'Video List',
+          description: 'Created from videos page',
+          creators: creators
+        };
+        
+        await this.$store.dispatch('createList', newListData);
+        this.showExportModal = false;
+        this.$router.push('/lists');
+      } catch (error) {
+        console.error('Failed to create list:', error);
+        alert('Failed to create list. Please try again.');
+      }
+    },
+    showExportModalHandler() {
+      this.showExportModal = true;
+    },
+    closeExportModal() {
+      this.showExportModal = false;
+    }
   },
   mounted() {
     this.fetchData()
     document.addEventListener('click', this.handleClickOutside)
-    this.applyFilters() // 初始应用筛选
+    this.applyFilters() // 始应用筛选
   },
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside)
@@ -715,7 +769,7 @@ export default {
   @apply bg-primary-500 border-primary-500;
 }
 
-/* 确保所有筛选器高度一致 */
+/* 确保所有筛选器度一致 */
 .css-13cymwt-control {
   height: 42px;
   display: flex;

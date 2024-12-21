@@ -18,7 +18,7 @@
         <tbody>
           <tr v-for="list in lists" :key="list.name" class="border-b hover:bg-secondary-100">
             <td class="p-3">{{ list.name }}</td>
-            <td class="p-3">{{ list.creators.length }}</td>
+            <td class="p-3">{{ list.creators?.length || 0 }}</td>
             <td class="p-3">{{ list.type }}</td>
             <td class="p-3">{{ list.description }}</td>
             <td class="p-3">{{ list.createdOn }}</td>
@@ -67,7 +67,7 @@
 
         <div>
           <div class="text-gray-600">
-            Creators ({{ selectedList.creators.length }} total, {{ notFoundCount }} not found)
+            Creators ({{ selectedList.creators?.length || 0 }} total)
           </div>
           
           <!-- Creators List -->
@@ -80,7 +80,7 @@
                 <div class="flex items-center space-x-4">
                   <span class="text-gray-500">{{ index + 1 }}.</span>
                   <a 
-                    :href="getCreatorProfileUrl(creator)"
+                    :href="`https://www.tiktok.com/@${creator}`"
                     target="_blank"
                     class="text-blue-600 hover:text-blue-800 hover:underline"
                   >
@@ -108,10 +108,10 @@
 export default {
   computed: {
     lists() {
-      return this.$store.state.lists;
+      return this.$store.state.lists || [];
     },
     allInfluencers() {
-      return this.$store.state.influencers;
+      return this.$store.state.influencers || [];
     }
   },
   data() {
@@ -123,29 +123,24 @@ export default {
   methods: {
     viewList(list) {
       this.selectedList = list;
-      this.notFoundCount = list.creators.filter(creator => 
-        !this.isCreatorFound(creator)
-      ).length;
     },
-    isCreatorFound(creator) {
-      return true;
-    },
-    removeCreator(index) {
+    async removeCreator(index) {
       if (this.selectedList) {
-        this.selectedList.creators.splice(index, 1);
-        this.updateList();
+        const updatedCreators = [...this.selectedList.creators];
+        updatedCreators.splice(index, 1);
+        
+        const updatedList = {
+          ...this.selectedList,
+          creators: updatedCreators
+        };
+        
+        try {
+          await this.$store.dispatch('updateList', updatedList);
+          this.selectedList = updatedList;
+        } catch (error) {
+          console.error('Failed to update list:', error);
+        }
       }
-    },
-    async updateList() {
-      try {
-        await this.$store.dispatch('updateList', this.selectedList);
-      } catch (error) {
-        console.error('Failed to update list:', error);
-      }
-    },
-    getCreatorProfileUrl(handle) {
-      const influencer = this.allInfluencers.find(inf => inf.handle === handle);
-      return influencer ? influencer.profileUrl : '#';
     }
   }
 }
