@@ -34,10 +34,27 @@ export const influencersAPI = {
         },
         timeout: 30000
       });
-      return response.data;
+      
+      // 检查响应数据的格式和内容
+      if (response.data && response.data.code === 0 && response.data.data) {
+        const emailData = response.data.data;
+        // 检查是否有邮箱数据
+        if (Array.isArray(emailData) && emailData.length > 0) {
+          // 如果邮箱是 %XXXX@XXXX.com 格式，则返回空字符串
+          const email = emailData[0].email;
+          if (email && !email.includes('%XXXX@XXXX.com')) {
+            return {
+              code: 0,
+              data: [{ email: email }]
+            };
+          }
+        }
+      }
+      // 如果邮箱格式不正确或没有邮箱，返回空字符串
+      return { code: 0, data: [{ email: '' }] };
     } catch (error) {
       console.error('Failed to fetch email:', error);
-      return { code: 0, data: [] };
+      return { code: 0, data: [{ email: '' }] };
     }
   }
 }

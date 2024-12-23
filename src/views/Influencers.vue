@@ -485,7 +485,7 @@
           </div>
         </div>
 
-        <!-- 空的 div 用于持布局平衡 -->
+        <!-- 空的 div 用于持布��平衡 -->
         <div class="invisible text-sm text-gray-700">
           Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, filteredInfluencers.length) }} of {{ filteredInfluencers.length }}
         </div>
@@ -791,7 +791,7 @@ export default {
   },
   methods: {
     matchFollowerRange(followers, range) {
-      // 将 followers 字符串转换为数字(以千为单位)
+      // 将 followers 字符串转换���数字(以千为单位)
       const value = followers.toLowerCase()
       let count
       if (value.includes('m')) {
@@ -956,21 +956,27 @@ export default {
               categories = []
             }
 
-            // 获取邮箱
-            let email = null
+            // 修改邮箱处理逻辑
+            let email = null;
             try {
-              const emailResponse = await influencersAPI.getEmail(item.handle)
+              const emailResponse = await influencersAPI.getEmail(item.handle);
               if (emailResponse.code === 0 && emailResponse.data && emailResponse.data.length > 0) {
-                email = emailResponse.data[0].email
+                const emailData = emailResponse.data[0].email;
+                // 只有当邮箱不是占位符格式时才显示
+                if (emailData && !emailData.includes('%XXXX@XXXX.com')) {
+                  email = emailData;
+                }
               }
             } catch (e) {
-              // 邮箱获取失败不影响整体数据展示
-              console.warn('Warning: Failed to fetch email for', item.handle)
+              console.warn('Warning: Failed to fetch email for', item.handle);
             }
+
+            // 如果没有有效的邮箱，使用空字符串
+            email = email || '';
 
             return {
               handle: item.handle,
-              email: email || '', // 如果获取失败则使用空字符串
+              email: email,
               bio: item.nickname || '',
               categories: categories,
               followers: this.formatFollowers(item.follower_cnt),
@@ -980,7 +986,7 @@ export default {
               profile: `@${item.handle}`,
               profileUrl: `https://www.tiktok.com/@${item.handle}`,
               avatar: item.avatar || ''
-            }
+            };
           }));
           
           if (!this.originalInfluencers) {
@@ -1002,7 +1008,7 @@ export default {
     parseCategories(categoryStr) {
       if (!categoryStr) return []
       try {
-        // 果已经是数组，直接返回
+        // 果已经是数组，直接���回
         if (Array.isArray(categoryStr)) {
           return categoryStr.map(cat => cat.name || cat).filter(Boolean)
         }
