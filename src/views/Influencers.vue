@@ -2,10 +2,13 @@
   <div class="px-8 py-4">
     <!-- Header -->
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold text-gray-900">Find TikTok Shop Influencers</h2>
+      <h2 class="text-2xl font-bold text-gray-900">搜寻 TikTok Shop 中的达人</h2>
       <div class="flex items-center gap-2">
-        <button class="export-button" @click="showExportModal = true">
-          Export Results
+        <button 
+          @click="showExportModal = true"
+          class="py-2.5 px-6 text-sm leading-[19.2px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 bg-[#6366F1] text-white hover:bg-[#5558E7]"
+        >
+          导出数据
         </button>
       </div>
     </div>
@@ -13,12 +16,12 @@
     <!-- Filters -->
     <div class="rounded-lg">
       <div class="mb-6">
-        <h3 class="font-semibold mb-2">Target Influencers</h3>
+        <h3 class="font-semibold mb-2">指定条件搜寻达人</h3>
         <div class="grid grid-cols-3 gap-4 items-center mb-4">
           <!-- Search Input -->
           <input 
             type="text"
-            placeholder="Search by topic/keywords, handle, or email"
+            placeholder="根据输入Handle、Nick Name、Email、Product Category 搜寻"
             class="search-input"
             v-model="searchQuery"
           >
@@ -245,7 +248,7 @@
                 <span v-else class="text-gray-900">{{ selectedGender.charAt(0).toUpperCase() + selectedGender.slice(1) }}</span>
               </div>
 
-              <!-- 右侧按钮组 -->
+              <!-- 右��按钮组 -->
               <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
                 <button 
                   v-if="selectedGender" 
@@ -363,7 +366,7 @@
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
               >
               <label for="withEmail" class="ml-2 text-sm text-gray-700">
-                Only show creators with an email
+                显示有设置邮箱的达人
               </label>
             </div>
           </div>
@@ -375,12 +378,12 @@
           <div class="flex justify-end">
             <button 
               @click="resetFilters"
-              class="reset-button flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#6366F1] bg-white border border-[#6366F1] rounded-md hover:bg-gray-50 transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Reset
+              重置条件
             </button>
           </div>
         </div>
@@ -392,7 +395,7 @@
           <thead>
             <tr class="border-b">
               <th class="p-3 text-left">Handle</th>
-              <th class="p-3 text-left">Nick name</th>
+              <th class="p-3 text-left">Nick Name</th>
               <th class="p-3 text-left">Product Category</th>
               <th class="p-3 text-left">Follower Count</th>
               <th class="p-3 text-left">GMV (Last 30 Days)</th>
@@ -485,7 +488,7 @@
           </div>
         </div>
 
-        <!-- 空的 div 用于持布��平衡 -->
+        <!-- 空的 div 用于持布平衡 -->
         <div class="invisible text-sm text-gray-700">
           Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, filteredInfluencers.length) }} of {{ filteredInfluencers.length }}
         </div>
@@ -791,7 +794,7 @@ export default {
   },
   methods: {
     matchFollowerRange(followers, range) {
-      // 将 followers 字符串转换���数字(以千为单位)
+      // 将 followers 字符串转换为数字(以千为单位)
       const value = followers.toLowerCase()
       let count
       if (value.includes('m')) {
@@ -1004,11 +1007,11 @@ export default {
         this.loading = false;
       }
     },
-    // 解析类别字符串为数组
+    // 解析类别��符串为数组
     parseCategories(categoryStr) {
       if (!categoryStr) return []
       try {
-        // 果已经是数组，直接���回
+        // 果已经是数组，直接回
         if (Array.isArray(categoryStr)) {
           return categoryStr.map(cat => cat.name || cat).filter(Boolean)
         }
@@ -1284,14 +1287,14 @@ export default {
   @apply absolute right-12;
 }
 
-/* 修改下拉箭头和清除按钮的样式 */
+/* 修改下���箭头和清除按钮的样式 */
 .view-count-dropdown button {
   margin-right: 1rem;  /* 增加清除按钮右侧间距 */
 }
 
 /* 调整下拉箭头的位置 */
 .view-count-dropdown span {
-  margin-left: 0.5rem;  /* 给下拉箭头增加左侧间距 */
+  margin-left: 0.5rem;  /* 给下拉箭头增加左侧间�� */
 }
 
 /* 确保容器足够空间 */

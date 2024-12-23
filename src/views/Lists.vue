@@ -25,9 +25,15 @@
             <td class="p-3">
               <button 
                 @click="viewList(list)"
-                class="text-primary-600 hover:underline"
+                class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
               >
-                View
+                详情
+              </button>
+              <button 
+                @click="exportToCsv(list)"
+                class="ml-2 inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500"
+              >
+                导出为csv文件
               </button>
             </td>
           </tr>
@@ -44,7 +50,7 @@
           @click="selectedList = null"
           class="text-gray-600 hover:text-gray-800 px-3 py-1 rounded hover:bg-gray-100"
         >
-          Back to Lists
+          返回上一级
         </button>
       </div>
 
@@ -140,6 +146,39 @@ export default {
         } catch (error) {
           console.error('Failed to update list:', error);
         }
+      }
+    },
+    exportToCsv(list) {
+      // 准备CSV数据
+      const csvData = [
+        ['序号', '达人名称', 'URL'] // CSV 头部
+      ];
+
+      // 添加数据行
+      list.creators?.forEach((creator, index) => {
+        csvData.push([
+          index + 1,
+          creator,
+          `https://www.tiktok.com/@${creator}`
+        ]);
+      });
+
+      // 将数据转换为CSV格式
+      const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+      // 创建Blob对象
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+      // 创建下载链接
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${list.name}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     }
   }
