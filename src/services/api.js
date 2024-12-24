@@ -3,7 +3,7 @@ import axios from 'axios'
 // 创建 axios 实例
 const api = axios.create({
   baseURL: 'http://192.168.0.123:8080/api',
-  timeout: 30000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     'accept': 'application/json'
@@ -32,7 +32,7 @@ export const influencersAPI = {
         params: {
           users: handle
         },
-        timeout: 30000
+        timeout: 10000
       });
       
       // 检查响应数据的格式和内容

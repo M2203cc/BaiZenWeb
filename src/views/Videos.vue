@@ -1,265 +1,184 @@
 <template>
   <div class="px-[50px] py-4">
-    <!-- 标题部分 -->
+    <!-- Header -->
     <div class="flex justify-between items-center mb-4">
-      <div class="flex items-center">
-        <div>
           <h2 class="text-2xl font-bold text-gray-900">Videos</h2>
-        </div>
-      </div>
     </div>
 
-    <!-- 搜索框部分 -->
-    <div class="w-1/2 mb-4">
-      <div class="flex gap-5">
+    <!-- Search Bar -->
+    <div class="flex gap-4 mb-6 max-w-2xl">
         <input 
-          class="flex min-h-10 rounded-md border border-secondary-300 bg-white px-4 py-2 text-[16px] leading-[19.2px] !ring-0 transition-all ease-curve placeholder:text-[#A0AEC0] focus:border-secondary-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 w-full" 
-          placeholder="Search videos" 
+        v-model="searchQuery"
           type="text"
-          v-model="searchQuery"
+        placeholder="Search videos..."
+        class="flex min-h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-[16px]"
         >
         <button 
-          class="text-12xl leading-[19.2px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-white focus:opacity-[0.88] disabled:bg-secondary-200 disabled:text-secondary-1000 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 h-[42px] px-4"
           @click="searchVideos"
+        class="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
         >
           Search
         </button>
-      </div>
     </div>
 
-    <!-- 筛选器部分 -->
-    <div class="grid grid-cols-3 gap-4">
-      <!-- Brand 筛选 -->
-      <div class="space-y-2">
-        <h4 class="mb-2 text-sm font-bold leading-[16.8px] text-[#6C7381]">Brand</h4>
-        <div class="brand-dropdown relative">
-          <div 
-            class="flex h-[42px] w-full rounded-md border border-secondary-300 bg-white px-4 items-center cursor-pointer"
-            @click="toggleBrandDropdown"
-          >
-            <input 
-              v-model="brandSearch"
-              class="flex-1 bg-transparent border-none outline-none cursor-pointer"
-              placeholder="Filter by brands"
-              @focus="showBrandDropdown = true"
-              @click.stop
-            >
-            <!-- 添加清除按钮 -->
-            <button 
-              v-if="brandSearch"
-              class="ml-2 mr-3 text-gray-400 hover:text-gray-600"
-              @click.stop="clearBrand"
-            >
-              ×
-            </button>
-            <span 
-              class="ml-3 transform transition-transform duration-200"
-              :class="{ 'rotate-180': showBrandDropdown }"
-            >
-              ▼
-            </span>
-          </div>
-          <!-- Brand 下拉列表 -->
-          <div 
-            v-show="showBrandDropdown" 
-            class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg max-h-60 overflow-y-auto"
-          >
-            <div 
-              v-for="brand in filteredBrands" 
-              :key="brand.name"
-              class="px-4 py-2 hover:bg-gray-50 cursor-pointer"
-              @click="selectBrand(brand)"
-            >
-              <div class="flex items-center gap-2">
-                <img :src="brand.image" class="w-8 h-8 rounded-full" :alt="brand.name">
-                <span>{{ brand.name }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Filters Section -->
+    <div class="flex flex-wrap gap-4 mb-6">
+      <!-- Brand Filter -->
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+        <select 
+          v-model="filters.brand"
+          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
+        >
+          <option value="" class="text-gray-500">Filter by brands</option>
+          <option v-for="brand in brandOptions" :key="brand" :value="brand" class="text-gray-900">
+            {{ brand }}
+          </option>
+        </select>
       </div>
 
-      <!-- Product 筛选 -->
-      <div class="space-y-2">
-        <h4 class="mb-2 text-sm font-bold leading-[16.8px] text-[#6C7381]">Product</h4>
-        <div class="product-dropdown relative">
-          <div 
-            class="flex h-[42px] w-full rounded-md border border-secondary-300 bg-white px-4 items-center cursor-pointer"
-            @click="toggleProductDropdown"
-          >
-            <input 
-              v-model="productSearch"
-              class="flex-1 bg-transparent border-none outline-none cursor-pointer"
-              placeholder="Filter by products"
-              @focus="showProductDropdown = true"
-              @click.stop
-            >
-            <!-- 清除按钮 -->
-            <button 
-              v-if="productSearch"
-              class="ml-2 mr-3 text-gray-400 hover:text-gray-600"
-              @click.stop="clearProduct"
-            >
-              ×
-            </button>
-            <span 
-              class="ml-3 transform transition-transform duration-200"
-              :class="{ 'rotate-180': showProductDropdown }"
-            >
-              ▼
-            </span>
-          </div>
-          <!-- Product 下拉列表 -->
-          <div 
-            v-show="showProductDropdown" 
-            class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg max-h-60 overflow-y-auto"
-          >
-            <div 
-              v-for="product in filteredProducts" 
-              :key="product.name"
-              class="px-4 py-2 hover:bg-gray-50 cursor-pointer"
-              @click="selectProduct(product)"
-            >
-              <div class="flex items-center gap-2">
-                <img :src="product.image" class="w-8 h-8 rounded-full" :alt="product.name">
-                <span>{{ product.name }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Product Filter -->
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
+        <select 
+          v-model="filters.product"
+          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
+        >
+          <option value="" class="text-gray-500">Filter by products</option>
+          <option v-for="product in productOptions" :key="product" :value="product" class="text-gray-900">
+            {{ product }}
+          </option>
+        </select>
       </div>
 
-      <!-- View Count 筛选 -->
-      <div class="space-y-2">
-        <h4 class="mb-2 text-sm font-bold leading-[16.8px] text-[#6C7381]">View Count</h4>
-        <div class="view-count-dropdown relative">
-          <div 
-            class="flex h-[42px] w-full rounded-md border border-secondary-300 bg-white px-4 items-center cursor-pointer"
-            @click="toggleViewCountDropdown"
-          >
-            <div class="flex flex-wrap gap-1 items-center flex-1 py-1">
-              <template v-if="selectedViewRanges.length">
-                <div 
-                  v-for="range in selectedViewRanges" 
-                  :key="range"
-                  class="flex items-center bg-gray-100 rounded px-2 py-1 text-sm"
-                >
-                  {{ range }}
-                  <button 
-                    class="ml-1 text-gray-500 hover:text-gray-700"
-                    @click.stop="removeViewRange(range)"
-                  >
-                    ×
-                  </button>
-                </div>
-              </template>
-              <span v-else class="text-[#A0AEC0]">Filter by video views</span>
-            </div>
-            <!-- 清除按钮 -->
-            <button 
-              v-if="selectedViewRanges.length"
-              class="ml-2 mr-3 text-gray-400 hover:text-gray-600"
-              @click.stop="clearViewRanges"
-            >
-              ×
-            </button>
-            <span 
-              class="ml-3 transform transition-transform duration-200" 
-              :class="{ 'rotate-180': isViewCountOpen }"
-            >
-              ▼
-            </span>
-          </div>
-          
-          <!-- 下拉选项 -->
-          <div 
-            v-show="isViewCountOpen" 
-            class="absolute z-50 w-full mt-1 bg-white border border-secondary-300 rounded-md shadow-lg"
-          >
-            <div class="py-1">
-              <div 
-                v-for="range in unselectedRanges" 
-                :key="range.value"
-                class="px-4 py-2 hover:bg-gray-50 cursor-pointer"
-                @click="selectViewRange(range.value)"
-              >
-                <span class="text-gray-700">{{ range.label }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- View Count Filter -->
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">View Count</label>
+        <select 
+          v-model="filters.viewCount"
+          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
+        >
+          <option value="" class="text-gray-500">Filter by video views</option>
+          <option value="1000000" class="text-gray-900">1M+</option>
+          <option value="500000" class="text-gray-900">500K+</option>
+          <option value="100000" class="text-gray-900">100K+</option>
+          <option value="50000" class="text-gray-900">50K+</option>
+        </select>
     </div>
 
-    <!-- 修改导出按钮部分 -->
-    <div class="flex justify-end mt-6 mb-4">
+      <!-- Export Button -->
+      <div class="flex items-end">
       <button 
-        @click="showExportModalHandler"
-        class="text-14xl leading-[21px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-white focus:opacity-[0.88] disabled:bg-secondary-200 disabled:text-secondary-1000 bg-primary-500 hover:bg-primary-400 active:bg-primary-600 h-[48px] px-6"
+          @click="showExportModal = true"
+          class="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
       >
         Add creators to list
       </button>
+      </div>
     </div>
 
-    <!-- 视频列表表格 -->
-    <div class="my-4">
-      <div class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
+    <!-- Videos Table -->
+    <div class="relative w-full overflow-x-auto rounded-sm border border-secondary-100 bg-white">
         <table class="w-full caption-bottom text-sm">
-          <!-- 表头 -->
           <thead class="[&_tr]:border-b">
-            <tr class="border-b transition-colors hover:bg-white">
-              <th v-for="header in tableHeaders" 
-                  :key="header"
-                  class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800"
-              >
-                <div class="flex items-center">{{ header }}</div>
-              </th>
+          <tr class="border-b">
+            <th class="py-3 px-2 text-left align-middle">Thumbnail</th>
+            <th class="py-3 px-2 text-left align-middle">Creator</th>
+            <th class="py-3 px-2 text-left align-middle">Posted Time</th>
+            <th class="py-3 px-2 text-left align-middle">Views</th>
+            <th class="py-3 px-2 text-left align-middle">Likes</th>
+            <th class="py-3 px-2 text-left align-middle">Description</th>
+            <th class="py-3 px-2 text-left align-middle">Product</th>
+            <th class="py-3 px-2 text-left align-middle">Brand</th>
             </tr>
           </thead>
-          
-          <!-- 表格内容 -->
           <tbody class="[&_tr:last-child]:border-0">
-            <tr v-for="video in getCurrentPageVideos" 
+          <tr 
+            v-for="video in filteredVideos" 
                 :key="video.id" 
                 class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-                @click="viewVideoDetail(video)"
+            @click="goToVideoDetail(video.id)"
             >
-              <td class="min-h-16 py-3 px-2 align-middle">
-                <img :src="video.thumbnail" class="w-16 h-16 rounded-md" :alt="video.title">
+              <td class="py-3 px-2 align-middle">
+              <div class="flex items-center gap-3">
+                <img 
+                  :src="video.thumbnail_url || 'https://via.placeholder.com/160x120'" 
+                  :alt="video.title"
+                  class="w-[60px] h-[80px] rounded-md object-cover"
+                  @error="handleImageError"
+                >
+              </div>
               </td>
-              <td class="min-h-16 py-3 px-2 align-middle">
-                <div class="flex items-center gap-2">
-                  <img :src="video.creatorAvatar" class="w-10 h-10 rounded-full mr-3" :alt="video.creator">
-                  <span>{{ video.creator }}</span>
+              <td class="py-3 px-2 align-middle">
+              <div class="flex items-center gap-2 relative creator-tooltip">
+                <img 
+                  :src="video.creator_profile_url || 'https://via.placeholder.com/32x32'" 
+                  :alt="video.creators?.handle"
+                  class="w-8 h-8 rounded-full object-cover"
+                  @error="handleImageError"
+                >
+                <span class="truncate">{{ video.creators?.handle || 'Unknown Creator' }}</span>
+                <div class="tooltip-content">{{ video.creators?.handle || 'Unknown Creator' }}</div>
+              </div>
+            </td>
+            <td class="py-3 px-2 align-middle">{{ getTimeAgo(video.posted_date) }}</td>
+            <td class="py-3 px-2 align-middle">{{ formatNumber(video.views_count || 0) }}</td>
+            <td class="py-3 px-2 align-middle">{{ formatNumber(video.likes_count || 0) }}</td>
+            <td class="py-3 px-2 align-middle max-w-xs">
+              <div class="relative description-tooltip">
+                <p class="truncate">{{ video.description || 'No description' }}</p>
+                <div class="tooltip-content">{{ video.description || 'No description' }}</div>
                 </div>
               </td>
-              <td>{{ video.postedTime }}</td>
-              <td>{{ formatNumber(video.views) }}</td>
-              <td>{{ formatNumber(video.likes) }}</td>
-              <td>{{ video.description }}</td>
-              <td>
-                <div class="flex items-center gap-2">
-                  <img :src="video.productImage" class="w-10 h-10 rounded-full mr-3" :alt="video.product">
-                  <span>{{ video.product }}</span>
+            <td class="py-3 px-2 align-middle">
+              <div class="flex items-center gap-2 relative product-tooltip">
+                <img 
+                  :src="video.seller_product_photo_url || 'https://via.placeholder.com/40x40'" 
+                  :alt="video.seller_products?.title"
+                  class="w-10 h-10 rounded-md object-cover"
+                  @error="handleImageError"
+                >
+                <span class="truncate max-w-[150px]">{{ video.seller_products?.title || 'Unknown Product' }}</span>
+                <div class="tooltip-content">{{ video.seller_products?.title || 'Unknown Product' }}</div>
                 </div>
               </td>
-              <td>
-                <div class="flex items-center gap-2">
-                  <img :src="video.brandImage" class="w-10 h-10 rounded-full mr-3" :alt="video.brand">
-                  <span>{{ video.brand }}</span>
+            <td class="py-3 px-2 align-middle">
+              <div class="flex items-center gap-2 relative brand-tooltip">
+                <img 
+                  :src="video.seller_photo_url || 'https://via.placeholder.com/40x40'" 
+                  :alt="video.seller_products?.sellers?.name"
+                  class="w-10 h-10 rounded-md object-cover"
+                  @error="handleImageError"
+                >
+                <span class="truncate">{{ video.seller_products?.sellers?.name || 'Unknown Brand' }}</span>
+                <div class="tooltip-content">{{ video.seller_products?.sellers?.name || 'Unknown Brand' }}</div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      </div>
+
+      <!-- Error State -->
+      <div v-if="error" class="p-4 text-center text-red-600">
+        {{ error }}
+      </div>
+
+      <!-- Empty State -->
+      <div v-if="!loading && !error && videos.length === 0" class="p-4 text-center text-gray-500">
+        No videos found
       </div>
     </div>
 
-    <!-- 分页部分 -->
-    <div class="mt-4 flex justify-between items-center">
+    <!-- Pagination -->
+    <div v-if="videos.length > 0" class="mt-4 flex justify-between items-center">
       <!-- 显示结果数量 -->
       <div class="text-sm text-gray-700">
-        Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalVideos) }} of {{ totalVideos }}
+        Showing {{ startIndex }} to {{ Math.min(endIndex, total) }} of {{ total }}
       </div>
 
       <!-- 分页按钮容器 - 居中 -->
@@ -278,10 +197,12 @@
           <template v-for="n in displayedPages" :key="n">
             <button 
               v-if="n !== '...'"
-              @click="changePage(n)"
+              @click="goToPage(n)"
+              class="px-3 py-1 rounded"
               :class="[
-                'px-3 py-1 rounded',
-                currentPage === n ? 'bg-primary-500 text-white' : 'text-gray-600 hover:text-primary-600'
+                currentPage === n 
+                  ? 'bg-primary-500 text-white' 
+                  : 'text-gray-600 hover:text-primary-600'
               ]"
             >
               {{ n }}
@@ -295,36 +216,29 @@
             :disabled="currentPage === totalPages"
             class="px-2 py-1 text-gray-600 hover:text-primary-600"
           >
-            <span class="text-sm">></span>
+            <span class="text-sm">›</span>
           </button>
         </div>
       </div>
 
       <!-- 空的 div 用于保持布局平衡 -->
       <div class="invisible text-sm text-gray-700">
-        Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalVideos) }} of {{ totalVideos }}
+        Showing {{ startIndex }} to {{ Math.min(endIndex, total) }} of {{ total }}
       </div>
     </div>
 
-    <!-- 添加 ExportModal 组件 -->
+    <!-- Export Modal -->
     <ExportModal
+      v-if="showExportModal"
       :show="showExportModal"
-      :filters="{
-        categories: [],
-        gmv: [],
-        followers: [],
-        gender: '',
-        languages: [],
-        onlyWithEmail: false
-      }"
-      :influencers="getCreatorsFromVideos"
-      @close="closeExportModal"
-      @create="handleCreateList"
+      :influencers="selectedInfluencers"
+      @close="showExportModal = false"
     />
   </div>
 </template>
 
 <script>
+import videoAPI from '../services/videoAPI'
 import ExportModal from '../components/ExportModal.vue'
 
 export default {
@@ -334,547 +248,386 @@ export default {
   },
   data() {
     return {
-      searchQuery: '',
-      selectedBrand: null,
-      selectedProduct: null,
-      selectedViewRanges: [],
-      viewRanges: [
-        { label: '0-100', value: '0-100' },
-        { label: '100-500', value: '100-500' },
-        { label: '500-2K', value: '500-2k' },
-        { label: '2K+', value: '2k+' }
-      ],
-      tableHeaders: [
-        'Thumbnail',
-        'Creator',
-        'Posted Time',
-        'Views',
-        'Likes',
-        'Description',
-        'Product',
-        'Brand'
-      ],
-      videos: [], // 将从 API 获取
-      isViewCountOpen: false,
-      brandSearch: '',
-      showBrandDropdown: false,
-      productSearch: '',
-      showProductDropdown: false,
-      filteredBrands: [],
-      filteredProducts: [],
+      videos: [],
+      loading: false,
+      error: null,
       currentPage: 1,
       pageSize: 10,
-      allVideos: [], // 储所有视频数据
-      filteredVideos: [], // 只在 data 中定义
+      total: 0,
+      searchQuery: '',
       showExportModal: false,
+      filters: {
+        brand: '',
+        product: '',
+        viewCount: ''
+      },
+      brandOptions: [],
+      productOptions: [],
+      fetchTimer: null
     }
   },
   computed: {
-    unselectedRanges() {
-      return this.viewRanges.filter(range => !this.selectedViewRanges.includes(range.value))
+    startIndex() {
+      return (this.currentPage - 1) * this.pageSize + 1
     },
-    // 从视频数据中取唯一的品牌列表
-    uniqueBrands() {
-      if (!this.allVideos.length) return [];
-      // 使用 Set 去重，然后转换为所需的格式
-      const brandsSet = new Set(this.allVideos.map(video => JSON.stringify({
-        name: video.brand,
-        image: video.brandImage
-      })));
-      return Array.from(brandsSet).map(brand => JSON.parse(brand));
+    endIndex() {
+      return Math.min(this.startIndex + this.pageSize - 1, this.total)
     },
-    filteredBrands() {
-      if (!this.brandSearch) return this.uniqueBrands;
-      const search = this.brandSearch.toLowerCase();
-      return this.uniqueBrands.filter(brand => 
-        brand.name.toLowerCase().includes(search)
-      );
-    },
-    
-    uniqueProducts() {
-      if (!this.allVideos.length) return [];
-      // 使用 Set 去重，然后��换为所需的格式
-      const productsSet = new Set(this.allVideos.map(video => JSON.stringify({
-        name: video.product,
-        image: video.productImage
-      })));
-      return Array.from(productsSet).map(product => JSON.parse(product));
-    },
-    
-    filteredProducts() {
-      if (!this.productSearch) return this.uniqueProducts;
-      const search = this.productSearch.toLowerCase();
-      return this.uniqueProducts.filter(product => 
-        product.name.toLowerCase().includes(search)
-      );
-    },
-
-    // 计算页数
     totalPages() {
-      return Math.ceil(this.filteredVideos.length / this.pageSize);
+      return Math.ceil(this.total / this.pageSize)
+    },
+    selectedInfluencers() {
+      // 将视频数据转换为导出所需的格式
+      return this.videos.map(video => ({
+        handle: video.creators?.handle,
+        // 可以添加其他需要段
+      }))
+    },
+    
+    filteredData() {
+      let filtered = [...this.videos];
+
+      // 应用品牌筛选
+      if (this.filters.brand) {
+        filtered = filtered.filter(video => 
+          video.seller_products?.sellers?.name === this.filters.brand
+        );
+      }
+
+      // 应用产品筛选
+      if (this.filters.product) {
+        filtered = filtered.filter(video => 
+          video.seller_products?.title === this.filters.product
+        );
+      }
+
+      // 应用观看次数筛选
+      if (this.filters.viewCount) {
+        const minViews = parseInt(this.filters.viewCount);
+        filtered = filtered.filter(video => 
+          (video.views_count || 0) >= minViews
+        );
+      }
+
+      return filtered;
     },
 
-    // 计算当前页显示的视频
-    getCurrentPageVideos() {
+    filteredVideos() {
+      // 如果没有筛选条件，使用 API 返回的 total
+      if (!this.filters.brand && !this.filters.product && !this.filters.viewCount) {
+        return this.videos;
+      }
+
+      // 选条件时，更新 total 为筛选后的数量
+      this.total = this.filteredData.length;
+
+      // 返回当前页的数据
       const start = (this.currentPage - 1) * this.pageSize;
       const end = start + this.pageSize;
-      return this.filteredVideos.slice(start, end);
+      return this.filteredData.slice(start, end);
     },
 
-    // 计算显示的页码范围
     displayedPages() {
       const total = this.totalPages;
       const current = this.currentPage;
-      const delta = 1; // 前页码前后显示的页码数
-
-      // 如果当前页超过了总页数，自动调整到最后一页
-      if (current > total && total > 0) {
-        this.$nextTick(() => {
-          this.currentPage = total;
-        });
-      }
-
       let pages = [];
-      const left = current - delta;
-      const right = current + delta;
 
+      if (total <= 5) {
+        // 如果总页数小于等于5，显示所有页码
       for (let i = 1; i <= total; i++) {
-        if (
-          i === 1 || // 第一页
-          i === total || // 最后一页
-          (i >= left && i <= right) // 当前页码附近页码
-        ) {
           pages.push(i);
-        } else if (pages[pages.length - 1] !== '...') {
-          pages.push('...');
+        }
+      } else {
+        // 总页数大于5的情况
+        if (current <= 3) {
+          // 在前几页时显示: 1 2 3 4 ... n
+          pages = [1, 2, 3, 4, '...', total];
+        } else if (current >= total - 2) {
+          // 在后几页时显示: 1 ... n-3 n-2 n-1 n
+          pages = [1, '...', total - 3, total - 2, total - 1, total];
+        } else {
+          // 在中间页时显示: 1 ... current-1 current current+1 current+2 ... n
+          pages = [
+            1,
+            '...',
+            current - 1,
+            current,
+            current + 1,
+            current + 2,
+            '...',
+            total
+          ];
         }
       }
 
       return pages;
-    },
-
-    // 计算当前显示的数据范围
-    startIndex() {
-      return (this.currentPage - 1) * this.pageSize + 1
-    },
-
-    endIndex() {
-      return Math.min(this.currentPage * this.pageSize, this.totalVideos)
-    },
-
-    // 总数据量
-    totalVideos() {
-      return this.filteredVideos.length;
-    },
-
-    // 从视频列表中提取创作者信息
-    getCreatorsFromVideos() {
-      return this.filteredVideos.map(video => ({
-        handle: video.creator,
-        profileUrl: `https://www.tiktok.com/@${video.creator}`,
-        avatar: video.creatorAvatar,
-        bio: video.description || '',
-        email: ''
-      }));
     }
   },
   methods: {
-    searchVideos() {
-      this.applyFilters();
-    },
     formatNumber(num) {
+      if (!num) return '0'
       if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M'
-      } else if (num >= 1000) {
+      }
+      if (num >= 1000) {
         return (num / 1000).toFixed(1) + 'K'
       }
-      return num
+      return num.toString()
     },
-    async fetchData() {
-      // 生成随机数据
-      const creators = [
-        { name: 'brothernailtech', avatar: 'https://picsum.photos/50' },
-        { name: 'pcosjourneyic', avatar: 'https://picsum.photos/51' },
-        { name: 'bsv_xo', avatar: 'https://picsum.photos/52' },
-        { name: 'actualreviewsfr', avatar: 'https://picsum.photos/53' },
-        { name: 'tanicha_rose', avatar: 'https://picsum.photos/54' }
-      ];
-
-      const descriptions = [
-        'Replying to @user#loving5u we appreciate the q...',
-        'Im so glad they put me on to this cleanse i was...',
-        'He gave it a 10/10 so i do too 🥰🥰���� #fyp',
-        'Somehow where gonna get there #fyp #viral #sho...',
-        'This skincare routine saved my oily, acne prone...'
-      ];
-
-      const products = [
-        { name: 'Brother Cosmetics Nail Growth Oil', image: 'https://picsum.photos/60' },
-        { name: 'Candida Cleanse - Gut and Colon', image: 'https://picsum.photos/61' },
-        { name: 'Chicme Lace Trim Slit Bowknot', image: 'https://picsum.photos/62' },
-        { name: 'USB-C Fast ChargingCable, Li...', image: 'https://picsum.photos/63' }
-      ];
-
-      const brands = [
-        { name: 'Brother Cosmetics', image: 'https://picsum.photos/70' },
-        { name: 'Pure Peak', image: 'https://picsum.photos/71' },
-        { name: 'chicme.us', image: 'https://picsum.photos/72' },
-        { name: 'KLSMYHOK! shop', image: 'https://picsum.photos/73' }
-      ];
-
-      const getRandomItem = (array) => array[Math.floor(Math.random() * array.length)];
-      const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-      const getRandomDate = () => {
-        const periods = ['a month ago', '4 months ago', '17 days ago', 'a year ago'];
-        return getRandomItem(periods);
-      };
-
-      this.allVideos = Array.from({ length: 20 }, (_, index) => {
-        const creator = getRandomItem(creators);
-        const product = getRandomItem(products);
-        const brand = getRandomItem(brands);
+    formatDate(timestamp) {
+      if (!timestamp) return 'Unknown date'
+      const date = new Date(timestamp * 1000)
+      return date.toLocaleDateString()
+    },
+    handleImageError(e) {
+      // 片加载失败时使用默认图
+      if (e.target.classList.contains('rounded-full')) {
+        e.target.src = 'https://via.placeholder.com/32x32'
+      } else {
+        e.target.src = 'https://via.placeholder.com/160x120'
+      }
+    },
+    async fetchFiltersOptions() {
+      // 只在第一次加载时获取筛选选项
+      if (this.brandOptions.length === 0 && this.productOptions.length === 0) {
+        const brands = new Set()
+        const products = new Set()
         
-        // 生成机视图数
-        const views = getRandomNumber(1000, 5000000); // 生成 1K 到 5M 之间的数字
+        this.videos.forEach(video => {
+          if (video.seller_products?.sellers?.name) {
+            brands.add(video.seller_products.sellers.name)
+          }
+          if (video.seller_products?.title) {
+            products.add(video.seller_products.title)
+          }
+        })
         
-        return {
-          id: index + 1,
-          thumbnail: `https://picsum.photos/200/200?random=${index}`,
-          creator: creator.name,
-          creatorAvatar: creator.avatar,
-          postedTime: getRandomDate(),
-          views: this.formatNumber(views), // 使用 formatNumber 格式化视图数
-          likes: getRandomNumber(10000, 5000000),
-          description: getRandomItem(descriptions),
-          product: product.name,
-          productImage: product.image,
-          brand: brand.name,
-          brandImage: brand.image
-        };
-      });
-      
-      // 初始化 filteredVideos 和 videos
-      this.filteredVideos = [...this.allVideos];
-      this.videos = [...this.allVideos];
+        this.brandOptions = Array.from(brands)
+        this.productOptions = Array.from(products)
+      }
     },
-    toggleViewCountDropdown() {
-      this.isViewCountOpen = !this.isViewCountOpen
-    },
-    removeViewRange(range) {
-      this.selectedViewRanges = this.selectedViewRanges.filter(r => r !== range)
-      this.applyFilters();
-    },
-    handleClickOutside(event) {
-      const brandDropdown = this.$el.querySelector('.brand-dropdown')
-      const productDropdown = this.$el.querySelector('.product-dropdown')
-      const viewCountDropdown = this.$el.querySelector('.view-count-dropdown')
+    async fetchVideos() {
+      try {
+        this.loading = true
+        this.error = null
+        
+        if (this.fetchTimer) {
+          clearTimeout(this.fetchTimer)
+        }
 
-      if (!event.target.closest('.brand-dropdown')) {
-        this.showBrandDropdown = false
-      }
-      if (!event.target.closest('.product-dropdown')) {
-        this.showProductDropdown = false
-      }
-      if (!event.target.closest('.view-count-dropdown')) {
-        this.isViewCountOpen = false
+        this.fetchTimer = setTimeout(async () => {
+          const response = await videoAPI.getVideos(
+            this.currentPage,
+            this.pageSize,
+            {
+              search: this.searchQuery,
+              ...this.filters
+            }
+          )
+          
+          if (response && response.data) {
+            this.videos = response.data
+            this.total = response.total || response.data.length
+            await this.fetchFiltersOptions()
+          } else {
+            throw new Error('Invalid response format')
+          }
+          this.loading = false
+        }, 300)
+
+      } catch (error) {
+        console.error('Failed to fetch videos:', error)
+        this.error = 'Failed to load videos. Please try again later.'
+        this.videos = []
+        this.loading = false
       }
     },
-    selectViewRange(value) {
-      if (!this.selectedViewRanges.includes(value)) {
-        this.selectedViewRanges.push(value);
-        this.applyFilters();
-      }
-      this.isViewCountOpen = false;
-    },
-    clearViewRanges() {
-      this.selectedViewRanges = []
-      this.applyFilters();
-    },
-    selectBrand(brand) {
-      this.selectedBrand = brand;
-      this.brandSearch = brand.name;
-      this.showBrandDropdown = false;
-      this.applyFilters();
-    },
-    selectProduct(product) {
-      this.selectedProduct = product;
-      this.productSearch = product.name;
-      this.showProductDropdown = false;
-      this.applyFilters();
-    },
-    // 切换页码
-    changePage(page) {
-      const totalPages = this.totalPages;
-      if (page >= 1 && page <= totalPages) {
-        this.currentPage = page;
-      } else if (page > totalPages && totalPages > 0) {
-        // 如果目标页码超过总页数，跳转到最后一页
-        this.currentPage = totalPages;
-      }
+    goToVideoDetail(videoId) {
+      this.$router.push(`/videos/${videoId}`)
     },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--
+        this.fetchVideos()
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++
+        this.fetchVideos()
       }
     },
-    viewVideoDetail(video) {
-      // 将选中的视频数据存储到 localStorage
-      localStorage.setItem('selectedVideo', JSON.stringify(video))
-      // 跳到详情页
-      this.$router.push(`/videos/${video.id}`)
+    searchVideos() {
+      this.currentPage = 1
+      this.fetchVideos()
     },
-    // 添加清除方法
-    clearBrand() {
-      this.brandSearch = '';
-      this.selectedBrand = null;
-      this.applyFilters();
-    },
-    clearProduct() {
-      this.productSearch = '';
-      this.selectedProduct = null;
-      this.applyFilters();
-    },
-    toggleBrandDropdown() {
-      this.showBrandDropdown = !this.showBrandDropdown;
-    },
-    toggleProductDropdown() {
-      this.showProductDropdown = !this.showProductDropdown;
-    },
-    parseViewCount(viewStr) {
-      // 移除所有逗号
-      viewStr = viewStr.replace(/,/g, '');
+    getTimeAgo(date) {
+      if (!date) return 'Unknown date'
+      const now = new Date()
+      const postedDate = new Date(date)
+      const diffTime = Math.abs(now - postedDate)
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
       
-      // 处理 K、M 单位
-      if (viewStr.includes('K')) {
-        return parseFloat(viewStr) * 1000;
-      } else if (viewStr.includes('M')) {
-        return parseFloat(viewStr) * 1000000;
-      }
+      // 计算月份差异
+      const months = Math.floor(diffDays / 30)
       
-      return parseFloat(viewStr);
-    },
-    applyFilters() {
-      let result = [...this.allVideos];
-
-      // 搜索关键词筛选
-      if (this.searchQuery.trim()) {
-        const searchTerm = this.searchQuery.toLowerCase().trim();
-        result = result.filter(video => 
-          video.description.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      // Brand 筛选
-      if (this.selectedBrand) {
-        result = result.filter(video => 
-          video.brand === this.selectedBrand.name
-        );
-      }
-
-      // Product 筛选
-      if (this.selectedProduct) {
-        result = result.filter(video => 
-          video.product === this.selectedProduct.name
-        );
-      }
-
-      // View Count 筛选
-      if (this.selectedViewRanges.length > 0) {
-        result = result.filter(video => {
-          const viewCount = this.parseViewCount(video.views);
-          return this.selectedViewRanges.some(range => {
-            switch(range) {
-              case '0-100':
-                return viewCount < 100;
-              case '100-500':
-                return viewCount >= 100 && viewCount < 500;
-              case '500-2k':
-                return viewCount >= 500 && viewCount < 2000;
-              case '2k+':
-                return viewCount >= 2000;
-              default:
-                return true;
-            }
-          });
-        });
-      }
-
-      this.filteredVideos = result;
-      this.currentPage = 1; // 重置页码
-    },
-    async handleCreateList(listData) {
-      try {
-        // 从当前过滤后的视频中提取创作者信息
-        const creators = this.filteredVideos.map(video => video.creator);
-        
-        const newListData = {
-          name: listData.name,
-          type: 'Video List',
-          description: 'Created from videos page',
-          creators: creators
-        };
-        
-        await this.$store.dispatch('createList', newListData);
-        this.showExportModal = false;
-        this.$router.push('/lists');
-      } catch (error) {
-        console.error('Failed to create list:', error);
-        alert('Failed to create list. Please try again.');
+      if (months > 0) {
+        if (months === 1) {
+          return 'a month ago'
+        }
+        return `${months} months ago`
+      } else {
+        if (diffDays === 1) {
+          return '1 day ago'
+        }
+        return `${diffDays} days ago`
       }
     },
-    showExportModalHandler() {
-      this.showExportModal = true;
-    },
-    closeExportModal() {
-      this.showExportModal = false;
+    goToPage(page) {
+      if (page !== this.currentPage) {
+        this.currentPage = page
+        this.fetchVideos()
+      }
     }
   },
-  mounted() {
-    this.fetchData()
-    document.addEventListener('click', this.handleClickOutside)
-    this.applyFilters() // 始应用筛选
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside)
+  created() {
+    this.fetchVideos()
   },
   watch: {
-    // 添加监听器，当筛选条件改变时重置页码
-    selectedBrand() {
-      this.currentPage = 1;
+    searchQuery(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.currentPage = 1
+        this.fetchVideos()
+      }
     },
-    selectedProduct() {
-      this.currentPage = 1;
-    },
-    selectedViewRanges: {
+    'filters': {
+      deep: true,
       handler() {
-        this.currentPage = 1;
+        this.currentPage = 1
+        this.fetchVideos()
+      }
       },
-      deep: true
+    currentPage(newPage) {
+      this.fetchVideos()
     }
   }
 }
 </script>
 
 <style scoped>
-.form-checkbox {
-  @apply rounded border-gray-300;
+.max-w-xs {
+  max-width: 20rem;
 }
 
-.form-checkbox:checked {
-  @apply bg-primary-500 border-primary-500;
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 确保所有筛选器度一致 */
-.css-13cymwt-control {
-  height: 42px;
-  display: flex;
-  align-items: center;
+.filter-select {
+  @apply flex w-full rounded-md border border-gray-300 bg-white 
+  text-sm transition-all hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
 }
 
-/* 下拉箭头式 */
-.transform {
-  font-size: 10px;
-  color: #6C7381;
-}
-
-/* 下拉面板样式 */
-.shadow-lg {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* 选中项样式 */
-.bg-gray-100 {
-  background-color: #f3f4f6;
-}
-
-/* 确保下拉面板在其他元素之上 */
-.z-50 {
-  z-index: 50;
-}
-
-/* 选中标签的样式 */
-.bg-primary-50 {
-  background-color: #e6f7ff;
-}
-
+/* 分页器样式 */
 .text-primary-600 {
-  color: #1890ff;
+  color: #6366F1;
 }
 
-/* 已选择项的样式 */
-.opacity-50 {
+.bg-primary-500 {
+  background-color: #6366F1;
+}
+
+.hover\:text-primary-600:hover {
+  color: #6366F1;
+}
+
+/* 禁用状态的按钮样式 */
+button:disabled {
   opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* 调整下拉内容的样式 */
-.css-13cymwt-control {
-  min-height: 42px;
-  height: auto;
-  padding-top: 4px;
-  padding-bottom: 4px;
+/* 分页按钮的过渡效果 */
+button {
+  transition: all 0.2s ease-in-out;
 }
 
-/* 标签容器样式 */
-.flex-wrap {
-  margin: -2px;
+/* 修改 tooltip 样式 */
+[title] {
+  position: relative;
 }
 
-.flex-wrap > * {
-  margin: 2px;
-}
-
-.view-count-dropdown .selected-range {
-  background-color: #f3f4f6;
+[title]:hover::before {
+  content: attr(title);
+  position: absolute;
+  top: -8px;
+  left: 0;
+  transform: translateY(-100%);
+  padding: 4px 8px;
+  background-color: #000;
+  color: white;
   border-radius: 4px;
-  padding: 2px 8px;
-  margin: 2px;
-  display: inline-flex;
-  align-items: center;
-  font-size: 14px;
+  font-size: 12px;
+  white-space: normal;
+  max-width: 300px;
+  word-wrap: break-word;
+  z-index: 10;
 }
 
-.view-count-dropdown .remove-btn {
-  margin-left: 4px;
-  color: #666;
-  font-size: 16px;
-  line-height: 1;
-  padding: 0 2px;
+[title]:hover::after {
+  display: none;
 }
 
-.view-count-dropdown .remove-btn:hover {
-  color: #333;
+[title] {
+  cursor: pointer;
 }
 
-.view-count-dropdown button.ml-2 {
-  margin-right: 12px;  /* 增加清除按钮右侧间距 */
+/* 移除默认的 title 示框 */
+[title] {
+  pointer-events: none;
 }
 
-.view-count-dropdown span {
-  margin-left: 12px;  /* 增加下拉箭头左侧间距 */
+/* 自定义提示框样式 */
+.creator-tooltip,
+.description-tooltip,
+.product-tooltip,
+.brand-tooltip {
+  position: relative;
 }
 
-/* 统一所有下拉框的清除按钮和箭头样式 */
-.brand-dropdown button,
-.product-dropdown button,
-.view-count-dropdown button {
-  margin-right: 12px;
+.tooltip-content {
+  display: none;
+  position: absolute;
+  top: -8px;
+  left: 0;
+  transform: translateY(-100%);
+  background-color: #000;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: normal;
+  max-width: 300px;
+  word-wrap: break-word;
+  z-index: 10;
 }
 
-.brand-dropdown span,
-.product-dropdown span,
-.view-count-dropdown span {
-  margin-left: 12px;
+.creator-tooltip:hover .tooltip-content,
+.description-tooltip:hover .tooltip-content,
+.product-tooltip:hover .tooltip-content,
+.brand-tooltip:hover .tooltip-content {
+  display: block;
 }
 
-/* 修改输入框样式以适应新布局 */
-.brand-dropdown input,
-.product-dropdown input {
-  @apply text-[16px] leading-[19.2px];
-  padding: 0;
+/* 添加表格行高样式 */
+th, td {
+  height: 55px !important;
+}
+
+/* 或者使用 min-height 来确保最小高度 */
+.min-h-16 {
+  min-height: 55px;
 }
 </style> 
