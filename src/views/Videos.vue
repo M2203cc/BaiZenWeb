@@ -64,17 +64,25 @@
           <option value="100000" class="text-gray-900">100K+</option>
           <option value="50000" class="text-gray-900">50K+</option>
         </select>
+      </div>
     </div>
 
-      <!-- Export Button -->
-      <div class="flex items-end">
+    <!-- Action Buttons -->
+    <div class="flex items-center space-x-4 mb-6">
       <button 
-          @click="showExportModal = true"
-          class="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+        v-if="hasSelectedVideos"
+        @click="openExportModal"
+        class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
       >
-        Add creators to list
+        Add Creators to List
       </button>
-      </div>
+      <button 
+        v-if="hasSelectedVideos"
+        @click="clearSelection"
+        class="px-4 py-2 text-gray-600 hover:text-gray-800"
+      >
+        Clear Selection
+      </button>
     </div>
 
     <!-- Videos Table -->
@@ -82,6 +90,14 @@
         <table class="w-full caption-bottom text-sm">
           <thead class="[&_tr]:border-b">
           <tr class="border-b">
+            <th class="py-3 px-2 text-left align-middle">
+              <input 
+                type="checkbox" 
+                class="rounded border-gray-300"
+                :checked="isCurrentPageAllSelected"
+                @change="selectAll"
+              >
+            </th>
             <th class="py-3 px-2 text-left align-middle">Thumbnail</th>
             <th class="py-3 px-2 text-left align-middle">Creator</th>
             <th class="py-3 px-2 text-left align-middle">Posted Time</th>
@@ -95,63 +111,75 @@
           <tbody class="[&_tr:last-child]:border-0">
           <tr 
             v-for="video in filteredVideos" 
-            :key="video.video_id"
+            :key="`${currentPage}-${video.id}`"
             class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-            @click="goToVideoDetail(video.video_id)"
+            @click="goToVideoDetail(video)"
             >
+              <td class="py-3 px-2 align-middle" @click.stop>
+                <input 
+                  type="checkbox" 
+                  class="rounded border-gray-300"
+                  :checked="selectedVideos.some(v => v.id === video.id)"
+                  @change="handleVideoSelect(video, $event)"
+                >
+              </td>
               <td class="py-3 px-2 align-middle">
               <div class="flex items-center gap-3">
                 <img 
+                  :key="`${currentPage}-${video.id}-thumb`"
                   :src="video.thumbnail_url || 'https://via.placeholder.com/160x120'" 
-                  :alt="video.title"
+                  :alt="video.description"
                   class="w-[60px] h-[80px] rounded-md object-cover"
                   @error="handleImageError"
                 >
               </div>
               </td>
               <td class="py-3 px-2 align-middle">
-              <div class="flex items-center gap-2 relative creator-tooltip">
-                <img 
-                  :src="video.creator_profile_url || 'https://via.placeholder.com/32x32'" 
-                  :alt="video.creators?.handle"
-                  class="w-8 h-8 rounded-full object-cover"
-                  @error="handleImageError"
-                >
-                <span class="truncate">{{ video.creators?.handle || 'Unknown Creator' }}</span>
-                <div class="tooltip-content">{{ video.creators?.handle || 'Unknown Creator' }}</div>
-              </div>
-            </td>
-            <td class="py-3 px-2 align-middle">{{ getTimeAgo(video.posted_date) }}</td>
-            <td class="py-3 px-2 align-middle">{{ formatNumber(video.views_count || 0) }}</td>
-            <td class="py-3 px-2 align-middle">{{ formatNumber(video.likes_count || 0) }}</td>
-            <td class="py-3 px-2 align-middle max-w-xs">
-              <div class="relative description-tooltip">
-                <p class="truncate">{{ video.description || 'No description' }}</p>
-                <div class="tooltip-content">{{ video.description || 'No description' }}</div>
+                <div class="flex items-center gap-2 relative creator-tooltip">
+                  <img 
+                    :key="`${currentPage}-${video.id}-creator`"
+                    :src="video.creatorAvatar || 'https://via.placeholder.com/40x40'" 
+                    :alt="video.creator"
+                    class="w-10 h-10 rounded-md object-cover"
+                    @error="handleImageError"
+                  >
+                  <span class="truncate max-w-[150px]">{{ video.creator }}</span>
+                  <div class="tooltip-content">{{ video.creator }}</div>
                 </div>
               </td>
-            <td class="py-3 px-2 align-middle">
-              <div class="flex items-center gap-2 relative product-tooltip">
-                <img 
-                  :src="video.seller_product_photo_url || 'https://via.placeholder.com/40x40'" 
-                  :alt="video.seller_products?.title"
-                  class="w-10 h-10 rounded-md object-cover"
-                  @error="handleImageError"
-                >
-                <span class="truncate max-w-[150px]">{{ video.seller_products?.title || 'Unknown Product' }}</span>
-                <div class="tooltip-content">{{ video.seller_products?.title || 'Unknown Product' }}</div>
+              <td class="py-3 px-2 align-middle">{{ getTimeAgo(video.posted_date) }}</td>
+              <td class="py-3 px-2 align-middle">{{ formatNumber(video.views_count || 0) }}</td>
+              <td class="py-3 px-2 align-middle">{{ formatNumber(video.likes_count || 0) }}</td>
+              <td class="py-3 px-2 align-middle max-w-xs">
+                <div class="relative description-tooltip">
+                  <p class="truncate">{{ video.description || 'No description' }}</p>
+                  <div class="tooltip-content">{{ video.description || 'No description' }}</div>
+                  </div>
+                </td>
+              <td class="py-3 px-2 align-middle">
+                <div class="flex items-center gap-2 relative product-tooltip">
+                  <img 
+                    :key="`${currentPage}-${video.id}-product`"
+                    :src="video.productImage || 'https://via.placeholder.com/40x40'" 
+                    :alt="video.product"
+                    class="w-10 h-10 rounded-md object-cover"
+                    @error="handleImageError"
+                  >
+                  <span class="truncate max-w-[150px]">{{ video.product }}</span>
+                  <div class="tooltip-content">{{ video.product }}</div>
                 </div>
               </td>
-            <td class="py-3 px-2 align-middle">
-              <div class="flex items-center gap-2 relative brand-tooltip">
-                <img 
-                  :src="video.seller_photo_url || 'https://via.placeholder.com/40x40'" 
-                  :alt="video.seller_products?.sellers?.name"
-                  class="w-10 h-10 rounded-md object-cover"
-                  @error="handleImageError"
-                >
-                <span class="truncate">{{ video.seller_products?.sellers?.name || 'Unknown Brand' }}</span>
-                <div class="tooltip-content">{{ video.seller_products?.sellers?.name || 'Unknown Brand' }}</div>
+              <td class="py-3 px-2 align-middle">
+                <div class="flex items-center gap-2 relative brand-tooltip">
+                  <img 
+                    :key="`${currentPage}-${video.id}-brand`"
+                    :src="video.brandImage || 'https://via.placeholder.com/40x40'" 
+                    :alt="video.brand"
+                    class="w-10 h-10 rounded-md object-cover"
+                    @error="handleImageError"
+                  >
+                  <span class="truncate">{{ video.brand }}</span>
+                  <div class="tooltip-content">{{ video.brand }}</div>
                 </div>
               </td>
             </tr>
@@ -164,8 +192,14 @@
       </div>
 
       <!-- Error State -->
-      <div v-if="error" class="p-4 text-center text-red-600">
+      <div v-if="error" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
         {{ error }}
+        <button 
+          @click="fetchVideos(currentPage)" 
+          class="ml-4 text-sm underline hover:text-red-800"
+        >
+          Retry
+        </button>
       </div>
 
       <!-- Empty State -->
@@ -220,19 +254,14 @@
           </button>
         </div>
       </div>
-
-      <!-- 空的 div 用于保持布局平衡 -->
-      <div class="invisible text-sm text-gray-700">
-        Showing {{ startIndex }} to {{ Math.min(endIndex, total) }} of {{ total }}
-      </div>
     </div>
 
     <!-- Export Modal -->
     <ExportModal
       v-if="showExportModal"
       :show="showExportModal"
-      :influencers="selectedInfluencers"
-      @close="showExportModal = false"
+      :influencers="selectedCreators"
+      @close="closeExportModal"
     />
   </div>
 </template>
@@ -240,6 +269,15 @@
 <script>
 import videoAPI from '../services/videoAPI'
 import ExportModal from '../components/ExportModal.vue'
+
+// 添加 debounce 实现
+function debounce(fn, delay) {
+  let timeoutId
+  return function (...args) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
 
 export default {
   name: 'Videos',
@@ -263,7 +301,9 @@ export default {
       },
       brandOptions: [],
       productOptions: [],
-      fetchTimer: null
+      fetchTimer: null,
+      selectedVideos: [],
+      selectedCreators: []
     }
   },
   computed: {
@@ -277,7 +317,7 @@ export default {
       return Math.ceil(this.total / this.pageSize)
     },
     selectedInfluencers() {
-      // 将视频数据转换为导出所需格式
+      // 将视频数据��换为导出所需格式
       return this.videos.map(video => ({
         handle: video.creators?.handle,
         // 可以添加其他需要段
@@ -361,6 +401,13 @@ export default {
       }
 
       return pages;
+    },
+    hasSelectedVideos() {
+      return this.selectedVideos.length > 0
+    },
+    isCurrentPageAllSelected() {
+      return this.videos.length > 0 && 
+        this.videos.every(video => this.selectedVideos.some(v => v.id === video.id))
     }
   },
   methods: {
@@ -374,10 +421,39 @@ export default {
       }
       return num.toString()
     },
-    formatDate(timestamp) {
-      if (!timestamp) return 'Unknown date'
-      const date = new Date(timestamp * 1000)
-      return date.toLocaleDateString()
+    formatDate(dateString) {
+      if (!dateString) return 'Unknown'
+      try {
+        const date = new Date(dateString)
+        const now = new Date()
+        const diff = now - date
+        
+        // 如果是无效日期
+        if (isNaN(date.getTime())) return 'Unknown'
+        
+        // 小于1小时
+        if (diff < 3600000) {
+          const minutes = Math.floor(diff / 60000)
+          return `${minutes} minutes ago`
+        }
+        
+        // 小于24小时
+        if (diff < 86400000) {
+          const hours = Math.floor(diff / 3600000)
+          return `${hours} hours ago`
+        }
+        
+        // 小于30天
+        if (diff < 2592000000) {
+          const days = Math.floor(diff / 86400000)
+          return `${days} days ago`
+        }
+        
+        // 大于30天
+        return date.toLocaleDateString()
+      } catch (e) {
+        return 'Unknown'
+      }
     },
     handleImageError(e) {
       // 片加载失败时使用默认图
@@ -388,7 +464,7 @@ export default {
       }
     },
     async fetchFiltersOptions() {
-      // 只在第一次加载时获取筛选选项
+      // 只在第一次加载获取筛选选项
       if (this.brandOptions.length === 0 && this.productOptions.length === 0) {
         const brands = new Set()
         const products = new Set()
@@ -407,54 +483,95 @@ export default {
       }
     },
     async fetchVideos(page = 1, applyFilters = false) {
+      console.log('Fetching videos for page:', page)
       try {
         this.loading = true
+        this.error = null
+        
+        // 在加载新数据前清空当前数据
+        this.videos = []
+        
         const params = {
-          page,
-          page_size: 10,
-          search: this.searchQuery || undefined
+          page: page,
+          pageSize: this.pageSize || 10
         }
         
-        // 添加筛选条件到请求参数
+        if (this.searchQuery?.trim()) {
+          params.search = this.searchQuery.trim()
+        }
+        
         if (applyFilters) {
-          if (this.filters.views.min) params.views_min = this.filters.views.min
-          if (this.filters.views.max) params.views_max = this.filters.views.max
-          if (this.filters.likes.min) params.likes_min = this.filters.likes.min
-          if (this.filters.likes.max) params.likes_max = this.filters.likes.max
-          if (this.filters.dateRange.start) params.posted_after = this.filters.dateRange.start
-          if (this.filters.dateRange.end) params.posted_before = this.filters.dateRange.end
-          if (this.filters.brands.length) params.brands = this.filters.brands
-          if (this.filters.products.length) params.products = this.filters.products
+          if (this.filters.brand) params.brand = this.filters.brand
+          if (this.filters.product) params.product = this.filters.product
+          if (this.filters.viewCount) params.viewCount = this.filters.viewCount
         }
 
+        // 添加一个小延迟，确保旧数据被清除
+        await new Promise(resolve => setTimeout(resolve, 50))
+
         const response = await videoAPI.getVideos(params)
-        this.videos = response.data.items
-        this.totalPages = response.data.total_pages
-        this.currentPage = page
+        console.log('API Response for page:', page, response)
+        
+        if (response && (response.data || response.items)) {
+          const items = response.data || response.items || []
+          // 使用 nextTick 确保 DOM 更新
+          await this.$nextTick()
+          
+          this.videos = items.map(video => ({
+            id: video.id || video.video_id,
+            thumbnail_url: video.thumbnail_url || video.cover_image_url,
+            creator: video.creators?.handle || 'Unknown Creator',
+            creatorAvatar: video.creator_profile_url,
+            views_count: video.views_count || video.stats?.play_count || 0,
+            likes_count: video.likes_count || video.stats?.digg_count || 0,
+            description: video.description || 'No description',
+            posted_date: video.posted_date || video.create_time || video.created_at,
+            product: video.seller_products?.title || 'Unknown Product',
+            productImage: video.seller_product_photo_url,
+            brand: video.seller_products?.sellers?.name || 'Unknown Brand',
+            brandImage: video.seller_photo_url
+          }))
+          
+          this.total = response.total || response.meta?.total || items.length
+          this.currentPage = page
+          await this.fetchFiltersOptions()
+        } else {
+          throw new Error('Invalid response format')
+        }
       } catch (error) {
-        console.error('Error fetching videos:', error)
+        console.error('Error in fetchVideos:', error)
+        this.error = error.message || 'Failed to load videos'
+        this.videos = []
+        this.total = 0
       } finally {
         this.loading = false
       }
     },
-    goToVideoDetail(videoId) {
-      this.$router.push(`/videos/${videoId}`)
+    goToVideoDetail(video) {
+      // 阻止事件冒泡，避免触发选择事件
+      event?.stopPropagation()
+      
+      if (video && video.id) {
+        this.$router.push({
+          name: 'VideoDetail',
+          params: { id: video.id }
+        })
+      }
     },
     prevPage() {
       if (this.currentPage > 1) {
-        this.currentPage--
-        this.fetchVideos()
+        const newPage = this.currentPage - 1
+        this.fetchVideos(newPage)
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        this.fetchVideos()
+        const newPage = this.currentPage + 1
+        this.fetchVideos(newPage)
       }
     },
     searchVideos() {
-      this.currentPage = 1
-      this.fetchVideos()
+      this.fetchVideos(1)
     },
     getTimeAgo(date) {
       if (!date) return 'Unknown date'
@@ -480,40 +597,108 @@ export default {
     },
     goToPage(page) {
       if (page !== this.currentPage) {
-        this.currentPage = page
-        this.fetchVideos()
+        console.log('Going to page:', page)
+        this.fetchVideos(page)
       }
     },
     // 应用筛选条件
     applyFilters() {
-      this.currentPage = 1 // 重置到第一页
       this.fetchVideos(1, true)
     },
     // 搜索处理
     handleSearch: debounce(function() {
-      this.currentPage = 1
       this.fetchVideos(1)
-    }, 300)
+    }, 300),
+    // 处理视频选择
+    handleVideoSelect(video, event) {
+      // 阻止点击事件冒泡，避免触发行点击事件
+      event.stopPropagation()
+      
+      const index = this.selectedVideos.findIndex(v => v.id === video.id)
+      if (index === -1) {
+        this.selectedVideos.push(video)
+        // 如果创建者还没有被选中，添加到选中列表
+        if (!this.selectedCreators.includes(video.creator)) {
+          this.selectedCreators.push(video.creator)
+        }
+      } else {
+        this.selectedVideos.splice(index, 1)
+        // 检查是否需要从创建者列表中移除
+        const hasOtherVideos = this.selectedVideos.some(v => v.creator === video.creator)
+        if (!hasOtherVideos) {
+          const creatorIndex = this.selectedCreators.indexOf(video.creator)
+          if (creatorIndex !== -1) {
+            this.selectedCreators.splice(creatorIndex, 1)
+          }
+        }
+      }
+    },
+    // 打开导出模态框
+    openExportModal() {
+      if (this.selectedCreators.length === 0) {
+        alert('Please select at least one video first')
+        return
+      }
+      this.showExportModal = true
+    },
+    // 关闭导出模态框
+    closeExportModal() {
+      this.showExportModal = false
+    },
+    // 清除选择
+    clearSelection() {
+      this.selectedVideos = []
+      this.selectedCreators = []
+    },
+    // 修改全选方法
+    selectAll(event) {
+      const isChecked = event.target.checked
+      
+      // 先获取当前页的所有视频ID
+      const currentPageVideoIds = this.videos.map(video => video.id)
+      
+      if (isChecked) {
+        // 选中当前页所有视频
+        this.videos.forEach(video => {
+          // 如果视频还没有被选中，则添加到选中列表
+          if (!this.selectedVideos.some(v => v.id === video.id)) {
+            this.selectedVideos.push(video)
+            // 如果创建者还没有被选中，添加到选中列表
+            if (!this.selectedCreators.includes(video.creator)) {
+              this.selectedCreators.push(video.creator)
+            }
+          }
+        })
+      } else {
+        // 只取消选中当前页的视频
+        this.selectedVideos = this.selectedVideos.filter(video => 
+          !currentPageVideoIds.includes(video.id)
+        )
+        
+        // 更新创建者列表
+        this.selectedCreators = []
+        this.selectedVideos.forEach(video => {
+          if (!this.selectedCreators.includes(video.creator)) {
+            this.selectedCreators.push(video.creator)
+          }
+        })
+      }
+    }
   },
   created() {
-    this.fetchVideos()
+    this.fetchVideos(1)
   },
   watch: {
     searchQuery(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.currentPage = 1
-        this.fetchVideos()
+        this.fetchVideos(1)
       }
     },
     'filters': {
       deep: true,
       handler() {
-        this.currentPage = 1
-        this.fetchVideos()
+        this.fetchVideos(1)
       }
-      },
-    currentPage(newPage) {
-      this.fetchVideos()
     }
   }
 }
@@ -559,7 +744,7 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
-/* 修改 tooltip 样式 */
+/* 修改 tooltip 式 */
 [title] {
   position: relative;
 }
@@ -589,7 +774,7 @@ button {
   cursor: pointer;
 }
 
-/* 移除默认的 title 示框 */
+/* 移除默认的 title 框 */
 [title] {
   pointer-events: none;
 }

@@ -7,6 +7,11 @@
 
     <!-- 产品列表表格 -->
     <div class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
+      <!-- 添加loading遮罩 -->
+      <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+        <div class="text-primary-600">Loading...</div>
+      </div>
+      
       <table class="w-full caption-bottom text-sm">
         <!-- 表头 -->
         <thead class="[&_tr]:border-b">
@@ -106,91 +111,16 @@
 </template>
 
 <script>
+import { get_product_list } from '@/api/euka_api_product.js'
+
 export default {
   name: 'Products',
   data() {
     return {
-      products: [
-        {
-          id: 1,
-          name: '15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules',
-          price: 13.99,
-          soldCount: 2309886,
-          image: 'https://picsum.photos/200/200?random=1'
-        },
-        {
-          id: 2,
-          name: 'GuruNanda Cocomint Pulling Oil with 7 Essential Oils & Vitamins D, E & K2 - 8 oz',
-          price: 10.99,
-          soldCount: 1853174,
-          image: 'https://picsum.photos/200/200?random=2'
-        },
-        {
-          id: 3,
-          name: 'Car Air Freshener Diffusers',
-          price: 3.99,
-          soldCount: 1091222,
-          image: 'https://picsum.photos/200/200?random=3'
-        },
-        {
-          id: 4,
-          name: 'LIP LINER STAY-N - Peel-Off Lip Liner Stain - Lasts All Day & Night Eyeliner Lipliner',
-          price: 8.96,
-          soldCount: 1041933,
-          image: 'https://picsum.photos/200/200?random=4'
-        },
-        {
-          id: 5,
-          name: 'Micro Ingredients Multi Collagen Peptides Powder',
-          price: 30.02,
-          soldCount: 966853,
-          image: 'https://picsum.photos/200/200?random=5'
-        },
-        {
-          id: 6,
-          name: 'Scented Car Air Freshener - Long Lasting Car Diffuser',
-          price: 3.60,
-          soldCount: 960335,
-          image: 'https://picsum.photos/200/200?random=6'
-        },
-        {
-          id: 7,
-          name: '(NEW) BODY GLAZE: Pick your favorite scent!',
-          price: 25.00,
-          soldCount: 933760,
-          image: 'https://picsum.photos/200/200?random=7'
-        },
-        {
-          id: 8,
-          name: 'Unbrush Detangling Hair Brush by FHI Heat',
-          price: 13.50,
-          soldCount: 927477,
-          image: 'https://picsum.photos/200/200?random=8'
-        },
-        {
-          id: 9,
-          name: 'Goli Ashwagandha & Vitamin D Gummy',
-          price: 13.96,
-          soldCount: 910377,
-          image: 'https://picsum.photos/200/200?random=9'
-        },
-        {
-          id: 10,
-          name: 'Upholstery Deodorizer (16 oz.) Household Scented',
-          price: 6.00,
-          soldCount: 900436,
-          image: 'https://picsum.photos/200/200?random=10'
-        },
-        {
-          id: 11,
-          name: 'Premium Essential Oil Diffuser Set',
-          price: 29.99,
-          soldCount: 895420,
-          image: 'https://picsum.photos/200/200?random=11'
-        }
-      ],
+      products: [],
       currentPage: 1,
-      pageSize: 10
+      pageSize: 10,
+      loading: false
     }
   },
   computed: {
@@ -236,24 +166,52 @@ export default {
     }
   },
   methods: {
-    changePage(page) {
+    async fetchProducts() {
+      try {
+        this.loading = true
+        const response = await get_product_list(this.currentPage, this.pageSize)
+        
+        const data = await response.json()
+        
+        if (response.status === 200 && data.data) {
+          this.products = data.data.map(item => ({
+            id: item.product_id,
+            name: item.title,
+            price: item.real_price,
+            soldCount: item.sold_count,
+            image: item.product_url
+          }))
+        }
+      } catch (error) {
+        console.error('获取产品数据失败:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+    async changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page
+        await this.fetchProducts()
       }
     },
-    prevPage() {
+    async prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--
+        await this.fetchProducts()
       }
     },
-    nextPage() {
+    async nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++
+        await this.fetchProducts()
       }
     },
     viewProductDetail(product) {
       this.$router.push(`/products/${product.id}`)
     }
+  },
+  created() {
+    this.fetchProducts()
   }
 }
 </script>

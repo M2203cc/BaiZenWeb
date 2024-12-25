@@ -6,6 +6,7 @@ import ProductDetail from '../views/ProductDetail.vue'
 import Brands from '../views/Brands.vue'
 import BrandDetail from '../views/BrandDetail.vue'
 import CategoryDetail from '../views/CategoryDetail.vue'
+import VideoDetail from '../views/VideoDetail.vue'
 
 const routes = [
   {
@@ -59,7 +60,8 @@ const routes = [
   {
     path: '/videos/:id',
     name: 'VideoDetail',
-    component: () => import('../views/VideoDetail.vue')
+    component: VideoDetail,
+    props: true
   },
   {
     path: '/products/:id',

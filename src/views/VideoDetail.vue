@@ -137,25 +137,40 @@
           </div>
 
           <!-- 下半部分：Audience Demographics -->
-          <div v-if="demographics" class="mt-16">
+          <div class="mt-16">
             <h2 class="text-2xl font-bold mb-8">Audience Demographics</h2>
             <div class="grid grid-cols-3 gap-8">
               <!-- Gender Distribution -->
-              <div class="p-6 rounded-xl">
-                <h3 class="text-lg font-semibold mb-6 text-center text-gray-800">Gender</h3>
-                <v-chart class="h-[250px]" :option="genderChartOption" autoresize />
+              <div class="text-center">
+                <h3 class="text-lg font-semibold mb-6">Gender</h3>
+                <v-chart 
+                  class="h-[250px]" 
+                  :option="genderChartOption" 
+                  :loading="!demographics?.gender"
+                  autoresize 
+                />
               </div>
 
               <!-- Age Distribution -->
-              <div class="p-6 rounded-xl">
-                <h3 class="text-lg font-semibold mb-6 text-center text-gray-800">Age</h3>
-                <v-chart class="h-[250px]" :option="ageChartOption" autoresize />
+              <div class="text-center">
+                <h3 class="text-lg font-semibold mb-6">Age</h3>
+                <v-chart 
+                  class="h-[250px]" 
+                  :option="ageChartOption" 
+                  :loading="!demographics?.age"
+                  autoresize 
+                />
               </div>
 
               <!-- Top Locations -->
-              <div class="p-6 rounded-xl">
-                <h3 class="text-lg font-semibold mb-6 text-center text-gray-800">Top 5 Locations</h3>
-                <v-chart class="h-[250px]" :option="locationChartOption" autoresize />
+              <div class="text-center">
+                <h3 class="text-lg font-semibold mb-6">Top 5 Locations</h3>
+                <v-chart 
+                  class="h-[250px]" 
+                  :option="locationChartOption" 
+                  :loading="!demographics?.locations"
+                  autoresize 
+                />
               </div>
             </div>
           </div>
@@ -167,8 +182,28 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { use } from 'echarts/core'
+import { PieChart, BarChart } from 'echarts/charts'
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import VChart from 'vue-echarts'
 import videoAPI from '../services/videoAPI'
+
+// 注册必要的组件
+use([
+  PieChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  CanvasRenderer
+])
 
 export default defineComponent({
   name: 'VideoDetail',
@@ -194,11 +229,52 @@ export default defineComponent({
     genderChartOption() {
       if (!this.demographics?.gender) return {}
       
-      const data = Object.entries(this.demographics.gender).map(([key, value]) => ({
-        name: key.charAt(0).toUpperCase() + key.slice(1),
-        value: value,
+      const data = [
+        { name: 'Female', value: this.demographics.gender.female },
+        { name: 'Male', value: this.demographics.gender.male }
+      ]
+      
+      return {
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}: {c}%'
+        },
+        legend: {
+          orient: 'horizontal',
+          bottom: '0',
+          icon: 'circle',
+          textStyle: { color: '#666' }
+        },
+        series: [{
+          type: 'pie',
+          radius: ['40%', '60%'],
+          center: ['50%', '40%'],
+          data: data.map(item => ({
+            ...item,
+            itemStyle: {
+              color: item.name === 'Female' ? '#FF85C0' : '#5B8FF9',
+              borderWidth: 0
+            }
+          })),
+          label: { show: false }
+        }]
+      }
+    },
+    
+    // 年龄分布图表配置
+    ageChartOption() {
+      if (!this.demographics?.age) return {}
+      
+      const ageOrder = ['18-24', '25-34', '35-44', '45-54', '55+']
+      const colors = ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F']
+      
+      const data = ageOrder.map((age, index) => ({
+        name: age,
+        value: Number(this.demographics.age[age] || 0),
         itemStyle: { 
-          color: key === 'female' ? '#FF85C0' : '#5B8FF9' 
+          color: colors[index],
+          borderWidth: 0
         }
       }))
       
@@ -211,44 +287,15 @@ export default defineComponent({
         legend: {
           orient: 'horizontal',
           bottom: '0',
-          icon: 'circle'
+          icon: 'circle',
+          textStyle: { color: '#666' }
         },
         series: [{
           type: 'pie',
           radius: ['40%', '60%'],
           center: ['50%', '40%'],
-          data: data
-        }]
-      }
-    },
-    
-    // 年龄分布图表配置
-    ageChartOption() {
-      if (!this.demographics?.age) return {}
-      
-      const colors = ['#5B8FF9', '#5AD8A6', '#FFD666', '#FF9F7F', '#8B7CE1']
-      const data = Object.entries(this.demographics.age).map(([key, value], index) => ({
-        name: key,
-        value: value,
-        itemStyle: { color: colors[index % colors.length] }
-      }))
-      
-      return {
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}: {c}%'
-        },
-        legend: {
-          orient: 'horizontal',
-          bottom: '0',
-          icon: 'circle'
-        },
-        series: [{
-          type: 'pie',
-          radius: ['40%', '60%'],
-          center: ['50%', '40%'],
-          data: data
+          data: data,
+          label: { show: false }
         }]
       }
     },
@@ -258,12 +305,8 @@ export default defineComponent({
       if (!this.demographics?.locations) return {}
       
       const locationData = Object.entries(this.demographics.locations)
-        .sort((a, b) => b[1] - a[1])
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
         .slice(0, 5)
-        .map(([name, value]) => ({
-          name,
-          value
-        }))
       
       return {
         backgroundColor: 'transparent',
@@ -271,37 +314,42 @@ export default defineComponent({
           trigger: 'axis',
           axisPointer: { type: 'shadow' }
         },
-        legend: {
-          show: false
-        },
         grid: {
-          left: '15%',
-          right: '15%',
-          bottom: '10%',
-          top: '5%'
+          top: '5%',
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
         },
         xAxis: {
           type: 'value',
-          axisLabel: { formatter: '{value}%' },
-          splitLine: { show: false }
+          axisLabel: { 
+            formatter: '{value}%',
+            color: '#666'
+          },
+          splitLine: { show: false },
+          axisLine: { show: false }
         },
         yAxis: {
           type: 'category',
-          data: locationData.map(item => item.name),
+          data: locationData.map(([name]) => name),
           axisLine: { show: false },
-          axisTick: { show: false }
+          axisTick: { show: false },
+          axisLabel: { color: '#666' }
         },
         series: [{
           type: 'bar',
-          data: locationData.map(item => ({
-            value: item.value,
+          data: locationData.map(([_, value]) => ({
+            value: Number(value),
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
                 { offset: 0, color: '#1890FF' },
                 { offset: 1, color: '#36CBCB' }
-              ])
+              ]),
+              borderWidth: 0
             }
-          }))
+          })),
+          barWidth: '60%'
         }]
       }
     },
@@ -339,20 +387,33 @@ export default defineComponent({
     async fetchVideoDetails() {
       try {
         this.loading = true
+        this.error = null
+        
         const videoId = this.$route.params.id
+        if (!videoId) {
+          throw new Error('Video ID is required')
+        }
+
+        // 获取视频详情
         const response = await videoAPI.getVideoDetails(videoId)
         
         if (response && response.data) {
           this.video = {
-            id: response.data.video_id,
-            creator: response.data.creators?.handle,
-            thumbnail: response.data.thumbnail_url,
-            postedTime: this.getTimeAgo(response.data.posted_date),
-            views: response.data.views_count,
-            likes: response.data.likes_count,
-            description: response.data.description,
-            product: response.data.seller_products?.title,
-            brand: response.data.seller_products?.sellers?.name
+            id: response.data.id || response.data.video_id,
+            thumbnail: response.data.thumbnail_url || response.data.cover_image_url,
+            creator: response.data.creators?.handle || 'Unknown Creator',
+            creatorAvatar: response.data.creator_profile_url,
+            views: response.data.views_count || response.data.stats?.play_count || 0,
+            likes: response.data.likes_count || response.data.stats?.digg_count || 0,
+            description: response.data.description || 'No description',
+            postedTime: this.getTimeAgo(response.data.posted_date || response.data.create_time || response.data.created_at),
+            product: response.data.seller_products?.title || 'Unknown Product',
+            productImage: response.data.seller_product_photo_url,
+            brand: response.data.seller_products?.sellers?.name || 'Unknown Brand',
+            brandImage: response.data.seller_photo_url,
+            follower_genders: response.data.follower_genders || {},
+            follower_ages: response.data.follower_ages || {},
+            follower_locations: response.data.follower_locations || {}
           }
 
           // 处理 insights 数据
@@ -364,31 +425,30 @@ export default defineComponent({
               transcript: response.data.analysis_json.transcript || ''
             }
           }
-        } else {
-          throw new Error('Invalid response format')
-        }
 
-        // 获取人口统计数据
-        const demographicsResponse = await videoAPI.getVideoDemographics(videoId)
-        if (demographicsResponse && demographicsResponse.data) {
-          this.demographics = {
-            gender: {
-              female: Number(demographicsResponse.data.follower_genders?.female || 0),
-              male: Number(demographicsResponse.data.follower_genders?.male || 0)
-            },
-            age: Object.entries(demographicsResponse.data.follower_ages || {}).reduce((acc, [key, value]) => {
-              acc[key] = Number(value)
-              return acc
-            }, {}),
-            locations: Object.entries(demographicsResponse.data.follower_locations || {}).reduce((acc, [key, value]) => {
-              acc[key] = Number(value)
-              return acc
-            }, {})
+          // 获取人口统计数据
+          try {
+            const demographicsResponse = await videoAPI.getVideoDemographics(videoId)
+            console.log('Demographics response:', demographicsResponse)
+            
+            if (demographicsResponse && demographicsResponse.data) {
+              this.demographics = {
+                gender: {
+                  female: Number(demographicsResponse.data.follower_genders?.female || 0),
+                  male: Number(demographicsResponse.data.follower_genders?.male || 0)
+                },
+                age: demographicsResponse.data.follower_ages || {},
+                locations: demographicsResponse.data.follower_locations || {}
+              }
+            }
+          } catch (demoError) {
+            console.error('Error fetching demographics:', demoError)
+            this.demographics = null
           }
         }
       } catch (error) {
         console.error('Error fetching video details:', error)
-        this.error = 'Failed to load video details'
+        this.error = error.message || 'Failed to load video details'
       } finally {
         this.loading = false
       }
