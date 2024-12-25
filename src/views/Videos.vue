@@ -209,51 +209,73 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="videos.length > 0" class="mt-4 flex justify-between items-center">
-      <!-- 显示结果数量 -->
+    <div class="mt-4 flex justify-between items-center">
+      <!-- 左侧显示结果数量 -->
       <div class="text-sm text-gray-700">
-        Showing {{ startIndex }} to {{ Math.min(endIndex, total) }} of {{ total }}
+        Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, total) }} of {{ total }} results
       </div>
 
-      <!-- 分页按钮容器 - 居中 -->
+      <!-- 中间分页按钮 -->
       <div class="flex-1 flex justify-center">
         <div class="flex items-center space-x-1">
-          <!-- 上一页按钮 -->
-          <button 
-            @click="prevPage"
+          <button
+            @click="goToPage(1)"
             :disabled="currentPage === 1"
-            class="px-2 py-1 text-gray-600 hover:text-primary-600"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === 1
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1] disabled:text-gray-300'
+            ]"
           >
-            <span class="text-sm">‹</span>
+            1
           </button>
 
-          <!-- 页码按钮 -->
-          <template v-for="n in displayedPages" :key="n">
-            <button 
-              v-if="n !== '...'"
-              @click="goToPage(n)"
-              class="px-3 py-1 rounded"
-              :class="[
-                currentPage === n 
-                  ? 'bg-primary-500 text-white' 
-                  : 'text-gray-600 hover:text-primary-600'
-              ]"
-            >
-              {{ n }}
-            </button>
-            <span v-else class="px-2">...</span>
-          </template>
-
-          <!-- 下一页按钮 -->
-          <button 
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-2 py-1 text-gray-600 hover:text-primary-600"
+          <button
+            v-if="showLeftEllipsis"
+            class="px-3 py-1 text-sm text-gray-500"
           >
-            <span class="text-sm">›</span>
+            ...
+          </button>
+
+          <button
+            v-for="page in visiblePages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === page
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1]'
+            ]"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            v-if="showRightEllipsis"
+            class="px-3 py-1 text-sm text-gray-500"
+          >
+            ...
+          </button>
+
+          <button
+            v-if="totalPages > 1"
+            @click="goToPage(totalPages)"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === totalPages
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1]'
+            ]"
+          >
+            {{ totalPages }}
           </button>
         </div>
       </div>
+
+      <!-- 右侧空白区域，用于保持对称 -->
+      <div class="w-[250px]"></div>
     </div>
 
     <!-- Export Modal -->
@@ -317,7 +339,7 @@ export default {
       return Math.ceil(this.total / this.pageSize)
     },
     selectedInfluencers() {
-      // 将视频数据��换为导出所需格式
+      // 将视频数据换为导出所需格式
       return this.videos.map(video => ({
         handle: video.creators?.handle,
         // 可以添加其他需要段
@@ -367,41 +389,31 @@ export default {
       return this.filteredData.slice(start, end);
     },
 
-    displayedPages() {
-      const total = this.totalPages;
-      const current = this.currentPage;
-      let pages = [];
-
-      if (total <= 5) {
-        // 如果总页数小于等于5，显示所有页码
-      for (let i = 1; i <= total; i++) {
-          pages.push(i);
-        }
-      } else {
-        // 总页数大于5的情况
-        if (current <= 3) {
-          // 在前几页时显示: 1 2 3 4 ... n
-          pages = [1, 2, 3, 4, '...', total];
-        } else if (current >= total - 2) {
-          // 在后几页时显示: 1 ... n-3 n-2 n-1 n
-          pages = [1, '...', total - 3, total - 2, total - 1, total];
-        } else {
-          // 在中间页时显示: 1 ... current-1 current current+1 current+2 ... n
-          pages = [
-            1,
-            '...',
-            current - 1,
-            current,
-            current + 1,
-            current + 2,
-            '...',
-            total
-          ];
-        }
+    visiblePages() {
+      let start = Math.max(2, this.currentPage - 2)
+      let end = Math.min(this.totalPages - 1, start + 4)
+      
+      // 调整起始位置，确保始终显示5个页码
+      if (end - start + 1 < 5) {
+        start = Math.max(2, end - 4)
       }
-
-      return pages;
+      
+      const pages = []
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+      return pages
     },
+
+    showLeftEllipsis() {
+      return this.visiblePages.length > 0 && this.visiblePages[0] > 2
+    },
+
+    showRightEllipsis() {
+      return this.visiblePages.length > 0 && 
+             this.visiblePages[this.visiblePages.length - 1] < this.totalPages - 1
+    },
+
     hasSelectedVideos() {
       return this.selectedVideos.length > 0
     },
@@ -482,8 +494,7 @@ export default {
         this.productOptions = Array.from(products)
       }
     },
-    async fetchVideos(page = 1, applyFilters = false) {
-      console.log('Fetching videos for page:', page)
+    async fetchVideos(page = 1) {
       try {
         this.loading = true
         this.error = null
@@ -500,14 +511,10 @@ export default {
           params.search = this.searchQuery.trim()
         }
         
-        if (applyFilters) {
-          if (this.filters.brand) params.brand = this.filters.brand
-          if (this.filters.product) params.product = this.filters.product
-          if (this.filters.viewCount) params.viewCount = this.filters.viewCount
-        }
-
-        // 添加一个小延迟，确保旧数据被清除
-        await new Promise(resolve => setTimeout(resolve, 50))
+        // 添加筛选条件
+        if (this.filters.brand) params.brand = this.filters.brand
+        if (this.filters.product) params.product = this.filters.product
+        if (this.filters.viewCount) params.viewCount = this.filters.viewCount
 
         const response = await videoAPI.getVideos(params)
         console.log('API Response for page:', page, response)
@@ -534,7 +541,6 @@ export default {
           
           this.total = response.total || response.meta?.total || items.length
           this.currentPage = page
-          await this.fetchFiltersOptions()
         } else {
           throw new Error('Invalid response format')
         }
@@ -597,7 +603,6 @@ export default {
     },
     goToPage(page) {
       if (page !== this.currentPage) {
-        console.log('Going to page:', page)
         this.fetchVideos(page)
       }
     },

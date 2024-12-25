@@ -93,7 +93,7 @@
     </div>
 
     <!-- Videos Section -->
-    <div>
+    <div class="mb-8">
       <div class="flex justify-between">
         <h2 class="text-2xl font-bold text-gray-900">Videos featuring this product</h2>
         <div class="flex items-center gap-4">
@@ -199,7 +199,19 @@
       </div>
     </div>
 
-    <!-- 添加创建列表模态框 -->
+    <!-- Demographics Charts -->
+    <div class="mt-8">
+      <CreatorDemographics 
+        :data="creatorDemographics" 
+        class="mb-8"
+      />
+      <AudienceDemographics 
+        :data="audienceDemographics" 
+        class="mb-8"
+      />
+    </div>
+
+    <!-- Modal -->
     <div v-if="showCreateListModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-[500px]">
         <div class="flex justify-between items-center mb-4">
@@ -242,8 +254,15 @@
 </template>
 
 <script>
+import CreatorDemographics from '../components/CreatorDemographics.vue'
+import AudienceDemographics from '../components/AudienceDemographics.vue'
+
 export default {
   name: 'BrandDetail',
+  components: {
+    CreatorDemographics,
+    AudienceDemographics
+  },
   props: {
     id: {
       type: [String, Number],
@@ -259,7 +278,39 @@ export default {
       products: [],
       videos: [],
       showCreateListModal: false,
-      listName: ''
+      listName: '',
+      creatorDemographics: {
+        gender: {
+          female: 90,
+          male: 10
+        },
+        language: {
+          english: 85,
+          french: 5,
+          spanish: 7,
+          other: 3
+        }
+      },
+      audienceDemographics: {
+        gender: {
+          female: 75,
+          male: 25
+        },
+        age: {
+          '18-24': 30,
+          '25-34': 35,
+          '35-44': 20,
+          '45-54': 10,
+          '55+': 5
+        },
+        locations: [
+          { name: 'Texas', value: 30 },
+          { name: 'California', value: 25 },
+          { name: 'Florida', value: 20 },
+          { name: 'New York', value: 15 },
+          { name: 'Georgia', value: 10 }
+        ]
+      }
     }
   },
   created() {
