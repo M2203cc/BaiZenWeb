@@ -1,5 +1,6 @@
 import requests
 import json
+from typing import List, Query
 
 # 定义一个函数来格式化响应数据
 def print_response(response):
@@ -62,16 +63,83 @@ def get_video_detail(video_id):
 
 def get_video_demographics(video_id):
     """获取视频人口统计数据"""
-    params = {
-        'video-ids': str(video_id),
-    }
-    response = requests.get(
-        'https://app.euka.ai/api/content-analysis/demographics',
-        params=params,
-        cookies=cookies,
-        headers=headers
-    )
-    return response
+    try:
+        params = {
+            'video-ids': str(video_id),
+        }
+        response = requests.get(
+            'https://app.euka.ai/api/content-analysis/demographics',
+            params=params,
+            cookies=cookies,
+            headers=headers
+        )
+        response.raise_for_status()
+        return response
+    except Exception as e:
+        print(f"获取人口统计数据时发生错误: {str(e)}")
+        raise
+
+@router.get("/videos")
+async def get_videos(
+    page: int = 1,
+    page_size: int = 10,
+    search: str = None,
+    views_min: int = None,
+    views_max: int = None,
+    likes_min: int = None, 
+    likes_max: int = None,
+    posted_after: str = None,
+    posted_before: str = None,
+    brands: List[str] = Query(None),
+    products: List[str] = Query(None)
+):
+    query = videos_collection.find()
+    
+    # 构建查询条件
+    filter_conditions = {}
+    
+    # 搜索条件
+    if search:
+        filter_conditions["$or"] = [
+            {"description": {"$regex": search, "$options": "i"}},
+            {"creator": {"$regex": search, "$options": "i"}},
+            {"brand": {"$regex": search, "$options": "i"}},
+            {"product": {"$regex": search, "$options": "i"}}
+        ]
+    
+    # 浏览量范围
+    if views_min or views_max:
+        filter_conditions["views_count"] = {}
+        if views_min:
+            filter_conditions["views_count"]["$gte"] = views_min
+        if views_max:
+            filter_conditions["views_count"]["$lte"] = views_max
+            
+    # 点赞数范围
+    if likes_min or likes_max:
+        filter_conditions["likes_count"] = {}
+        if likes_min:
+            filter_conditions["likes_count"]["$gte"] = likes_min
+        if likes_max:
+            filter_conditions["likes_count"]["$lte"] = likes_max
+            
+    # 发布时间范围
+    if posted_after or posted_before:
+        filter_conditions["posted_date"] = {}
+        if posted_after:
+            filter_conditions["posted_date"]["$gte"] = posted_after
+        if posted_before:
+            filter_conditions["posted_date"]["$lte"] = posted_before
+            
+    # 品牌和产品筛选
+    if brands:
+        filter_conditions["seller_products.sellers.name"] = {"$in": brands}
+    if products:
+        filter_conditions["seller_products.title"] = {"$in": products}
+    
+    # 应用筛选条件
+    if filter_conditions:
+        query = query.find(filter_conditions)
 
 if __name__ == '__main__':
     # 1. 获取视频列表
@@ -79,20 +147,27 @@ if __name__ == '__main__':
     video_list_response = get_video_list()
     print_response(video_list_response)
     
-    # 如果成功获取视频列表，获取第一个视频的详细信息
     try:
-        video_id = video_list_response.json()['data'][0]['id']
+        # 获取所有视频数据
+        videos = video_list_response.json()['data']
         
-        # 2. 获取特定视频详情
-        print("\n获取视频详情：")
-        video_detail_response = get_video_detail(video_id)
-        print_response(video_detail_response)
-        
-        # 3. 获取视频人口统计数据
-        print("\n获取视频人口统计数据：")
-        demographics_response = get_video_demographics(video_id)
-        print_response(demographics_response)
-        
+        # 遍历每个视频
+        for video in videos:
+            video_id = video['video_id']
+            print(f"\n处理视频 ID: {video_id}")
+            
+            # 2. 获取特定视频详情
+            print("\n获取视频详情：")
+            video_detail_response = get_video_detail(video_id)
+            print_response(video_detail_response)
+            
+            # 3. 获取视频人口统计数据
+            print("\n获取视频人口统计数据：")
+            demographics_response = get_video_demographics(video_id)
+            print_response(demographics_response)
+            
+            print("\n" + "="*50 + "\n")  # 分隔线
+            
     except Exception as e:
         print(f"发生错误: {str(e)}") 
 

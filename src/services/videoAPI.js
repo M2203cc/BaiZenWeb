@@ -60,6 +60,11 @@ const videoAPI = {
         },
         withCredentials: true
       });
+      
+      if (!response.data) {
+        throw new Error('No demographics data received');
+      }
+      
       return response.data;
     } catch (error) {
       console.error('Error fetching video demographics:', error);

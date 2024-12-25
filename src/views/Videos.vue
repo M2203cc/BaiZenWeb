@@ -95,9 +95,9 @@
           <tbody class="[&_tr:last-child]:border-0">
           <tr 
             v-for="video in filteredVideos" 
-                :key="video.id" 
-                class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-            @click="goToVideoDetail(video.id)"
+            :key="video.video_id"
+            class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
+            @click="goToVideoDetail(video.video_id)"
             >
               <td class="py-3 px-2 align-middle">
               <div class="flex items-center gap-3">
@@ -277,7 +277,7 @@ export default {
       return Math.ceil(this.total / this.pageSize)
     },
     selectedInfluencers() {
-      // 将视频数据转换为导出所需的格式
+      // 将视频数据转换为导出所需格式
       return this.videos.map(video => ({
         handle: video.creators?.handle,
         // 可以添加其他需要段
@@ -406,39 +406,34 @@ export default {
         this.productOptions = Array.from(products)
       }
     },
-    async fetchVideos() {
+    async fetchVideos(page = 1, applyFilters = false) {
       try {
         this.loading = true
-        this.error = null
+        const params = {
+          page,
+          page_size: 10,
+          search: this.searchQuery || undefined
+        }
         
-        if (this.fetchTimer) {
-          clearTimeout(this.fetchTimer)
+        // 添加筛选条件到请求参数
+        if (applyFilters) {
+          if (this.filters.views.min) params.views_min = this.filters.views.min
+          if (this.filters.views.max) params.views_max = this.filters.views.max
+          if (this.filters.likes.min) params.likes_min = this.filters.likes.min
+          if (this.filters.likes.max) params.likes_max = this.filters.likes.max
+          if (this.filters.dateRange.start) params.posted_after = this.filters.dateRange.start
+          if (this.filters.dateRange.end) params.posted_before = this.filters.dateRange.end
+          if (this.filters.brands.length) params.brands = this.filters.brands
+          if (this.filters.products.length) params.products = this.filters.products
         }
 
-        this.fetchTimer = setTimeout(async () => {
-          const response = await videoAPI.getVideos(
-            this.currentPage,
-            this.pageSize,
-            {
-              search: this.searchQuery,
-              ...this.filters
-            }
-          )
-          
-          if (response && response.data) {
-            this.videos = response.data
-            this.total = response.total || response.data.length
-            await this.fetchFiltersOptions()
-          } else {
-            throw new Error('Invalid response format')
-          }
-          this.loading = false
-        }, 300)
-
+        const response = await videoAPI.getVideos(params)
+        this.videos = response.data.items
+        this.totalPages = response.data.total_pages
+        this.currentPage = page
       } catch (error) {
-        console.error('Failed to fetch videos:', error)
-        this.error = 'Failed to load videos. Please try again later.'
-        this.videos = []
+        console.error('Error fetching videos:', error)
+      } finally {
         this.loading = false
       }
     },
@@ -488,7 +483,17 @@ export default {
         this.currentPage = page
         this.fetchVideos()
       }
-    }
+    },
+    // 应用筛选条件
+    applyFilters() {
+      this.currentPage = 1 // 重置到第一页
+      this.fetchVideos(1, true)
+    },
+    // 搜索处理
+    handleSearch: debounce(function() {
+      this.currentPage = 1
+      this.fetchVideos(1)
+    }, 300)
   },
   created() {
     this.fetchVideos()

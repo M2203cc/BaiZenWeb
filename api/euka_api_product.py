@@ -85,27 +85,60 @@ def get_product_videos(product_id, page=1, page_size=10, start_date=None, end_da
     return response
 
 if __name__ == '__main__':
-    # 示例使用
-    print("获取产品列表：")
-    product_list_response = get_product_list()
-    print_response(product_list_response)
-    
     try:
-        # 获取第一个产品的ID
-        product_id = product_list_response.json()['data'][0]['id']
+        # 1. 获取产品列表
+        print("获取产品列表：")
+        product_list_response = get_product_list()
+        print_response(product_list_response)
         
-        print("\n获取产品详情：")
-        product_detail_response = get_product_detail(product_id)
-        print_response(product_detail_response)
-        
-        print("\n获取产品人口统计：")
-        demographics_response = get_product_demographics(product_id)
-        print_response(demographics_response)
-        
-        print("\n获取产品相关视频：")
-        videos_response = get_product_videos(product_id)
-        print_response(videos_response)
-        
+        # 确保响应成功并包含数据
+        if product_list_response.status_code == 200:
+            products_data = product_list_response.json()
+            
+            if 'data' in products_data and products_data['data']:
+                # 遍历每个产品
+                for product in products_data['data']:
+                    # 使用正确的 ID 字段
+                    product_id = product.get('product_id')  # 或者根据实际返回数据结构调整
+                    
+                    if product_id:
+                        print(f"\n处理产品 ID: {product_id}")
+                        
+                        # 2. 获取产品详情
+                        print("\n获取产品详情：")
+                        product_detail_response = get_product_detail(product_id)
+                        if product_detail_response.status_code == 200:
+                            print_response(product_detail_response)
+                        else:
+                            print(f"获取产品详情失败: {product_detail_response.status_code}")
+                        
+                        # 3. 获取产品人口统计
+                        print("\n获取产品人口统计：")
+                        demographics_response = get_product_demographics(product_id)
+                        if demographics_response.status_code == 200:
+                            print_response(demographics_response)
+                        else:
+                            print(f"获取人口统计失败: {demographics_response.status_code}")
+                        
+                        # 4. 获取产品相关视频
+                        print("\n获取产品相关视频：")
+                        videos_response = get_product_videos(product_id)
+                        if videos_response.status_code == 200:
+                            print_response(videos_response)
+                        else:
+                            print(f"获取相关视频失败: {videos_response.status_code}")
+                        
+                        print("\n" + "="*50 + "\n")  # 分隔线
+                    else:
+                        print(f"产品数据中未找到有效的 ID: {product}")
+            else:
+                print("产品列表为空或格式不正确")
+        else:
+            print(f"获取产品列表失败: {product_list_response.status_code}")
+            
     except Exception as e:
         print(f"发生错误: {str(e)}")
+        # 打印更详细的错误信息
+        import traceback
+        print(traceback.format_exc())
 
