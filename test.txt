@@ -1,1 +1,286 @@
-runoob.com
+{
+  "message": "get-product-videos:: Videos fetched successfully",
+  "data": [
+    {
+      "video_id": "7442724689773858078",
+      "posted_date": "2024-11-29T15:33:22+00:00",
+      "views_count": 34541888,
+      "likes_count": 445977,
+      "description": "Legit in shock with these halara new leggings! #halara #halaraeveryday #tiktokmademebuyit #fyp #plussizefashion #apronbelly #fyp ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": null,
+        "handle": "catshrank",
+        "uid_shop": "7494014591903106371"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729568240189804836"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7442724689773858078.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494014591903106371.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7426085085964733742",
+      "posted_date": "2024-10-15T19:22:56+00:00",
+      "views_count": 12386308,
+      "likes_count": 146478,
+      "description": "",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": null,
+        "handle": "jenn_lyles",
+        "uid_shop": "7494020363354539576"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729568240189804836"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7426085085964733742.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494020363354539576.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7446933410326629675",
+      "posted_date": "2024-12-10T23:45:05+00:00",
+      "views_count": 7744886,
+      "likes_count": 25988,
+      "description": "#halaraworkleisure #halaraworkpants ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "Audrymedia@gmail.com",
+        "handle": "audrymm",
+        "uid_shop": "7494001439796529369"
+      },
+      "seller_products": {
+        "title": "Halara Halara 2-Piece  Flex High Waisted Side Pocket Wide Leg Waffle Work Pants Set",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1730136758060290340"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7446933410326629675.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494001439796529369.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1730136758060290340.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7427624680418184479",
+      "posted_date": "2024-10-19T22:57:30+00:00",
+      "views_count": 6878532,
+      "likes_count": 44769,
+      "description": "🚨🚨 ON SALE FOR $24🚨🚨 grab yours! These are one of my fav pants & I swear by them @Halara_official #halarapants #halarawafflepants #halara #workpants #TikTokShop ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "Lizz.socialmedia@gmail.com",
+        "handle": "lizzmi45",
+        "uid_shop": "7494010514528896909"
+      },
+      "seller_products": {
+        "title": "Halara Flex High Waisted Plicated Side Pocket Wide Leg Waffle Work Pants",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729408758258766116"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7427624680418184479.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494010514528896909.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729408758258766116.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7423828035184413998",
+      "posted_date": "2024-10-09T17:24:26+00:00",
+      "views_count": 6346837,
+      "likes_count": 30878,
+      "description": "PSA‼️ @Halara_official #flashsale ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": null,
+        "handle": "loren_elizabeth55",
+        "uid_shop": "7494010320695035484"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729406821413261604"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7423828035184413998.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494010320695035484.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7427552518164499755",
+      "posted_date": "2024-10-19T18:17:18+00:00",
+      "views_count": 5472469,
+      "likes_count": 18843,
+      "description": "Some of the only leggings I will spend my money on anymore 👏🏻 #tummycontrol #tummycontrolleggings #csectionmom #mombelly #Halara #halaraleggings #highwaisted #highwaistedleggings #momapproved #midsizewomen @Halara ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "kaitilyndecker@gmail.com",
+        "handle": "kaitilyndecker",
+        "uid_shop": "7494009229416500178"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729406821413261604"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7427552518164499755.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494009229416500178.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7439086607564786990",
+      "posted_date": "2024-11-19T20:15:29+00:00",
+      "views_count": 5106800,
+      "likes_count": 99374,
+      "description": "Whelp. Ill take the halara butt lifting leggings in every color please! #halara #halaraeveryday #halaraleggings #leggings #workoutleggings #gymleggings #halarasocinched #tiktokshopblackfriday #tiktokshopcybermonday #tiktokshopholidayhaul ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "AndreaLemise.UGC@gmail.com",
+        "handle": "spacecadetmomma",
+        "uid_shop": "7494025737471165751"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729568240189804836"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7439086607564786990.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494025737471165751.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7420566487129165098",
+      "posted_date": "2024-09-30T22:27:56+00:00",
+      "views_count": 4343478,
+      "likes_count": 43012,
+      "description": "Replying to @TeresaCathleen333 these have paneling for booty scrunch that lift UP your booty! #halara #halaraleggings #plussizefits #plussizeleggings #tummycontrolleggings #plussizepants #plussizeootd #fyp #fashionfinds #plussizefinds #halaratiktokshop #tummycontrol #TikTokMadeMeBuyIt ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "c@dailynouri.com",
+        "handle": "influencedqueens",
+        "uid_shop": "7495307849358936654"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729406821413261604"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7420566487129165098.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495307849358936654.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7443523892259343647",
+      "posted_date": "2024-12-01T19:14:34+00:00",
+      "views_count": 3539257,
+      "likes_count": 3952,
+      "description": "🤯 How many leggings is too many leggings? Asking for a friend #halara #halaraeveryday #3packleggings #tiktokdeals #TikTokShop #fyp #midsize ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": "britlynshop@gmail.com",
+        "handle": "brittany_lynnnn",
+        "uid_shop": "7493996567902259724"
+      },
+      "seller_products": {
+        "title": "Halara 3-Piece SoCinched High Waisted Tummy Control Side Pocket Shaping Training Leggings Set",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1730030445959287076"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7443523892259343647.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7493996567902259724.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1730030445959287076.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    },
+    {
+      "video_id": "7438061738060451118",
+      "posted_date": "2024-11-17T01:58:26+00:00",
+      "views_count": 3122942,
+      "likes_count": 35619,
+      "description": "Whelp the halara butt lifting leggings do just that! @Halara you really nailed it with these leggings #halara #halaraleggings #halarareview #halaraeveryday #buttlifting #leggings #tiktokshopblackfriday #tiktokshopcybermonday #tiktokshopholidayhaul ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "creators": {
+        "email": null,
+        "handle": "on.trendz101",
+        "uid_shop": "7494952501031308103"
+      },
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729568240189804836"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7438061738060451118.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/default.png",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+    }
+  ],
+  "total": 13666
+}

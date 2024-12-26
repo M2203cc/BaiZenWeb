@@ -4,19 +4,19 @@
     <div class="grid grid-cols-3 gap-8">
       <div class="text-center">
         <h3 class="text-lg font-semibold mb-6">Gender</h3>
-        <div class="bg-white p-4 rounded-lg shadow h-[250px]">
+        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
           <Doughnut :data="genderData" :options="chartOptions" />
         </div>
       </div>
       <div class="text-center">
         <h3 class="text-lg font-semibold mb-6">Age</h3>
-        <div class="bg-white p-4 rounded-lg shadow h-[250px]">
+        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
           <Doughnut :data="ageData" :options="chartOptions" />
         </div>
       </div>
       <div class="text-center">
         <h3 class="text-lg font-semibold mb-6">Top 5 Locations</h3>
-        <div class="bg-white p-4 rounded-lg shadow h-[250px]">
+        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
           <Bar :data="locationData" :options="barOptions" />
         </div>
       </div>
@@ -62,45 +62,38 @@ export default {
       return {
         labels: ['Female', 'Male'],
         datasets: [{
-          data: [this.data.gender.female, this.data.gender.male],
+          data: [
+            parseFloat(this.data.gender.female || 0),
+            parseFloat(this.data.gender.male || 0)
+          ],
           backgroundColor: ['#FF85C0', '#5B8FF9']
         }]
       }
     },
     ageData() {
+      const ageRanges = ['18-24', '25-34', '35-44', '45-54', '55+']
       return {
-        labels: ['18-24', '25-34', '35-44', '45-54', '55+'],
+        labels: ageRanges,
         datasets: [{
-          data: [
-            this.data.age['18-24'],
-            this.data.age['25-34'],
-            this.data.age['35-44'],
-            this.data.age['45-54'],
-            this.data.age['55+']
-          ],
+          data: ageRanges.map(range => parseFloat(this.data.age[range] || 0)),
           backgroundColor: ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F']
         }]
       }
     },
     locationData() {
+      const locations = this.data.locations
+        .map(loc => ({
+          name: loc.name.split(' ')[0], // 只显示第一个单词
+          value: parseFloat(loc.value)
+        }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5)
+
       return {
-        labels: this.data.locations.map(loc => loc.name),
+        labels: locations.map(loc => loc.name),
         datasets: [{
-          data: this.data.locations.map(loc => loc.value),
-          backgroundColor: new Array(5).fill({
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [{
-              offset: 0,
-              color: '#1890FF'
-            }, {
-              offset: 1,
-              color: '#36CBCB'
-            }]
-          })
+          data: locations.map(loc => loc.value),
+          backgroundColor: '#1890FF'
         }]
       }
     },
@@ -119,7 +112,7 @@ export default {
           },
           tooltip: {
             callbacks: {
-              label: (context) => `${context.label}: ${context.raw}%`
+              label: (context) => `${context.label}: ${context.raw.toFixed(1)}%`
             }
           }
         }
@@ -136,7 +129,7 @@ export default {
           },
           tooltip: {
             callbacks: {
-              label: (context) => `${context.raw}%`
+              label: (context) => `${context.raw.toFixed(1)}%`
             }
           }
         },
@@ -147,16 +140,12 @@ export default {
               display: false
             },
             ticks: {
-              color: '#666',
               callback: (value) => `${value}%`
             }
           },
           y: {
             grid: {
               display: false
-            },
-            ticks: {
-              color: '#666'
             }
           }
         }
@@ -170,6 +159,6 @@ export default {
 .v-chart {
   width: 100%;
   height: 100%;
-  background-color: transparent;
+  background-color: transparent !important;
 }
 </style> 

@@ -198,33 +198,25 @@ export default defineComponent({
     async fetchBrands() {
       try {
         this.loading = true
-        console.log('Fetching brands with params:', {
-          page: this.currentPage,
-          pageSize: this.pageSize,
-          search: this.searchQuery
-        })
-
         const response = await brandAPI.getBrands({
           page: this.currentPage,
           pageSize: this.pageSize,
-          search: this.searchQuery
+          search: this.searchQuery,
+          withImages: true
         })
-
-        console.log('Raw API response:', response)
 
         if (response && response.data) {
           this.brands = response.data.map(brand => ({
-            id: brand.id,
+            id: brand.seller_id,
             name: brand.name,
             brand_url: brand.brand_url,
             num_products: brand.num_products,
-            total_sales: brand.total_sales
+            total_sales: brand.total_sales,
+            category_id: brand.category_id,
+            created_at: brand.created_at,
+            last_updated_at: brand.last_updated_at
           }))
-          this.totalBrands = response.total || 0
-          console.log('Processed brands:', this.brands)
-          console.log('Total brands:', this.totalBrands)
-        } else {
-          console.warn('Invalid response format:', response)
+          this.totalBrands = response.total
         }
       } catch (error) {
         console.error('Error fetching brands:', error)
