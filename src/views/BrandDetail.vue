@@ -407,10 +407,12 @@
 
         <template v-else>
           <CreatorDemographics 
+            v-if="creatorDemographics.gender"
             :data="creatorDemographics" 
             class="mb-8"
           />
           <AudienceDemographics 
+            v-if="audienceDemographics.gender"
             :data="audienceDemographics" 
             class="mb-8"
           />
@@ -846,23 +848,28 @@ export default {
         if (analyticsData && analyticsData.data) {
           const data = analyticsData.data;
           
-          // 更新 Creator Demographics 数据
+          // 确保数据存在并进行安全的赋值
           this.creatorDemographics = {
             gender: {
-              female: data.creator_genders.female,
-              male: data.creator_genders.male
+              female: data.creator_genders?.female || 0,
+              male: data.creator_genders?.male || 0
             },
-            language: data.creator_languages
+            language: data.creator_languages || {}
           };
 
-          // 更新 Audience Demographics 数据
           this.audienceDemographics = {
             gender: {
-              female: data.follower_genders.female,
-              male: data.follower_genders.male
+              female: data.follower_genders?.female || 0,
+              male: data.follower_genders?.male || 0
             },
-            age: data.follower_ages,
-            locations: Object.entries(data.follower_locations)
+            age: data.follower_ages || {
+              '18-24': 0,
+              '25-34': 0,
+              '35-44': 0,
+              '45-54': 0,
+              '55+': 0
+            },
+            locations: Object.entries(data.follower_locations || {})
               .map(([name, value]) => ({
                 name,
                 value
@@ -922,20 +929,26 @@ export default {
           // 更新 Creator Demographics 数据
           this.creatorDemographics = {
             gender: {
-              female: data.creator_genders.female,
-              male: data.creator_genders.male
+              female: data.creator_genders?.female || 0,
+              male: data.creator_genders?.male || 0
             },
-            language: data.creator_languages
+            language: data.creator_languages || {}
           };
 
           // 更新 Audience Demographics 数据
           this.audienceDemographics = {
             gender: {
-              female: data.follower_genders.female,
-              male: data.follower_genders.male
+              female: data.follower_genders?.female || 0,
+              male: data.follower_genders?.male || 0
             },
-            age: data.follower_ages,
-            locations: Object.entries(data.follower_locations)
+            age: data.follower_ages || {
+              '18-24': 0,
+              '25-34': 0,
+              '35-44': 0,
+              '45-54': 0,
+              '55+': 0
+            },
+            locations: Object.entries(data.follower_locations || {})
               .map(([name, value]) => ({
                 name,
                 value
@@ -950,7 +963,7 @@ export default {
       }
     },
     formatProductName(name) {
-      // 如果名称长度超过200个字符，截取��200个字符并添加省略号
+      // 如果名称长度超过200个字符，截取200个字符并添加省略号
       if (name.length > 350) {
         return name.substring(0, 350) + '...';
       }

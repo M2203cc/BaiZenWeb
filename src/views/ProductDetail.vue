@@ -38,6 +38,9 @@
             {{ product.title }}
           </button>
         </h2>
+        <p class="text-[16px] text-gray-600 px-4 mt-2">
+          {{ product.seller_name }}
+        </p>
       </div>
     </div>
 
@@ -82,7 +85,7 @@
             </svg>
                   <span>{{ formatNumber(point.views_count) }} views</span>
                 </div>
-                <!-- 悬停时显��的完整内容 -->
+                <!-- 悬停时显示的完整内容 -->
                 <div 
                   class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
                          invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
@@ -138,7 +141,7 @@
       </div>
     </div>
 
-    <!-- Format详情模态框 -->
+    <!-- Format详情模��� -->
     <div v-if="showFormatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-[500px]">
         <!-- 标题和关闭按钮 -->
@@ -593,7 +596,8 @@ export default {
       
       this.product = {
         id: productId,
-        title: data.title
+        title: data.title,
+        seller_name: data.videos?.[0]?.seller_products?.sellers?.name || 'Loading'
       };
       
       // 设置视频格式数据
@@ -725,6 +729,11 @@ export default {
         const data = await response.json();
         this.videos = data.data;
         this.totalVideos = data.total;
+        
+        // 设置卖家名称
+        if (data.data && data.data[0]?.seller_products?.sellers?.name) {
+          this.product.seller_name = data.data[0].seller_products.sellers.name;
+        }
       } catch (error) {
         console.error('Failed to fetch videos:', error);
       } finally {
