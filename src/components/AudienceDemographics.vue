@@ -1,124 +1,141 @@
 <template>
-  <div class="mb-8">
-    <h2 class="text-2xl font-bold mb-8">Audience Demographics</h2>
-    <div class="grid grid-cols-3 gap-8">
-      <div class="text-center">
-        <h3 class="text-lg font-semibold mb-6">Gender</h3>
-        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
-          <Doughnut :data="genderData" :options="chartOptions" />
-        </div>
+  <div class="grid grid-cols-3 gap-6">
+    <!-- Gender Distribution -->
+    <div class="p-4 rounded-lg bg-[#F8F9FA]">
+      <h3 class="text-lg font-medium text-center mb-2">Gender</h3>
+      <div class="h-[180px]">
+        <Doughnut 
+          v-if="genderChartData"
+          :data="genderChartData"
+          :options="genderChartOptions"
+        />
       </div>
-      <div class="text-center">
-        <h3 class="text-lg font-semibold mb-6">Age</h3>
-        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
-          <Doughnut :data="ageData" :options="chartOptions" />
-        </div>
+    </div>
+
+    <!-- Age Distribution -->
+    <div class="p-4 rounded-lg bg-[#F8F9FA]">
+      <h3 class="text-lg font-medium text-center mb-2">Age</h3>
+      <div class="h-[180px]">
+        <Doughnut 
+          v-if="ageChartData"
+          :data="ageChartData"
+          :options="ageChartOptions"
+        />
       </div>
-      <div class="text-center">
-        <h3 class="text-lg font-semibold mb-6">Top 5 Locations</h3>
-        <div class="bg-gray-50 p-4 rounded-lg h-[200px]">
-          <Bar :data="locationData" :options="barOptions" />
-        </div>
+    </div>
+
+    <!-- Top 5 Locations -->
+    <div class="p-4 rounded-lg bg-[#F8F9FA]">
+      <h3 class="text-lg font-medium text-center mb-2">Top 5 Locations</h3>
+      <div class="h-[180px]">
+        <Bar
+          v-if="locationsChartData"
+          :data="locationsChartData"
+          :options="locationsChartOptions"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  Chart as ChartJS,
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-} from 'chart.js'
-import { Bar, Doughnut } from 'vue-chartjs'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js'
+import { Doughnut, Bar } from 'vue-chartjs'
 
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-)
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
 export default {
   name: 'AudienceDemographics',
   components: {
-    Bar,
-    Doughnut
+    Doughnut,
+    Bar
   },
   props: {
-    data: {
+    genderData: {
       type: Object,
+      required: true
+    },
+    ageData: {
+      type: Object,
+      required: true
+    },
+    locationsData: {
+      type: Array,
       required: true
     }
   },
   computed: {
-    genderData() {
+    genderChartData() {
       return {
         labels: ['Female', 'Male'],
         datasets: [{
-          data: [
-            parseFloat(this.data.gender.female || 0),
-            parseFloat(this.data.gender.male || 0)
-          ],
-          backgroundColor: ['#FF85C0', '#5B8FF9']
+          data: [this.genderData.female, this.genderData.male],
+          backgroundColor: ['#FF6384', '#36A2EB'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB']
         }]
       }
     },
-    ageData() {
-      const ageRanges = ['18-24', '25-34', '35-44', '45-54', '55+']
-      return {
-        labels: ageRanges,
-        datasets: [{
-          data: ageRanges.map(range => parseFloat(this.data.age[range] || 0)),
-          backgroundColor: ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F']
-        }]
-      }
-    },
-    locationData() {
-      const locations = this.data.locations
-        .map(loc => ({
-          name: loc.name.split(' ')[0], // 只显示第一个单词
-          value: parseFloat(loc.value)
-        }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 5)
-
-      return {
-        labels: locations.map(loc => loc.name),
-        datasets: [{
-          data: locations.map(loc => loc.value),
-          backgroundColor: '#1890FF'
-        }]
-      }
-    },
-    chartOptions() {
+    genderChartOptions() {
       return {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '60%',
         plugins: {
           legend: {
             position: 'bottom',
             labels: {
-              color: '#666',
-              usePointStyle: true,
-              pointStyle: 'circle'
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: (context) => `${context.label}: ${context.raw.toFixed(1)}%`
+              boxWidth: 12,
+              padding: 15,
+              font: {
+                size: 12
+              }
             }
           }
         }
       }
     },
-    barOptions() {
+    ageChartData() {
+      const ageGroups = Object.entries(this.ageData)
+      
+      return {
+        labels: ageGroups.map(([age]) => age),
+        datasets: [{
+          data: ageGroups.map(([, value]) => value),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+        }]
+      }
+    },
+    ageChartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 12,
+              padding: 15,
+              font: {
+                size: 12
+              }
+            }
+          }
+        }
+      }
+    },
+    locationsChartData() {
+      return {
+        labels: this.locationsData.map(loc => loc.name),
+        datasets: [{
+          data: this.locationsData.map(loc => loc.value),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+          borderRadius: 4
+        }]
+      }
+    },
+    locationsChartOptions() {
       return {
         responsive: true,
         maintainAspectRatio: false,
@@ -126,26 +143,29 @@ export default {
         plugins: {
           legend: {
             display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: (context) => `${context.raw.toFixed(1)}%`
-            }
           }
         },
         scales: {
           x: {
-            beginAtZero: true,
             grid: {
-              display: false
+              display: true,
+              color: '#f0f0f0'
             },
             ticks: {
-              callback: (value) => `${value}%`
+              callback: value => `${value}%`,
+              font: {
+                size: 12
+              }
             }
           },
           y: {
             grid: {
               display: false
+            },
+            ticks: {
+              font: {
+                size: 12
+              }
             }
           }
         }
@@ -153,12 +173,4 @@ export default {
     }
   }
 }
-</script>
-
-<style scoped>
-.v-chart {
-  width: 100%;
-  height: 100%;
-  background-color: transparent !important;
-}
-</style> 
+</script> 
