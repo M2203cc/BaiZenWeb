@@ -382,42 +382,22 @@
         </div>
       </div>
 
-      <!-- Demographics Charts -->
-      <div class="mt-8">
-        <!-- Analytics Error State -->
-        <div v-if="analyticsError" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p class="text-red-600">{{ analyticsError }}</p>
-          <button 
-            @click="retryAnalytics"
-            class="mt-2 px-4 py-2 text-sm text-primary-600 hover:text-primary-500"
-          >
-            Retry loading demographics
-          </button>
-        </div>
+      <!-- Creator Demographics Section -->
+      <CreatorDemographics 
+        v-if="creatorDemographics"
+        class="mb-8"
+        :gender-data="creatorDemographics.gender"
+        :language-data="creatorDemographics.language"
+      />
 
-        <!-- Analytics Loading State -->
-        <div v-else-if="analyticsLoading" class="flex flex-col justify-center items-center min-h-[200px] space-y-4">
-          <div class="relative">
-            <div class="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin">
-              <div class="absolute top-0 left-0 w-16 h-16 border-4 border-primary-600 rounded-full animate-loading"></div>
-            </div>
-          </div>
-          <div class="text-gray-500 font-medium animate-pulse">Loading demographics data...</div>
-        </div>
-
-        <template v-else>
-          <CreatorDemographics 
-            v-if="creatorDemographics.gender"
-            :data="creatorDemographics" 
-            class="mb-8"
-          />
-          <AudienceDemographics 
-            v-if="audienceDemographics.gender"
-            :data="audienceDemographics" 
-            class="mb-8"
-          />
-        </template>
-      </div>
+      <!-- Audience Demographics Section -->
+      <AudienceDemographics 
+        v-if="audienceDemographics"
+        class="mb-8"
+        :gender-data="audienceDemographics.gender"
+        :age-data="audienceDemographics.age"
+        :locations-data="audienceDemographics.locations"
+      />
 
       <!-- Modal -->
       <div v-if="showCreateListModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -823,7 +803,7 @@ export default {
             total_sales: response.total_sales
           };
           
-          // 基本数据加载完成后，并行加载其他数据
+          // 本数据加载完成后，并行加载其他数据
           Promise.all([
             this.fetchProducts(),
             this.fetchVideos(),
@@ -848,32 +828,34 @@ export default {
         if (analyticsData && analyticsData.data) {
           const data = analyticsData.data;
           
-          // 确保数据存在并进行安全的赋值
+          // 确保数据格式正确
           this.creatorDemographics = {
             gender: {
-              female: data.creator_genders?.female || 0,
-              male: data.creator_genders?.male || 0
+              female: parseFloat(data.creator_genders?.female || 0),
+              male: parseFloat(data.creator_genders?.male || 0)
             },
-            language: data.creator_languages || {}
+            language: Object.entries(data.creator_languages || {}).reduce((acc, [key, value]) => {
+              acc[key] = parseFloat(value);
+              return acc;
+            }, {})
           };
 
           this.audienceDemographics = {
             gender: {
-              female: data.follower_genders?.female || 0,
-              male: data.follower_genders?.male || 0
+              female: parseFloat(data.follower_genders?.female || 0),
+              male: parseFloat(data.follower_genders?.male || 0)
             },
-            age: data.follower_ages || {
-              '18-24': 0,
-              '25-34': 0,
-              '35-44': 0,
-              '45-54': 0,
-              '55+': 0
-            },
+            age: Object.entries(data.follower_ages || {}).reduce((acc, [key, value]) => {
+              acc[key] = parseFloat(value);
+              return acc;
+            }, {}),
             locations: Object.entries(data.follower_locations || {})
               .map(([name, value]) => ({
                 name,
-                value
+                value: parseFloat(value)
               }))
+              .sort((a, b) => b.value - a.value)
+              .slice(0, 5)
           };
         }
       } catch (error) {
@@ -1051,7 +1033,7 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
-/* 确保表格单元格内容溢出时显示省略号 */
+/* 确保表格单元格内容溢出时显示省略�� */
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
