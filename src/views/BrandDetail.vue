@@ -71,10 +71,10 @@
             </div>
             <table class="w-full caption-bottom text-sm">
               <thead class="[&_tr]:border-b">
-                <tr class="border-b">
-                  <th class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[55%]">Product</th>
-                  <th class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Price</th>
-                  <th class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Sold Count</th>
+                <tr class="border-b bg-[#FAFAFA]">
+                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[55%]">Product</th>
+                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Price</th>
+                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Sold Count</th>
                 </tr>
               </thead>
               <tbody class="[&_tr:last-child]:border-0">
@@ -209,8 +209,8 @@
           </div>
           <table class="w-full caption-bottom text-sm">
             <thead class="[&_tr]:border-b">
-              <tr class="border-b">
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[5%]">
+              <tr class="border-b bg-[#FAFAFA]">
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[5%]">
                   <input 
                     type="checkbox" 
                     class="rounded border-gray-300"
@@ -218,12 +218,12 @@
                     @change="selectAll"
                   >
                 </th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[10%]">Thumbnail</th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Creator</th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Posted Time</th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Views</th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Likes</th>
-                <th class="h-[90px] py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Product</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[10%]">Thumbnail</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Creator</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Posted Time</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Views</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Likes</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Product</th>
               </tr>
             </thead>
             <tbody class="[&_tr:last-child]:border-0">
