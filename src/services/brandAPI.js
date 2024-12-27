@@ -11,7 +11,7 @@ const brandAPI = {
         params.append('search', search)
       }
 
-      const url = `http://192.168.0.170:8000/brands/?${params}`
+      const url = `http://localhost:8000/brands/?${params}`
       console.log('Fetching brands from:', url)
 
       const response = await fetch(url, {
@@ -40,7 +40,7 @@ const brandAPI = {
 
   async getBrandDetails(brandId) {
     try {
-      const response = await fetch(`http://192.168.0.170:8000/brands/${brandId}`, {
+      const response = await fetch(`http://localhost:8000/brands/${brandId}`, {
         method: 'GET',
         headers: {
           'accept': 'application/json'
@@ -79,7 +79,7 @@ const brandAPI = {
 
         // 创建请求Promise
         const fetchPromise = fetch(
-          `http://192.168.0.170:8000/brands/${brandId}/analytics`,
+          `http://localhost:8000/brands/${brandId}/analytics`,
           {
             method: 'GET',
             headers: {
@@ -129,7 +129,7 @@ const brandAPI = {
       });
 
       const response = await fetch(
-        `http://192.168.0.170:8000/brands/${brandId}/products?${params}`,
+        `http://localhost:8000/brands/${brandId}/products?${params}`,
         {
           method: 'GET',
           headers: {
@@ -161,7 +161,7 @@ const brandAPI = {
       });
 
       const response = await fetch(
-        `http://192.168.0.170:8000/brands/${brandId}/videos?${params}`,
+        `http://localhost:8000/brands/${brandId}/videos?${params}`,
         {
           method: 'GET',
           headers: {

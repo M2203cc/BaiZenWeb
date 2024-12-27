@@ -186,9 +186,18 @@ export default {
     async fetchProducts() {
       try {
         this.loading = true
-        const response = await fetch(`http://192.168.0.170:8000/products/?page=${this.currentPage}&page_size=${this.pageSize}`)
-        
-        const data = await response.json()
+        const response = await fetch(`http://localhost:8000/products/?page=${this.currentPage}&page_size=${this.pageSize}`, {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
         
         if (response.status === 200 && data.data) {
           this.products = data.data.map(item => ({
@@ -202,7 +211,8 @@ export default {
           this.totalItems = data.total
         }
       } catch (error) {
-        console.error('获取产品数据失败:', error)
+        console.error('获取产品数据失败:', error);
+        this.error = '加载产品失败';
       } finally {
         this.loading = false
       }

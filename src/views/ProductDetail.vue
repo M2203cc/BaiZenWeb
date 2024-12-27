@@ -597,7 +597,7 @@ export default {
   async created() {
     const productId = this.$route.params.id;
     try {
-      const response = await fetch(`http://192.168.0.170:8000/products/${productId}`);
+      const response = await fetch(`http://localhost:8000/products/${productId}`);
       const data = await response.json();
       
       this.product = {
@@ -730,7 +730,7 @@ export default {
       try {
         const productId = this.$route.params.id;
         const response = await fetch(
-          `http://192.168.0.170:8000/products/${productId}/videos?page=${page}&per_page=${this.videosPerPage}`
+          `http://localhost:8000/products/${productId}/videos?page=${page}&per_page=${this.videosPerPage}`
         );
         const data = await response.json();
         this.videos = data.data;
@@ -796,7 +796,7 @@ export default {
       
       try {
         const productId = this.$route.params.id;
-        const response = await fetch(`http://192.168.0.170:8000/products/${productId}/analytics`);
+        const response = await fetch(`http://localhost:8000/products/${productId}/analytics`);
         const { data } = await response.json();
         
         // 处理Creator Demographics数据
@@ -842,7 +842,7 @@ export default {
     async fetchSellingPoints() {
       try {
         const productId = this.$route.params.id;
-        const response = await fetch(`http://192.168.0.170:8000/products/${productId}/selling_points`);
+        const response = await fetch(`http://localhost:8000/products/${productId}/selling_points`);
         const { data } = await response.json();
         this.sellingPoints = data;
         this.pagination.totalPages = Math.ceil(data.length / this.pagination.pageSize);
