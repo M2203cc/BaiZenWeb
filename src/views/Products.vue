@@ -7,13 +7,10 @@
 
     <!-- 产品列表表格 -->
     <div class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
-      <!-- 添加loading遮罩 -->
-      <div v-if="loading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
-        <div class="text-primary-600">Loading...</div>
+      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
-      
       <table class="w-full caption-bottom text-sm">
-        <!-- 表头 -->
         <thead class="[&_tr]:border-b">
           <tr class="border-b transition-colors hover:bg-white">
             <th class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 min-w-64">
@@ -27,9 +24,7 @@
             </th>
           </tr>
         </thead>
-
-        <!-- 表格内容 -->
-        <tbody class="[&_tr:last-child]:border-0">
+        <tbody v-if="!loading && products.length > 0" class="[&_tr:last-child]:border-0">
           <tr 
             v-for="product in getCurrentPageProducts" 
             :key="product.id"
@@ -41,7 +36,7 @@
                 <img 
                   :src="product.image" 
                   :alt="product.name"
-                  class="rounded-md object-cover w-10 h-10"
+                  class="rounded-md object-cover w-12 h-12 flex-shrink-0"
                 >
                 <button class="!ring-0 text-left truncate w-auto">
                   {{ product.name }}
@@ -57,62 +52,86 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- 无数据状态 -->
+      <div v-if="!loading && products.length === 0" class="py-20 text-center text-gray-500">
+        No products found
+      </div>
     </div>
 
-    <!-- 分页部分 - 移到表格外面 -->
+    <!-- 分页部分 -->
     <div class="mt-4 flex justify-between items-center">
-      <!-- 显示数量信息 -->
-      <div class="text-secondary-500 text-sm leading-[19.2px] w-[35%]">
-        Showing {{ startIndex }} to {{ Math.min(endIndex, totalProducts) }} of {{ totalProducts }}
+      <!-- 左侧显示结果数量 -->
+      <div class="text-sm text-gray-700">
+        Showing {{ startIndex + 1 }} to {{ Math.min(endIndex, totalProducts) }} of {{ totalProducts }} results
       </div>
 
-      <!-- 分页按钮 -->
-      <nav role="navigation" aria-label="pagination" class="mx-auto flex w-full justify-center">
+      <!-- 中间分页按钮 -->
+      <div class="flex-1 flex justify-center">
         <div class="flex items-center space-x-1">
-          <!-- 上一页按钮 -->
-          <button 
-            @click="prevPage"
+          <button
+            @click="goToPage(1)"
             :disabled="currentPage === 1"
-            class="px-2 py-1 text-secondary-500 hover:text-primary-600"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === 1
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1] disabled:text-gray-300'
+            ]"
           >
-            <span class="text-sm">‹</span>
+            1
           </button>
 
-          <!-- 页码按钮 -->
-          <template v-for="n in displayedPages" :key="n">
-            <button 
-              v-if="n !== '...'"
-              @click="changePage(n)"
-              :class="[
-                'px-3 py-1 rounded',
-                currentPage === n ? 'bg-[#6366F1] text-white' : 'text-secondary-500 hover:text-primary-600'
-              ]"
-            >
-              {{ n }}
-            </button>
-            <span v-else class="px-2 text-secondary-500">...</span>
-          </template>
-
-          <!-- 下一页按钮 -->
-          <button 
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-2 py-1 text-secondary-500 hover:text-primary-600"
+          <button
+            v-if="showLeftEllipsis"
+            class="px-3 py-1 text-sm text-gray-500"
           >
-            <span class="text-sm">›</span>
+            ...
+          </button>
+
+          <button
+            v-for="page in visiblePages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === page
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1]'
+            ]"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            v-if="showRightEllipsis"
+            class="px-3 py-1 text-sm text-gray-500"
+          >
+            ...
+          </button>
+
+          <button
+            v-if="totalPages > 1"
+            @click="goToPage(totalPages)"
+            :class="[
+              'px-3 py-1 text-sm',
+              currentPage === totalPages
+                ? 'bg-[#6366F1] text-white rounded-md'
+                : 'text-gray-500 hover:text-[#6366F1]'
+            ]"
+          >
+            {{ totalPages }}
           </button>
         </div>
-      </nav>
+      </div>
 
-      <!-- 为了保持布局平衡的空div -->
-      <div class="w-[35%]"></div>
+      <!-- 右侧空白区域，用于保持对称 -->
+      <div class="w-[250px]"></div>
     </div>
   </div>
 </template>
 
 <script>
-import { get_product_list } from '@/api/euka_api_product.js'
-
 export default {
   name: 'Products',
   data() {
@@ -120,56 +139,54 @@ export default {
       products: [],
       currentPage: 1,
       pageSize: 10,
-      loading: false
+      loading: false,
+      totalItems: 0
     }
   },
   computed: {
     totalProducts() {
-      return this.products.length
+      return this.totalItems
     },
     totalPages() {
-      return Math.ceil(this.totalProducts / this.pageSize)
+      return Math.ceil(this.totalItems / this.pageSize)
     },
     getCurrentPageProducts() {
-      const start = (this.currentPage - 1) * this.pageSize
-      const end = start + this.pageSize
-      return this.products.slice(start, end)
+      return this.products
     },
     startIndex() {
-      return (this.currentPage - 1) * this.pageSize + 1
+      return (this.currentPage - 1) * this.pageSize
     },
     endIndex() {
-      return Math.min(this.currentPage * this.pageSize, this.totalProducts)
+      return Math.min(this.currentPage * this.pageSize, this.totalItems)
     },
-    displayedPages() {
-      const total = this.totalPages
-      const current = this.currentPage
-      const delta = 1
-
-      let pages = []
-      const left = current - delta
-      const right = current + delta
-
-      for (let i = 1; i <= total; i++) {
-        if (
-          i === 1 ||
-          i === total ||
-          (i >= left && i <= right)
-        ) {
-          pages.push(i)
-        } else if (pages[pages.length - 1] !== '...') {
-          pages.push('...')
-        }
+    visiblePages() {
+      let start = Math.max(2, this.currentPage - 2)
+      let end = Math.min(this.totalPages - 1, start + 4)
+      
+      // 调整起始位置，确保始终显示5个页码
+      if (end - start + 1 < 5) {
+        start = Math.max(2, end - 4)
       }
-
+      
+      const pages = []
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
       return pages
+    },
+    showLeftEllipsis() {
+      return this.visiblePages.length > 0 && this.visiblePages[0] > 2
+    },
+    showRightEllipsis() {
+      return this.visiblePages.length > 0 && 
+             this.visiblePages[this.visiblePages.length - 1] < this.totalPages - 1
     }
   },
   methods: {
     async fetchProducts() {
       try {
         this.loading = true
-        const response = await get_product_list(this.currentPage, this.pageSize)
+        const response = await fetch(`http://192.168.0.170:8000/products/?page=${this.currentPage}&page_size=${this.pageSize}`)
         
         const data = await response.json()
         
@@ -179,8 +196,10 @@ export default {
             name: item.title,
             price: item.real_price,
             soldCount: item.sold_count,
-            image: item.product_url
+            image: `https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/${item.product_id}.jpg`
           }))
+          
+          this.totalItems = data.total
         }
       } catch (error) {
         console.error('获取产品数据失败:', error)
@@ -188,22 +207,10 @@ export default {
         this.loading = false
       }
     },
-    async changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
+    goToPage(page) {
+      if (page !== this.currentPage) {
         this.currentPage = page
-        await this.fetchProducts()
-      }
-    },
-    async prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        await this.fetchProducts()
-      }
-    },
-    async nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
-        await this.fetchProducts()
+        this.fetchProducts()
       }
     },
     viewProductDetail(product) {
@@ -216,8 +223,20 @@ export default {
 }
 </script>
 
-<style scoped>
-.min-w-64 {
-  min-width: 16rem;
+<style>
+.bg-primary {
+  background-color: #6366F1;
+}
+
+.text-primary {
+  color: #6366F1;
+}
+
+.ring-primary {
+  --tw-ring-color: #6366F1;
+}
+
+.hover\:bg-primary:hover {
+  background-color: #6366F1;
 }
 </style> 

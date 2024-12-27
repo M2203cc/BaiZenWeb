@@ -24,8 +24,15 @@
     </div>
 
     <!-- 基础数据加载状态 -->
-    <div v-if="loading" class="flex justify-center items-center min-h-[200px]">
-      <span>Loading...</span>
+    <div v-if="loading" class="flex flex-col justify-center items-center min-h-[200px] space-y-4">
+      <!-- 主加载动画 -->
+      <div class="relative">
+        <div class="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin">
+          <div class="absolute top-0 left-0 w-16 h-16 border-4 border-primary-600 rounded-full animate-loading"></div>
+        </div>
+      </div>
+      <!-- 加载文字 -->
+      <div class="text-gray-500 font-medium animate-pulse">Loading brand details...</div>
     </div>
 
     <!-- 基础数据错误状态 -->
@@ -56,23 +63,12 @@
       <!-- Products Section -->
       <div class="mb-8">
         <h2 class="text-2xl font-bold mb-4">Products</h2>
-        <!-- Products Loading State -->
-        <div v-if="productsLoading" class="flex justify-center items-center min-h-[100px]">
-          <span>Loading products...</span>
-        </div>
-        <!-- Products Error State -->
-        <div v-else-if="productsError" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p class="text-red-600">{{ productsError }}</p>
-          <button 
-            @click="fetchProducts"
-            class="mt-2 px-4 py-2 text-sm text-primary-600 hover:text-primary-500"
-          >
-            Retry loading products
-          </button>
-        </div>
-        <!-- Products Content -->
-        <div v-else class="relative w-full">
+        <div class="relative w-full">
           <div class="bg-white rounded-sm border border-secondary-100">
+            <!-- Loading Skeleton -->
+            <div v-if="productsLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+            </div>
             <table class="w-full caption-bottom text-sm">
               <thead class="[&_tr]:border-b">
                 <tr class="border-b">
@@ -82,34 +78,54 @@
                 </tr>
               </thead>
               <tbody class="[&_tr:last-child]:border-0">
-                <tr 
-                  v-for="product in products" 
-                  :key="product.id"
-                  class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer group"
-                  @click="goToProductDetail(product.id)"
-                >
-                  <td class="min-h-16 py-3 px-2 align-middle relative w-[55%]">
-                    <div class="flex items-center gap-3 max-w-full">
-                      <img 
-                        :src="product.image" 
-                        :alt="product.name"
-                        class="w-10 h-10 rounded-md object-cover flex-shrink-0"
-                      >
-                      <div class="min-w-0 flex-1">
-                        <span class="block truncate">{{ product.name }}</span>
+                <!-- Skeleton Rows when loading -->
+                <template v-if="productsLoading">
+                  <tr v-for="i in 10" :key="i" class="border-b">
+                    <td class="min-h-16 py-3 px-2 align-middle">
+                      <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-md bg-gray-200 animate-pulse"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
                       </div>
-                      <!-- 悬浮提示框 -->
-                      <div 
-                        class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
-                               invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
-                      >
-                        {{ product.name }}
+                    </td>
+                    <td class="min-h-16 py-3 px-2 align-middle">
+                      <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                    </td>
+                    <td class="min-h-16 py-3 px-2 align-middle">
+                      <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                    </td>
+                  </tr>
+                </template>
+                <!-- Actual Data -->
+                <template v-else>
+                  <tr 
+                    v-for="product in products" 
+                    :key="product.id"
+                    class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer group"
+                    @click="goToProductDetail(product.id)"
+                  >
+                    <td class="min-h-16 py-3 px-2 align-middle relative w-[55%]">
+                      <div class="flex items-center gap-3 max-w-full">
+                        <img 
+                          :src="product.image" 
+                          :alt="product.name"
+                          class="w-10 h-10 rounded-md object-cover flex-shrink-0"
+                        >
+                        <div class="min-w-0 flex-1">
+                          <span class="block truncate">{{ product.name }}</span>
+                        </div>
+                        <!-- 悬浮提示框 -->
+                        <div 
+                          class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                                 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+                        >
+                          {{ product.name }}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td class="min-h-16 py-3 px-2 align-middle w-[20%]">${{ product.price ? product.price.toFixed(2) : '0.00' }}</td>
-                  <td class="min-h-16 py-3 px-2 align-middle w-[25%]">{{ formatNumber(product.soldCount || 0) }}</td>
-                </tr>
+                    </td>
+                    <td class="min-h-16 py-3 px-2 align-middle w-[20%]">${{ product.price ? product.price.toFixed(2) : '0.00' }}</td>
+                    <td class="min-h-16 py-3 px-2 align-middle w-[25%]">{{ formatNumber(product.soldCount || 0) }}</td>
+                  </tr>
+                </template>
               </tbody>
             </table>
 
@@ -184,22 +200,13 @@
             </button>
           </div>
         </div>
-        <!-- Videos Loading State -->
-        <div v-if="videosLoading" class="flex justify-center items-center min-h-[100px]">
-          <span>Loading videos...</span>
-        </div>
-        <!-- Videos Error State -->
-        <div v-else-if="videosError" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p class="text-red-600">{{ videosError }}</p>
-          <button 
-            @click="fetchVideos"
-            class="mt-2 px-4 py-2 text-sm text-primary-600 hover:text-primary-500"
-          >
-            Retry loading videos
-          </button>
-        </div>
+
         <!-- Videos Content -->
-        <div v-else-if="videos.length > 0" class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
+        <div v-if="videos.length > 0" class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
+          <!-- Loading Skeleton -->
+          <div v-if="videosLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          </div>
           <table class="w-full caption-bottom text-sm">
             <thead class="[&_tr]:border-b">
               <tr class="border-b">
@@ -220,71 +227,106 @@
               </tr>
             </thead>
             <tbody class="[&_tr:last-child]:border-0">
-              <tr 
-                v-for="video in videos" 
-                :key="video.id"
-                class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer h-[90px]"
-                @click="goToVideoDetail(video.id)"
-              >
-                <td class="h-[90px] py-3 px-2 align-middle" @click.stop>
-                  <input 
-                    type="checkbox" 
-                    class="rounded border-gray-300"
-                    :checked="selectedVideos.some(v => v.id === video.id)"
-                    @change="handleVideoSelect(video, $event)"
-                  >
-                </td>
-                <td class="h-[90px] py-3 px-2 align-middle">
-                  <div class="flex items-center h-full">
-                    <img 
-                      :src="video.thumbnail" 
-                      :alt="video.title"
-                      class="w-[63px] h-[112px] rounded-md object-cover"
-                    >
-                  </div>
-                </td>
-                <td class="h-[90px] py-3 px-2 align-middle relative group">
-                  <div class="flex items-center gap-2">
-                    <img 
-                      :src="video.creatorAvatar" 
-                      :alt="video.creator"
-                      class="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                    >
-                    <div class="min-w-0 flex-1">
-                      <span class="block truncate">{{ video.creator }}</span>
+              <!-- Skeleton Rows when loading -->
+              <template v-if="videosLoading">
+                <tr v-for="i in 10" :key="i" class="border-b h-[90px]">
+                  <td class="py-3 px-2 align-middle">
+                    <div class="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="w-[63px] h-[112px] bg-gray-200 rounded-md animate-pulse"></div>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div class="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
                     </div>
-                  </div>
-                  <!-- Creator 悬浮提示 -->
-                  <div 
-                    class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
-                           invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
-                  >
-                    {{ video.creator }}
-                  </div>
-                </td>
-                <td class="h-[90px] py-3 px-2 align-middle whitespace-nowrap">{{ video.postedTime }}</td>
-                <td class="h-[90px] py-3 px-2 align-middle">{{ formatNumber(video.views || 0) }}</td>
-                <td class="h-[90px] py-3 px-2 align-middle">{{ formatNumber(video.likes || 0) }}</td>
-                <td class="h-[90px] py-3 px-2 align-middle relative group">
-                  <div class="flex items-center gap-3 max-w-full">
-                    <img 
-                      :src="video.productImage" 
-                      :alt="video.productName"
-                      class="w-10 h-10 rounded-md object-cover flex-shrink-0"
-                    >
-                    <div class="min-w-0 flex-1">
-                      <span class="block truncate">{{ video.productName }}</span>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  </td>
+                  <td class="py-3 px-2 align-middle">
+                    <div class="flex items-center gap-2">
+                      <div class="w-10 h-10 bg-gray-200 rounded-md animate-pulse"></div>
+                      <div class="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
                     </div>
-                  </div>
-                  <!-- Product 悬浮提示 -->
-                  <div 
-                    class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
-                           invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
-                  >
-                    {{ video.productName }}
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              </template>
+              <!-- Actual Data -->
+              <template v-else>
+                <tr 
+                  v-for="video in videos" 
+                  :key="video.id"
+                  class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer h-[90px]"
+                  @click="goToVideoDetail(video.id)"
+                >
+                  <td class="h-[90px] py-3 px-2 align-middle" @click.stop>
+                    <input 
+                      type="checkbox" 
+                      class="rounded border-gray-300"
+                      :checked="selectedVideos.some(v => v.id === video.id)"
+                      @change="handleVideoSelect(video, $event)"
+                    >
+                  </td>
+                  <td class="h-[90px] py-3 px-2 align-middle">
+                    <div class="flex items-center h-full">
+                      <img 
+                        :src="video.thumbnail" 
+                        :alt="video.title"
+                        class="w-[63px] h-[112px] rounded-md object-cover"
+                      >
+                    </div>
+                  </td>
+                  <td class="h-[90px] py-3 px-2 align-middle relative group">
+                    <div class="flex items-center gap-2">
+                      <img 
+                        :src="video.creatorAvatar" 
+                        :alt="video.creator"
+                        class="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                      >
+                      <div class="min-w-0 flex-1">
+                        <span class="block truncate">{{ video.creator }}</span>
+                      </div>
+                    </div>
+                    <!-- Creator 悬浮提示 -->
+                    <div 
+                      class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                             invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+                    >
+                      {{ video.creator }}
+                    </div>
+                  </td>
+                  <td class="h-[90px] py-3 px-2 align-middle whitespace-nowrap">{{ video.postedTime }}</td>
+                  <td class="h-[90px] py-3 px-2 align-middle">{{ formatNumber(video.views || 0) }}</td>
+                  <td class="h-[90px] py-3 px-2 align-middle">{{ formatNumber(video.likes || 0) }}</td>
+                  <td class="h-[90px] py-3 px-2 align-middle relative group">
+                    <div class="flex items-center gap-3 max-w-full">
+                      <img 
+                        :src="video.productImage" 
+                        :alt="video.productName"
+                        class="w-10 h-10 rounded-md object-cover flex-shrink-0"
+                      >
+                      <div class="min-w-0 flex-1">
+                        <span class="block truncate">{{ video.productName }}</span>
+                      </div>
+                    </div>
+                    <!-- Product 悬浮提示 -->
+                    <div 
+                      class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                             invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+                    >
+                      {{ video.productName }}
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
 
@@ -335,7 +377,6 @@
             </div>
           </div>
         </div>
-        <!-- No Videos State -->
         <div v-else class="text-center text-gray-500 py-8">
           No videos available
         </div>
@@ -355,8 +396,13 @@
         </div>
 
         <!-- Analytics Loading State -->
-        <div v-else-if="analyticsLoading" class="flex justify-center items-center min-h-[200px]">
-          <span>Loading demographics data...</span>
+        <div v-else-if="analyticsLoading" class="flex flex-col justify-center items-center min-h-[200px] space-y-4">
+          <div class="relative">
+            <div class="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin">
+              <div class="absolute top-0 left-0 w-16 h-16 border-4 border-primary-600 rounded-full animate-loading"></div>
+            </div>
+          </div>
+          <div class="text-gray-500 font-medium animate-pulse">Loading demographics data...</div>
         </div>
 
         <template v-else>
@@ -590,7 +636,7 @@ export default {
           pages.push('...');
         }
         
-        // 确定中间页码��范围
+        // 确定中间页码的范围
         let start = Math.max(2, currentPage - 2);
         let end = Math.min(totalPages - 1, currentPage + 2);
         
@@ -904,7 +950,7 @@ export default {
       }
     },
     formatProductName(name) {
-      // 如果名称长度超过200个字符，截取前200个字符并添加省略号
+      // 如果名称长度超过200个字符，截取��200个字符并添加省略号
       if (name.length > 350) {
         return name.substring(0, 350) + '...';
       }
@@ -997,7 +1043,7 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: calc(100% - 3rem); /* 减去图片和间距的宽度 */
+  max-width: calc(100% - 3rem); /* 减去图标和间距的宽度 */
 }
 
 /* 悬浮提示框的样式 */
@@ -1007,5 +1053,27 @@ button {
 
 .group:hover .group-hover\:opacity-100 {
   opacity: 1;
+}
+
+@keyframes loading {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+  }
+  75% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
+}
+
+.animate-loading {
+  animation: loading 1.5s ease-in-out infinite;
 }
 </style> 

@@ -21,7 +21,10 @@
     </div>
 
     <!-- 品牌列表表格 -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="bg-white rounded-lg shadow overflow-hidden relative">
+      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      </div>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -36,7 +39,7 @@
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody v-show="!loading && brands.length > 0" class="bg-white divide-y divide-gray-200">
           <tr 
             v-for="brand in brands" 
             :key="brand.id"

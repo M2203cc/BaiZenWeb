@@ -1,286 +1,414 @@
 {
-  "message": "get-product-videos:: Videos fetched successfully",
-  "data": [
+  "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
+  "hooks_analysis_json": [
     {
-      "video_id": "7442724689773858078",
-      "posted_date": "2024-11-29T15:33:22+00:00",
-      "views_count": 34541888,
-      "likes_count": 445977,
-      "description": "Legit in shock with these halara new leggings! #halara #halaraeveryday #tiktokmademebuyit #fyp #plussizefashion #apronbelly #fyp ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": null,
-        "handle": "catshrank",
-        "uid_shop": "7494014591903106371"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729568240189804836"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7442724689773858078.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494014591903106371.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7436588387370388782",
+          "hook_phrasing": "Why are you only pooping one time a day?",
+          "views_count": 956462,
+          "posted_date": "2024-11-13T02:41:05+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017626910590174.webp"
+        }
+      ]
     },
     {
-      "video_id": "7426085085964733742",
-      "posted_date": "2024-10-15T19:22:56+00:00",
-      "views_count": 12386308,
-      "likes_count": 146478,
-      "description": "",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": null,
-        "handle": "jenn_lyles",
-        "uid_shop": "7494020363354539576"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729568240189804836"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7426085085964733742.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494020363354539576.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7436974568964672798",
+          "hook_phrasing": "It's not your fault. You're not a big bag, you just need a gut cleanse.",
+          "views_count": 605054,
+          "posted_date": "2024-11-14T03:39:49+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494831640458987698.webp"
+        }
+      ]
     },
     {
-      "video_id": "7446933410326629675",
-      "posted_date": "2024-12-10T23:45:05+00:00",
-      "views_count": 7744886,
-      "likes_count": 25988,
-      "description": "#halaraworkleisure #halaraworkpants ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "Audrymedia@gmail.com",
-        "handle": "audrymm",
-        "uid_shop": "7494001439796529369"
-      },
-      "seller_products": {
-        "title": "Halara Halara 2-Piece  Flex High Waisted Side Pocket Wide Leg Waffle Work Pants Set",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1730136758060290340"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7446933410326629675.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494001439796529369.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1730136758060290340.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7441052769579978015",
+          "hook_phrasing": "Why is it 2.3 million sold?",
+          "views_count": 372716,
+          "posted_date": "2024-11-25T03:25:21+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494026760103298560.webp"
+        }
+      ]
     },
     {
-      "video_id": "7427624680418184479",
-      "posted_date": "2024-10-19T22:57:30+00:00",
-      "views_count": 6878532,
-      "likes_count": 44769,
-      "description": "🚨🚨 ON SALE FOR $24🚨🚨 grab yours! These are one of my fav pants & I swear by them @Halara_official #halarapants #halarawafflepants #halara #workpants #TikTokShop ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "Lizz.socialmedia@gmail.com",
-        "handle": "lizzmi45",
-        "uid_shop": "7494010514528896909"
-      },
-      "seller_products": {
-        "title": "Halara Flex High Waisted Plicated Side Pocket Wide Leg Waffle Work Pants",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729408758258766116"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7427624680418184479.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494010514528896909.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729408758258766116.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7441123387746831646",
+          "hook_phrasing": "6 days in, and I'm already obsessed... now they're selling it for $10",
+          "views_count": 1227277,
+          "posted_date": "2024-11-25T07:59:53+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494338856714733770.webp"
+        }
+      ]
     },
     {
-      "video_id": "7423828035184413998",
-      "posted_date": "2024-10-09T17:24:26+00:00",
-      "views_count": 6346837,
-      "likes_count": 30878,
-      "description": "PSA‼️ @Halara_official #flashsale ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": null,
-        "handle": "loren_elizabeth55",
-        "uid_shop": "7494010320695035484"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729406821413261604"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7423828035184413998.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494010320695035484.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7442355423786683678",
+          "hook_phrasing": "About to eat my first Thanksgiving meal of the day...I have two.",
+          "views_count": 90582,
+          "posted_date": "2024-11-28T15:40:26+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494026760103298560.webp"
+        }
+      ]
     },
     {
-      "video_id": "7427552518164499755",
-      "posted_date": "2024-10-19T18:17:18+00:00",
-      "views_count": 5472469,
-      "likes_count": 18843,
-      "description": "Some of the only leggings I will spend my money on anymore 👏🏻 #tummycontrol #tummycontrolleggings #csectionmom #mombelly #Halara #halaraleggings #highwaisted #highwaistedleggings #momapproved #midsizewomen @Halara ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "kaitilyndecker@gmail.com",
-        "handle": "kaitilyndecker",
-        "uid_shop": "7494009229416500178"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729406821413261604"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7427552518164499755.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494009229416500178.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7437153468898413855",
+          "hook_phrasing": "My REAL 15 Day Gut Cleanse Journey (Not what I expected)",
+          "views_count": 86483,
+          "posted_date": "2024-11-14T15:14:03+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495486083437529588.webp"
+        }
+      ]
     },
     {
-      "video_id": "7439086607564786990",
-      "posted_date": "2024-11-19T20:15:29+00:00",
-      "views_count": 5106800,
-      "likes_count": 99374,
-      "description": "Whelp. Ill take the halara butt lifting leggings in every color please! #halara #halaraeveryday #halaraleggings #leggings #workoutleggings #gymleggings #halarasocinched #tiktokshopblackfriday #tiktokshopcybermonday #tiktokshopholidayhaul ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "AndreaLemise.UGC@gmail.com",
-        "handle": "spacecadetmomma",
-        "uid_shop": "7494025737471165751"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729568240189804836"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7439086607564786990.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494025737471165751.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7437295815590153514",
+          "hook_phrasing": "This is me just three months ago before I started taking the 15-day gut cleanse.",
+          "views_count": 187731,
+          "posted_date": "2024-11-15T00:26:15+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495333158864521393.webp"
+        }
+      ]
     },
     {
-      "video_id": "7420566487129165098",
-      "posted_date": "2024-09-30T22:27:56+00:00",
-      "views_count": 4343478,
-      "likes_count": 43012,
-      "description": "Replying to @TeresaCathleen333 these have paneling for booty scrunch that lift UP your booty! #halara #halaraleggings #plussizefits #plussizeleggings #tummycontrolleggings #plussizepants #plussizeootd #fyp #fashionfinds #plussizefinds #halaratiktokshop #tummycontrol #TikTokMadeMeBuyIt ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "c@dailynouri.com",
-        "handle": "influencedqueens",
-        "uid_shop": "7495307849358936654"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729406821413261604"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7420566487129165098.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495307849358936654.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729406821413261604.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7438806936360979758",
+          "hook_phrasing": "Reply to Blackginger's comment I need more proof!!!!",
+          "views_count": 40702,
+          "posted_date": "2024-11-19T02:10:12+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494686580493486662.webp"
+        }
+      ]
     },
     {
-      "video_id": "7443523892259343647",
-      "posted_date": "2024-12-01T19:14:34+00:00",
-      "views_count": 3539257,
-      "likes_count": 3952,
-      "description": "🤯 How many leggings is too many leggings? Asking for a friend #halara #halaraeveryday #3packleggings #tiktokdeals #TikTokShop #fyp #midsize ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": "britlynshop@gmail.com",
-        "handle": "brittany_lynnnn",
-        "uid_shop": "7493996567902259724"
-      },
-      "seller_products": {
-        "title": "Halara 3-Piece SoCinched High Waisted Tummy Control Side Pocket Shaping Training Leggings Set",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1730030445959287076"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7443523892259343647.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7493996567902259724.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1730030445959287076.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7436899909975936287",
+          "hook_phrasing": "Do you always feel drowsy with an upset stomach?",
+          "views_count": 5622,
+          "posted_date": "2024-11-14T04:00:00+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/default.png"
+        }
+      ]
     },
     {
-      "video_id": "7438061738060451118",
-      "posted_date": "2024-11-17T01:58:26+00:00",
-      "views_count": 3122942,
-      "likes_count": 35619,
-      "description": "Whelp the halara butt lifting leggings do just that! @Halara you really nailed it with these leggings #halara #halaraleggings #halarareview #halaraeveryday #buttlifting #leggings #tiktokshopblackfriday #tiktokshopcybermonday #tiktokshopholidayhaul ",
-      "photo_downloaded": false,
-      "social_listening_term": null,
-      "revenue": null,
-      "creators": {
-        "email": null,
-        "handle": "on.trendz101",
-        "uid_shop": "7494952501031308103"
-      },
-      "seller_products": {
-        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
-        "sellers": {
-          "name": "Halara US",
-          "seller_id": "7495304734897637668"
-        },
-        "seller_id": "7495304734897637668",
-        "product_id": "1729568240189804836"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7438061738060451118.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/default.png",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png"
+      "examples": [
+        {
+          "video_id": "7436533576088227102",
+          "hook_phrasing": "If you bought the viral 15-day gut cleanse already...",
+          "views_count": 7245,
+          "posted_date": "2024-11-12T23:08:36+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495610271044634945.webp"
+        }
+      ]
     }
   ],
-  "total": 13666
+  "selling_points_analysis_json": [
+    {
+      "examples": [
+        {
+          "video_id": "7442355423786683678",
+          "selling_point_phrasing": "By the end of the night, these meals will be deleted from my system.",
+          "views_count": 90582,
+          "posted_date": "2024-11-28T15:40:26+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494026760103298560.webp"
+        },
+        {
+          "video_id": "7436588387370388782",
+          "selling_point_phrasing": "That's a sign of a healthy digestive system and gut.",
+          "views_count": 956462,
+          "posted_date": "2024-11-13T02:41:05+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017626910590174.webp"
+        },
+        {
+          "video_id": "7437641002241887534",
+          "selling_point_phrasing": "When you do go, you're gonna get a lot of stuff out of you.",
+          "views_count": 18349,
+          "posted_date": "2024-11-15T22:45:48+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495084775273958248.webp"
+        },
+        {
+          "video_id": "7440650178123631915",
+          "selling_point_phrasing": "Balance Bugs.",
+          "views_count": 7536,
+          "posted_date": "2024-11-24T01:22:55+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495909059540912509.webp"
+        },
+        {
+          "video_id": "7437766065070902570",
+          "selling_point_phrasing": "Flushes out toxins, cleanses and detoxifies the intestines, boosts digestion, and balances gut bacteria.",
+          "views_count": 6472,
+          "posted_date": "2024-11-16T06:51:11+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494014072309581271.webp"
+        }
+      ],
+      "selling_point": "Health and Effectiveness"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7437153468898413855",
+          "selling_point_phrasing": "15-day gut cleanse...lost 15 pounds!",
+          "views_count": 86483,
+          "posted_date": "2024-11-14T15:14:03+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495486083437529588.webp"
+        },
+        {
+          "video_id": "7437295815590153514",
+          "selling_point_phrasing": "My jawline is way sharper and I just feel like a better person overall.",
+          "views_count": 187731,
+          "posted_date": "2024-11-15T00:26:15+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495333158864521393.webp"
+        },
+        {
+          "video_id": "7435713126164729118",
+          "selling_point_phrasing": "15 days after cleanse, I lost 20 lbs.",
+          "views_count": 9761,
+          "posted_date": "2024-11-10T18:04:50+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495152715302996260.webp"
+        },
+        {
+          "video_id": "7434508949107363118",
+          "selling_point_phrasing": "Lap netwaye et lap netwaye sérieusement",
+          "views_count": 6391,
+          "posted_date": "2024-11-07T12:11:57+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494057218084604005.webp"
+        },
+        {
+          "video_id": "7434301517454118190",
+          "selling_point_phrasing": "Yo he bajado dos tallas en hacérmela",
+          "views_count": 3355,
+          "posted_date": "2024-11-06T22:46:53+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495361380853123406.webp"
+        }
+      ],
+      "selling_point": "Dramatic Physical Transformation"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7436974568964672798",
+          "selling_point_phrasing": "Two for the price of one!",
+          "views_count": 605054,
+          "posted_date": "2024-11-14T03:39:49+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494831640458987698.webp"
+        },
+        {
+          "video_id": "7441740541169077534",
+          "selling_point_phrasing": "Literally on sale rn.",
+          "views_count": 9896,
+          "posted_date": "2024-11-26T23:54:11+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494587513185011951.webp"
+        },
+        {
+          "video_id": "7436533576088227102",
+          "selling_point_phrasing": "It just dropped 7 bucks in price and costs less than a milkshake rn.",
+          "views_count": 7245,
+          "posted_date": "2024-11-12T23:08:36+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495610271044634945.webp"
+        },
+        {
+          "video_id": "7440729772013014315",
+          "selling_point_phrasing": "For less than a Starbucks drink.",
+          "views_count": 4095,
+          "posted_date": "2024-11-24T06:31:50+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494012588061460005.webp"
+        },
+        {
+          "video_id": "7436104092025425183",
+          "selling_point_phrasing": "Go get it while it's on sale.",
+          "views_count": 9416,
+          "posted_date": "2024-11-11T19:22:00+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495116285455010542.webp"
+        }
+      ],
+      "selling_point": "Affordability and Deals"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7441052769579978015",
+          "selling_point_phrasing": "...your entire quality of life will probably go up a bit...",
+          "views_count": 372716,
+          "posted_date": "2024-11-25T03:25:21+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494026760103298560.webp"
+        },
+        {
+          "video_id": "7440355154597236014",
+          "selling_point_phrasing": "Nothing hurts anymore. I feel kind of euphoric.",
+          "views_count": 3589,
+          "posted_date": "2024-11-23T06:18:08+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494012588061460005.webp"
+        },
+        {
+          "video_id": "7442877232265186603",
+          "selling_point_phrasing": "Clean that gut out honey. Get them chitlins out of you.",
+          "views_count": 13384,
+          "posted_date": "2024-11-30T01:25:01+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494113571039316305.webp"
+        },
+        {
+          "video_id": "7436588387370388782",
+          "selling_point_phrasing": "This will change your life. It'll have you feeling like a new human.",
+          "views_count": 956462,
+          "posted_date": "2024-11-13T02:41:05+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017626910590174.webp"
+        },
+        {
+          "video_id": "7441091025730276654",
+          "selling_point_phrasing": "Nothing hurts anymore. I feel kind of free.",
+          "views_count": 3894,
+          "posted_date": "2024-11-25T05:53:39+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494012588061460005.webp"
+        }
+      ],
+      "selling_point": "Emotional and Lifestyle Impact"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7436588387370388782",
+          "selling_point_phrasing": "164,000 reviews down below, all positive.",
+          "views_count": 956462,
+          "posted_date": "2024-11-13T02:41:05+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017626910590174.webp"
+        },
+        {
+          "video_id": "7434301517454118190",
+          "selling_point_phrasing": "Esta me ha vendido más de dos millones de veces aquí en la tienda TikTok",
+          "views_count": 3355,
+          "posted_date": "2024-11-06T22:46:53+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495361380853123406.webp"
+        },
+        {
+          "video_id": "7442877232265186603",
+          "selling_point_phrasing": "The viral 15 day gut cleanse.",
+          "views_count": 13384,
+          "posted_date": "2024-11-30T01:25:01+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494113571039316305.webp"
+        },
+        {
+          "video_id": "7436899909975936287",
+          "selling_point_phrasing": "It's a very popular product on TikTok right now for a good reason.",
+          "views_count": 5622,
+          "posted_date": "2024-11-14T04:00:00+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/default.png"
+        },
+        {
+          "video_id": "7437641002241887534",
+          "selling_point_phrasing": "The good thing about this is that you're not gonna have the runs.",
+          "views_count": 18349,
+          "posted_date": "2024-11-15T22:45:48+00:00",
+          "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495084775273958248.webp"
+        }
+      ],
+      "selling_point": "Popularity and Social Proof"
+    }
+  ],
+  "video_formats_analysis_json": [
+    {
+      "examples": [
+        {
+          "video_id": "7437295815590153514",
+          "explanation": "A user shows their dramatic jawline improvement after using the cleanse for over three months, mentioning pros (improved appearance) and cons to humanize the experience."
+        },
+        {
+          "video_id": "7435713126164729118",
+          "explanation": "Starts with a weight measurement on a scale showing drastic weight loss (e.g., dropping 20 lbs in 15 days) and uses this as visual evidence of success."
+        },
+        {
+          "video_id": "7437153468898413855",
+          "explanation": "Features a user's '15 Day Gut Cleanse Journey,' emphasizing unexpected transformations via scale visuals and personal testimony."
+        }
+      ],
+      "description": "This format highlights the product’s before-and-after effects, focusing on visual proof of results. It's aimed at building trust by showcasing clear changes, often with weight loss, bloating reduction, or overall appearance improvement. Visuals such as scales, body transformations, or jawlines enhanced after use are integral.",
+      "tips_to_use": "Emphasize dramatic visual changes, provide clear timelines of progress, and include authentic user experiences.",
+      "video_format_name": "Transformation Showcase"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7436588387370388782",
+          "explanation": "Opens with a provocative question 'Why are you only pooping once a day?' then positions the product as a life-changing solution."
+        },
+        {
+          "video_id": "7436899909975936287",
+          "explanation": "Tackles bloating and irregularity with animated demonstrations and straightforward commentary on the cleanse’s effectiveness."
+        },
+        {
+          "video_id": "7437766065070902570",
+          "explanation": "Explicitly describes the gut cleanse as a way to detoxify intestines, flush out toxins, and restore balance, addressing common digestive problems."
+        }
+      ],
+      "description": "This format focuses on identifying a relatable problem (e.g., bloating, constipation, weight issues) and then offering the product as the ultimate solution. Often these videos use empathy, humor, or shocking statements to connect emotionally with the audience.",
+      "tips_to_use": "Start with a relatable issue your audience faces, then present the product as the definitive solution.",
+      "video_format_name": "Problem/Solution Spotlight"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7442355423786683678",
+          "explanation": "A comedic hook shows anticipation for a large Thanksgiving meal, followed by the gut cleanser as a solution for overeating ('meals deleted')."
+        },
+        {
+          "video_id": "7442892705245613358",
+          "explanation": "Humorously claims the product cleanses 'everything, even the lies of your ex,' appealing to people with a playful tone."
+        },
+        {
+          "video_id": "7440650178123631915",
+          "explanation": "Uses an exaggerated crying face to convey the relatable pain of stomach issues, blending humor and relatability."
+        }
+      ],
+      "description": "This strategy uses comedy and exaggerated scenarios to entertain viewers while embedding the product pitch. These videos often leverage meme culture, inside jokes, or situations the audience can laugh about while subtly promoting the product.",
+      "tips_to_use": "Incorporate humor to create an approachable and engaging persona for the product.",
+      "video_format_name": "Humorous/Relatable Situations"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7436974568964672798",
+          "explanation": "Highlights a Black Friday 'two for one' deal in multiple references, encouraging purchases before the deal ends."
+        },
+        {
+          "video_id": "7437641002241887534",
+          "explanation": "Combines a commentary on the product’s convenience (less disruptive than expected) with its holiday sale ('three for the price of one')."
+        },
+        {
+          "video_id": "7439145243234061611",
+          "explanation": "Emphasizes the jaw-dropping price of $13, suggesting urgency and scarcity."
+        }
+      ],
+      "description": "This format plays on fear-of-missing-out (FOMO) by emphasizing price drops, limited-time sales, or deals like two-for-one bundles. It encourages an urgent response, blending affordability with product benefit promotion.",
+      "tips_to_use": "Highlight limited-time deals and emphasize urgency and scarcity to encourage quick purchases.",
+      "video_format_name": "FOMO & Limited-Time Offers"
+    },
+    {
+      "examples": [
+        {
+          "video_id": "7441052769579978015",
+          "explanation": "Mentions that over 2.3 million units have been sold to answer why the product has such widespread popularity."
+        },
+        {
+          "video_id": "7434301517454118190",
+          "explanation": "Highlights that the product has sold over two million times on TikTok, claiming it’s unmatched in success."
+        },
+        {
+          "video_id": "7437766065070902570",
+          "explanation": "Mentions both high sales volume ('more than 2 million sold') and free shipping, building credibility while minimizing purchase friction."
+        }
+      ],
+      "description": "This format leverages popularity, reviews, or sales data to build trust and persuade the audience. It shows that the product is already widely loved, reassuring consumers they are not alone in buying it.",
+      "tips_to_use": "Leverage sales figures, customer reviews, and social validation to build trust with your audience.",
+      "video_format_name": "Social Proof Drives Trust"
+    }
+  ]
 }
