@@ -29,14 +29,21 @@
         <img 
           :src="`https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/${product.id}.jpg`"
           :alt="product.title"
-          class="h-full rounded-l-[12px] min-w-[250px]"
+          class="h-full rounded-l-[12px] min-w-[250px] object-cover"
         >
       </div>
-      <div class="w-full py-4">
-        <h2 class="text-[40px] leading-[48px] font-bold text-textPrimary px-4">
-          <button class="w-fit !ring-0 text-left line-clamp-4">
+      <div class="w-full py-4 flex flex-col">
+        <h2 class="text-[32px] leading-[40px] font-bold text-textPrimary px-4 flex-grow relative group">
+          <button class="w-fit !ring-0 text-left line-clamp-6">
             {{ product.title }}
           </button>
+          <!-- 悬停时显示的完整标题 -->
+          <div 
+            class="absolute left-0 top-full mt-2 p-3 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md text-base
+                   invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+          >
+            {{ product.title }}
+          </div>
         </h2>
         <p class="text-[16px] text-gray-600 px-4 mt-2">
           {{ product.seller_name }}
@@ -77,17 +84,16 @@
               <div class="flex items-center justify-between gap-2 relative group">
                 <div class="bg-[#F1F3F5] hover:bg-[#E9ECEF] rounded-md px-3 py-2">
                   <p class="text-sm text-gray-900 max-w-[490px] truncate">{{ point.selling_point_phrasing }}</p>
-            </div>
+                </div>
                 <div class="flex items-center gap-1.5 text-neutral-400 text-[12px] whitespace-nowrap flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary flex-shrink-0">
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-              <polyline points="16 7 22 7 22 13"></polyline>
-            </svg>
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                    <polyline points="16 7 22 7 22 13"></polyline>
+                  </svg>
                   <span>{{ formatNumber(point.views_count) }} views</span>
                 </div>
-                <!-- 悬停时显示的完整内容 -->
                 <div 
-                  class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                  class="absolute left-0 bottom-full mb-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
                          invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
                 >
                   {{ point.selling_point_phrasing }}
@@ -119,17 +125,16 @@
               <div class="flex items-center justify-between gap-2 relative group">
                 <div class="bg-[#F1F3F5] hover:bg-[#E9ECEF] rounded-md px-3 py-2">
                   <p class="text-sm text-gray-900 max-w-[490px] truncate">{{ hook.hook_phrasing }}</p>
-            </div>
+                </div>
                 <div class="flex items-center gap-1.5 text-neutral-400 text-[12px] whitespace-nowrap flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary flex-shrink-0">
-                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                <polyline points="16 7 22 7 22 13"></polyline>
-              </svg>
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                    <polyline points="16 7 22 7 22 13"></polyline>
+                  </svg>
                   <span>{{ formatNumber(hook.views_count) }} views</span>
                 </div>
-                <!-- 悬停时显示的完整内容 -->
                 <div 
-                  class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                  class="absolute left-0 bottom-full mb-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
                          invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
                 >
                   {{ hook.hook_phrasing }}
@@ -141,6 +146,7 @@
       </div>
     </div>
 
+    <!-- Format详情模 -->
     <!-- Format详情模��� -->
     <div v-if="showFormatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-[500px]">
@@ -318,7 +324,7 @@
                 </button>
                 <span v-else class="px-2">...</span>
               </template>
-
+              <!-- 下一页���钮 -->
               <!-- 下一页按钮 -->
               <button 
                 @click="nextVideosPage"
