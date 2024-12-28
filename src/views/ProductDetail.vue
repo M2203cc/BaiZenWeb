@@ -106,12 +106,12 @@
     </div>
 
     <!-- Top Hooks 部分 -->
-    <div class="mt-10">
+    <div v-if="hooks && hooks.length > 0" class="mt-10">
       <h2 class="text-xl font-semibold mb-4">Top Hooks</h2>
-        <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-          <div 
+      <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+        <div 
           v-for="(hook, index) in hooks" 
-            :key="index" 
+          :key="index" 
           class="flex items-center gap-4 p-2 rounded-md"
         >
           <span class="w-3 text-gray-500">{{ index + 1 }}</span>
@@ -147,7 +147,7 @@
     </div>
 
     <!-- Format详情模 -->
-    <!-- Format详情模��� -->
+    <!-- Format详情模 -->
     <div v-if="showFormatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 w-[500px]">
         <!-- 标题和关闭按钮 -->
@@ -324,7 +324,6 @@
                 </button>
                 <span v-else class="px-2">...</span>
               </template>
-              <!-- 下一页���钮 -->
               <!-- 下一页按钮 -->
               <button 
                 @click="nextVideosPage"

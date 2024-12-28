@@ -202,7 +202,7 @@
         </div>
 
         <!-- Videos Content -->
-        <div v-if="videos.length > 0" class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
+        <div v-if="videos.length > 0" class="relative w-full rounded-sm border border-secondary-100 bg-white">
           <!-- Loading Skeleton -->
           <div v-if="videosLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -314,15 +314,15 @@
                         class="w-10 h-10 rounded-md object-cover flex-shrink-0"
                       >
                       <div class="min-w-0 flex-1">
-                        <span class="block truncate">{{ video.productName }}</span>
+                        <span class="block truncate max-w-[300px]">{{ video.productName }}</span>
                       </div>
                     </div>
-                    <!-- Product 悬浮提示 -->
+                    <!-- Product 悬浮提示 - 修改位置到上方 -->
                     <div 
-                      class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                      class="absolute bottom-full left-0 mb-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
                              invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
                     >
-                      {{ video.productName }}
+                      {{ video.fullProductName }}
                     </div>
                   </td>
                 </tr>
@@ -752,12 +752,14 @@ export default {
             title: video.description,
             creator: video.creators.handle,
             creatorAvatar: video.creator_profile_url,
-            // 转换posted_date为相对时间
             postedTime: this.getRelativeTime(video.posted_date),
             views: video.views_count,
             likes: video.likes_count,
             productImage: video.seller_product_photo_url,
-            productName: video.seller_products.title
+            // 保存完整的产品名称
+            fullProductName: video.seller_products.title,
+            // 显示截断的产品名称
+            productName: this.formatProductName(video.seller_products.title)
           }));
           this.totalVideos = videosResponse.total || 0;
         }
@@ -945,11 +947,9 @@ export default {
       }
     },
     formatProductName(name) {
-      // 如果名称长度超过200个字符，截取200个字符并添加省略号
-      if (name.length > 350) {
-        return name.substring(0, 350) + '...';
-      }
-      return name;
+      if (!name) return '';
+      // 如果名称长度超过 50 个字符，截取前 50 个字符并添加省略号
+      return name.length > 50 ? `${name.substring(0, 50)}...` : name;
     },
     openExportModal() {
       if (this.selectedCreators.length === 0) {
@@ -1033,7 +1033,7 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
-/* 确保表格单元格内容溢出时显示省略�� */
+/* 确保表格单元格内容溢出时显示省略号 */
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
