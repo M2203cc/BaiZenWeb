@@ -35,4 +35,31 @@ export default {
     }
   }
 }
-</script> 
+</script>
+
+<style>
+/* 全局样式 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50;
+}
+
+.bg-primary-600 {
+  background-color: #6366F1;
+}
+
+.hover\:bg-primary-700:hover {
+  background-color: #4F46E5;
+}
+
+.text-primary-600 {
+  color: #6366F1;
+}
+
+.border-primary-600 {
+  border-color: #6366F1;
+}
+</style> 

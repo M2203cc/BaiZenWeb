@@ -454,8 +454,8 @@
 </template>
 
 <script>
-import CreatorDemographics from '@/components/CreatorDemographics.vue'
-import AudienceDemographics from '@/components/AudienceDemographics.vue'
+import CreatorDemographics from '../components/CreatorDemographics.vue'
+import AudienceDemographics from '../components/AudienceDemographics.vue'
 
 export default {
   name: 'ProductDetail',

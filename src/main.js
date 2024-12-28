@@ -2,23 +2,17 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VCalendar from 'v-calendar'
+import 'v-calendar/dist/style.css'
 import './assets/styles/main.css'
-import * as echarts from 'echarts'
-import VChart from 'vue-echarts'
-import axios from 'axios'
-import VCalendar from 'v-calendar';
-import 'v-calendar/dist/style.css';
 
+// 创建应用实例
 const app = createApp(App)
+
+// 注册插件
 app.use(router)
 app.use(store)
-app.component('v-chart', VChart)
+app.use(VCalendar, {})
 
-// 将 echarts 挂载到全局，方便在组件中使用
-app.config.globalProperties.$echarts = echarts
-
-// 配置 axios 默认值
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
-
-app.mount('#app') 
-app.use(VCalendar, {});
+// 挂载应用
+app.mount('#app')

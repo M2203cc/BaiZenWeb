@@ -24,7 +24,7 @@
     <!-- Filters Section -->
     <div class="flex flex-wrap gap-4 mb-6">
       <!-- Date Range Filter -->
-      <div class="flex-1">
+      <div class="w-[300px]">
         <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
         <div class="relative">
           <div 
@@ -50,7 +50,7 @@
           <div
             v-if="showDatePicker"
             class="absolute z-50 mt-1 p-4 bg-white border border-gray-300 rounded-md shadow-lg"
-            style="min-width: 600px"
+            style="width: 600px"
           >
             <div class="flex flex-col">
               <div class="flex justify-between items-center mb-4">
@@ -79,13 +79,14 @@
               <v-date-picker
                 v-model="dateRange"
                 is-range
-                :min-date="new Date(2020, 0, 1)"
-                :max-date="new Date()"
+                :min-date="minDate"
+                :max-date="maxDate"
                 :columns="2"
+                :initial-page="initialPage"
                 class="rounded-md"
               />
 
-              <!-- 操作按钮 -->
+              <!-- 操作按��� -->
               <div class="flex justify-end gap-2 mt-4">
                 <button
                   @click="showDatePicker = false"
@@ -106,7 +107,7 @@
       </div>
 
       <!-- View Count Filter -->
-      <div class="flex-1">
+      <div class="w-[300px]">
         <label class="block text-sm font-medium text-gray-700 mb-1">View Count</label>
         <div class="relative">
           <!-- 输入框区域 -->
@@ -462,34 +463,50 @@ export default {
         start: null,
         end: null
       },
+      initialPage: new Date(),
       datePresets: [
-        { label: 'Today', getValue: () => {
-          const today = new Date();
-          return { start: today, end: today };
-        }},
-        { label: 'Yesterday', getValue: () => {
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          return { start: yesterday, end: yesterday };
-        }},
-        { label: 'Last 7 Days', getValue: () => {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 6);
-          return { start, end };
-        }},
-        { label: 'Last 30 Days', getValue: () => {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 29);
-          return { start, end };
-        }},
-        { label: 'This Month', getValue: () => {
-          const now = new Date();
-          const start = new Date(now.getFullYear(), now.getMonth(), 1);
-          const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          return { start, end };
-        }}
+        { 
+          label: 'Today',
+          getValue: () => {
+            const today = new Date()
+            return { start: today, end: today }
+          }
+        },
+        {
+          label: 'Yesterday',
+          getValue: () => {
+            const yesterday = new Date()
+            yesterday.setDate(yesterday.getDate() - 1)
+            return { start: yesterday, end: yesterday }
+          }
+        },
+        {
+          label: 'Last 7 Days',
+          getValue: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setDate(start.getDate() - 6)
+            return { start, end }
+          }
+        },
+        {
+          label: 'Last 30 Days',
+          getValue: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setDate(start.getDate() - 29)
+            return { start, end }
+          }
+        },
+        {
+          label: 'This Month',
+          getValue: () => {
+            const now = new Date()
+            const start = new Date(now.getFullYear(), now.getMonth(), 1)
+            const end = new Date()
+            return { start, end }
+          }
+        }
       ]
     }
   },
@@ -504,7 +521,7 @@ export default {
       return Math.ceil(this.total / this.pageSize)
     },
     selectedInfluencers() {
-      // 将视频数据换为导出需格式
+      // 将频数据换为导出需格式
       return this.videos.map(video => ({
         handle: video.creators?.handle,
         // 可以添加其他需段
@@ -601,9 +618,8 @@ export default {
       )
     },
     formatDateRange() {
-      if (!this.dateRange.start || !this.dateRange.end) {
-        return '';
-      }
+      if (!this.dateRange.start || !this.dateRange.end) return '';
+      
       const formatDate = (date) => {
         if (!date) return '';
         return new Date(date).toLocaleDateString('en-US', {
@@ -612,7 +628,30 @@ export default {
           day: '2-digit'
         });
       };
+      
       return `${formatDate(this.dateRange.start)} ~ ${formatDate(this.dateRange.end)}`;
+    },
+    minDate() {
+      const date = new Date()
+      date.setMonth(date.getMonth() - 1)
+      date.setDate(1)
+      return date
+    },
+    maxDate() {
+      return new Date()
+    },
+    disabledDates() {
+      return {
+        start: null,
+        end: this.maxDate,
+        dates: [],
+        ranges: [
+          {
+            start: null,
+            end: new Date(this.minDate.getTime() - 24 * 60 * 60 * 1000)
+          }
+        ]
+      }
     }
   },
   methods: {
@@ -661,7 +700,7 @@ export default {
       }
     },
     handleImageError(e) {
-      // 片加载失败使用默认图
+      // 片加载失败使用认图
       if (e.target.classList.contains('rounded-full')) {
         e.target.src = 'https://via.placeholder.com/32x32'
       } else {
@@ -694,62 +733,52 @@ export default {
         
         const params = {
           page,
-          pageSize: this.pageSize
+          page_size: this.pageSize
         };
         
+        // 添加日期范围参数
+        if (this.dateRange.start && this.dateRange.end) {
+          params.start_date = new Date(this.dateRange.start)
+            .toISOString()
+            .split('T')[0];
+          params.end_date = new Date(this.dateRange.end)
+            .toISOString()
+            .split('T')[0];
+        }
+
+        // 添加搜索参数
         if (this.searchQuery?.trim()) {
           params.search = this.searchQuery.trim();
         }
 
-        // 修改日期范围参数的格式
-        if (this.dateRange.start && this.dateRange.end) {
-          // 确保开始日期是当天的开始
-          const startDate = new Date(this.dateRange.start);
-          startDate.setHours(0, 0, 0, 0);
-          
-          // 确保结束日期是当天的结束
-          const endDate = new Date(this.dateRange.end);
-          endDate.setHours(23, 59, 59, 999);
-          
-          params.startDate = startDate.toISOString();
-          params.endDate = endDate.toISOString();
-        }
-
         const response = await videoAPI.getVideos(params);
-        console.log('API Response for page:', page, response)
         
-        if (response && (response.data || response.items)) {
-          const items = response.data || response.items || []
-          // 使用 nextTick 确保 DOM 更新
-          await this.$nextTick()
-          
-          this.videos = items.map(video => ({
-            id: video.id || video.video_id,
-            thumbnail_url: video.thumbnail_url || video.cover_image_url,
+        if (response && response.data) {
+          this.videos = response.data.map(video => ({
+            id: video.video_id,
+            thumbnail_url: video.thumbnail_url,
             creator: video.creators?.handle || 'Unknown Creator',
             creatorAvatar: video.creator_profile_url,
-            views_count: video.views_count || video.stats?.play_count || 0,
-            likes_count: video.likes_count || video.stats?.digg_count || 0,
+            views_count: video.views_count || 0,
+            likes_count: video.likes_count || 0,
             description: video.description || 'No description',
-            posted_date: video.posted_date || video.create_time || video.created_at,
+            posted_date: video.posted_date,
             product: video.seller_products?.title || 'Unknown Product',
             productImage: video.seller_product_photo_url,
             brand: video.seller_products?.sellers?.name || 'Unknown Brand',
             brandImage: video.seller_photo_url
-          }))
+          }));
           
-          this.total = response.total || response.meta?.total || items.length
-          this.currentPage = page
-        } else {
-          throw new Error('Invalid response format')
+          this.total = response.total;
+          this.currentPage = page;
         }
       } catch (error) {
-        console.error('Error in fetchVideos:', error)
-        this.error = error.message || 'Failed to load videos'
-        this.videos = []
-        this.total = 0
+        console.error('Error fetching videos:', error);
+        this.error = error.message || 'Failed to load videos';
+        this.videos = [];
+        this.total = 0;
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     goToVideoDetail(video) {
@@ -778,26 +807,27 @@ export default {
     searchVideos() {
       this.fetchVideos(1)
     },
-    getTimeAgo(date) {
-      if (!date) return 'Unknown date'
-      const now = new Date()
-      const postedDate = new Date(date)
-      const diffTime = Math.abs(now - postedDate)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    getTimeAgo(dateString) {
+      if (!dateString) return 'Unknown date';
       
-      // 算月份差异
-      const months = Math.floor(diffDays / 30)
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffTime = now - date;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       
-      if (months > 0) {
-        if (months === 1) {
-          return 'a month ago'
-        }
-        return `${months} months ago`
+      if (diffDays < 1) {
+        return 'Today';
+      } else if (diffDays === 1) {
+        return '1 day ago';
+      } else if (diffDays < 30) {
+        return `${diffDays} days ago`;
       } else {
-        if (diffDays === 1) {
-          return '1 day ago'
+        const diffMonths = Math.floor(diffDays / 30);
+        if (diffMonths === 1) {
+          return 'a month ago';
+        } else {
+          return `${diffMonths} months ago`;
         }
-        return `${diffDays} days ago`
       }
     },
     goToPage(page) {
@@ -837,7 +867,7 @@ export default {
         }
       }
     },
-    // 打开导出模态框
+    // 开导出模态框
     openExportModal() {
       if (this.selectedCreators.length === 0) {
         alert('Please select at least one video first')
@@ -935,7 +965,11 @@ export default {
       }
     },
     selectDatePreset(preset) {
-      this.dateRange = preset.getValue();
+      const range = preset.getValue();
+      this.dateRange = {
+        start: range.start,
+        end: range.end
+      };
     }
   },
   created() {
@@ -1070,7 +1104,7 @@ button {
   display: block;
 }
 
-/* 添加表��行高样式 */
+/* 添加表���高样式 */
 th, td {
   height: 55px !important;
 }

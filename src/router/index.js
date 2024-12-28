@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Videos from '../views/Videos.vue'
 import Influencers from '../views/Influencers.vue'
 import Lists from '../views/Lists.vue'
 import ListDetail from '../views/ListDetail.vue'
@@ -12,7 +13,12 @@ import Categories from '../views/Categories.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/influencers'
+    redirect: '/videos'
+  },
+  {
+    path: '/videos',
+    name: 'Videos',
+    component: Videos
   },
   {
     path: '/influencers',
@@ -31,11 +37,6 @@ const routes = [
     path: '/lists/:id',
     name: 'ListDetail',
     component: ListDetail
-  },
-  {
-    path: '/videos',
-    name: 'Videos',
-    component: () => import('../views/Videos.vue')
   },
   {
     path: '/brands',
