@@ -1,49 +1,326 @@
 {
-  "data": {
-    "follower_ages": {
-      "55+": "12.26",
-      "18-24": "10.90",
-      "25-34": "34.09",
-      "35-44": "25.87",
-      "45-54": "16.89"
+  "message": "get-product-videos:: Videos fetched successfully",
+  "data": [
+    {
+      "video_id": "7403257014471642399",
+      "posted_date": "2024-08-15T06:58:30+00:00",
+      "views_count": 52586494,
+      "likes_count": 4126502,
+      "description": "Replying to @user#1loving5u we appreciate the question! Hope this answers some of yalls question 🫶🏼",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Brother Cosmetics Nail Growth Oil For Strength and Moisture | Organic Nail Care Blend",
+        "sellers": {
+          "name": "Brother Cosmetics",
+          "seller_id": "7495293858009418261"
+        },
+        "seller_id": "7495293858009418261",
+        "product_id": "1729439556006089237"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7403257014471642399.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494008621490078840.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729439556006089237.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495293858009418261.png",
+      "creators": {
+        "email": null,
+        "handle": "brothernailtech",
+        "uid_shop": "7494008621490078840",
+        "hashtags": [],
+        "follower_count": null
+      }
     },
-    "follower_genders": {
-      "male": "30.84",
-      "female": "69.16"
+    {
+      "video_id": "7434907085810240810",
+      "posted_date": "2024-11-08T13:56:53+00:00",
+      "views_count": 46836659,
+      "likes_count": 2112949,
+      "description": "He gave it a 10/10 so i do too 😅😅😅 #fyp ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Chicme Lace Trim Slit Bowknot Decor Sleep Dress Lingerie Party Nightwear",
+        "sellers": {
+          "name": "chicme.us",
+          "seller_id": "7495430452029196514"
+        },
+        "seller_id": "7495430452029196514",
+        "product_id": "1729436090324717794"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7434907085810240810.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494012261646436787.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729436090324717794.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495430452029196514.png",
+      "creators": {
+        "email": "bklynn.work@gmail.com",
+        "handle": "bsv_xo",
+        "uid_shop": "7494012261646436787",
+        "hashtags": [],
+        "follower_count": null
+      }
     },
-    "follower_locations": {
-      "TEXAS": "27.58",
-      "CALIFORNIA": "21.49",
-      "FLORIDA": "15.34",
-      "NEW YORK": "10.39",
-      "GEORGIA": "6.01"
+    {
+      "video_id": "7403088230809177386",
+      "posted_date": "2024-08-14T20:03:39+00:00",
+      "views_count": 45619411,
+      "likes_count": 2652,
+      "description": "SELF CARE NIGHTS WITH BIORÉ🫧✨🤍  This was so satisfying 10/10 recommend these besties!! @Biore Skincare #biorepartner   ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": 661.78,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Bioré Original Deep Cleansing Pore Strips, Nose Strips for Blackhead Removal, Instant Pore Unclogging, Oil-Free, Non-Comedogenic, 8 Count",
+        "sellers": {
+          "name": "Biore Skincare",
+          "seller_id": "7495371564970576589"
+        },
+        "seller_id": "7495371564970576589",
+        "product_id": "1729456762326323917"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7403088230809177386.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/default.png",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729456762326323917.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495371564970576589.png",
+      "creators": {
+        "email": "josieespinosaa09@gmail.com",
+        "handle": "josiegomezz",
+        "uid_shop": "7493999433668791272",
+        "hashtags": [],
+        "follower_count": null
+      }
     },
-    "creator_genders": {
-      "female": "97.76",
-      "male": "2.24"
+    {
+      "video_id": "7364092687093583150",
+      "posted_date": "2024-05-01T18:00:58+00:00",
+      "views_count": 45142189,
+      "likes_count": 61898,
+      "description": "I should probably bolt them down next time. To buy C4 Click the link on my video to get some from TikTok Shop!  #C4Energy #C4UltimatePartner #BallsOutEnergy @C4 Energy ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": 74.09,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "C4 Ultimate Sugar Free Energy Drink 16oz (Pack of 12) | Artic Snowcone | Pre Workout Performance Drink with No Artificial Colors or Dyes",
+        "sellers": {
+          "name": "C4 Energy",
+          "seller_id": "7495170617235704109"
+        },
+        "seller_id": "7495170617235704109",
+        "product_id": "1729460265472594221"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7364092687093583150.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494006174651483419.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729460265472594221.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495170617235704109.png",
+      "creators": {
+        "email": "jakehinga@gmail.com",
+        "handle": "hingaflips",
+        "uid_shop": "7494006174651483419",
+        "hashtags": [],
+        "follower_count": null
+      }
     },
-    "creator_languages": {
-      "en": "97.11",
-      "id": "0.02",
-      "es": "2.40",
-      "vi": "0.02",
-      "km": "0.05",
-      "ar": "0.05",
-      "ms": "0.09",
-      "tl": "0.02",
-      "ne": "0.03",
-      "ilo": "0.02",
-      "fr": "0.05",
-      "fil": "0.02",
-      "bg": "0.02",
-      "hi": "0.02",
-      "ru": "0.02",
-      "ko": "0.02",
-      "pl": "0.02",
-      "ur": "0.03",
-      "uk": "0.02",
-      "ro": "0.02",
-      "so": "0.02"
+    {
+      "video_id": "7362770509936741674",
+      "posted_date": "2024-04-28T04:30:22+00:00",
+      "views_count": 43975238,
+      "likes_count": 8139,
+      "description": "These nippy covers are a holy grail product. #beautyhacks #braalternative #travelmusthaves #siliconenippycover #summermusthaves #weddingseason #fashionhacks ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": 512587,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "CAKES circles - The 1st viral non-adhesive nip cover - Official CAKES",
+        "sellers": {
+          "name": "CAKES body",
+          "seller_id": "7495287105357974079"
+        },
+        "seller_id": "7495287105357974079",
+        "product_id": "1729418496836080191"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7362770509936741674.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494056253974153635.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729418496836080191.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495287105357974079.png",
+      "creators": {
+        "email": null,
+        "handle": "ohhgoodnessme",
+        "uid_shop": "7494056253974153635",
+        "hashtags": [],
+        "follower_count": null
+      }
+    },
+    {
+      "video_id": "7440919675665452331",
+      "posted_date": "2024-11-24T18:48:42+00:00",
+      "views_count": 43534170,
+      "likes_count": 1668785,
+      "description": "Somehow where gonna get there  #fyp #viral #shop #charger ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "USB-C Fast ChargingCable, Lightning/SB A/Type C, 240W 4 in 1  cable With Breathing Light, Compatible with iPhone, iPad, Samsung, Laptops Charger Connector Durable Sync Smartphone Cellphone Electronic cable max",
+        "sellers": {
+          "name": "KLSMYHOKI shop",
+          "seller_id": "7495369409107364558"
+        },
+        "seller_id": "7495369409107364558",
+        "product_id": "1729688068912812750"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7440919675665452331.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495524954036406513.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729688068912812750.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495369409107364558.png",
+      "creators": {
+        "email": null,
+        "handle": "actualreviewsfr",
+        "uid_shop": "7495524954036406513",
+        "hashtags": [],
+        "follower_count": null
+      }
+    },
+    {
+      "video_id": "7443915392537595182",
+      "posted_date": "2024-12-02T20:33:39+00:00",
+      "views_count": 39765880,
+      "likes_count": 1105096,
+      "description": "#tiktokshopblackfriday #tiktokshopcybermonday #christmas #tiktokshopdeals #parents #cybermonday #duolingo #blackfriday #registerednurse #nurse ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "MINISO X28 OWS Open Ear Wireless Bluetooth Earbuds HIFI Sound Quality Sports Headphones IPX5 Waterproof With microphone",
+        "sellers": {
+          "name": "MINISO.US",
+          "seller_id": "7495688751470185268"
+        },
+        "seller_id": "7495688751470185268",
+        "product_id": "1729483168175526708"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7443915392537595182.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495306722492909964.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729483168175526708.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495688751470185268.png",
+      "creators": {
+        "email": null,
+        "handle": "interesting_world_0",
+        "uid_shop": "7495306722492909964",
+        "hashtags": [],
+        "follower_count": null
+      }
+    },
+    {
+      "video_id": "7444642754757528862",
+      "posted_date": "2024-12-04T19:36:17+00:00",
+      "views_count": 36864379,
+      "likes_count": 210184,
+      "description": "Yall know exactly whats going to happen #giftsforher #womensclothing #womensfashion ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Chicme Lace Trim Slit Bowknot Decor Sleep Dress Lingerie Party Nightwear",
+        "sellers": {
+          "name": "chicme.us",
+          "seller_id": "7495430452029196514"
+        },
+        "seller_id": "7495430452029196514",
+        "product_id": "1729436090324717794"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7444642754757528862.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494016759657629379.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729436090324717794.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495430452029196514.png",
+      "creators": {
+        "email": "ethanhughes1221@yahoo.com",
+        "handle": "ethanhughessssss",
+        "uid_shop": "7494016759657629379",
+        "hashtags": [],
+        "follower_count": null
+      }
+    },
+    {
+      "video_id": "7442724689773858078",
+      "posted_date": "2024-11-29T15:33:22+00:00",
+      "views_count": 35672047,
+      "likes_count": 450245,
+      "description": "Legit in shock with these halara new leggings! #halara #halaraeveryday #tiktokmademebuyit #fyp #plussizefashion #apronbelly #fyp ",
+      "photo_downloaded": false,
+      "social_listening_term": null,
+      "revenue": null,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Halara SoCinched High Waisted Butt Lifting Tummy Control Side Pocket Shaping Training UltraSculpt Leggings",
+        "sellers": {
+          "name": "Halara US",
+          "seller_id": "7495304734897637668"
+        },
+        "seller_id": "7495304734897637668",
+        "product_id": "1729568240189804836"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7442724689773858078.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494014591903106371.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729568240189804836.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495304734897637668.png",
+      "creators": {
+        "email": null,
+        "handle": "catshrank",
+        "uid_shop": "7494014591903106371",
+        "hashtags": [],
+        "follower_count": null
+      }
+    },
+    {
+      "video_id": "7412156494310903070",
+      "posted_date": "2024-09-08T06:33:12+00:00",
+      "views_count": 33503830,
+      "likes_count": 32504,
+      "description": "Put my stickers on my Trekking the National Parks water bottle! 🥾🏕️@Underdog Games #asmr #nationalparks #hiketok #outdoors #nationalpark #nationalparkgeek #stickers #trekkingthenationalparks ",
+      "photo_downloaded": true,
+      "social_listening_term": null,
+      "revenue": 158641,
+      "analysis_json": null,
+      "social_listening_analysis_json": null,
+      "seller_products": {
+        "title": "Trekking The National Parks Water Bottle with 3 Lids (Straw, Chug, Spout) & 63 Waterproof Stickers | 32oz Insulated Leakproof Stainless Steel Tumbler",
+        "sellers": {
+          "name": "Underdog Games",
+          "seller_id": "7494826593577830472"
+        },
+        "seller_id": "7494826593577830472",
+        "product_id": "1729597549717917768"
+      },
+      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7412156494310903070.webp",
+      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494012574306633625.webp",
+      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729597549717917768.jpg",
+      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7494826593577830472.png",
+      "creators": {
+        "email": "Simonepatricecollabs@gmail.com",
+        "handle": "simonepatrice_",
+        "uid_shop": "7494012574306633625",
+        "hashtags": [],
+        "follower_count": null
+      }
     }
-  }
+  ],
+  "total": 7249578
 }

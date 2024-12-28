@@ -23,47 +23,161 @@
 
     <!-- Filters Section -->
     <div class="flex flex-wrap gap-4 mb-6">
-      <!-- Brand Filter -->
+      <!-- Date Range Filter -->
       <div class="flex-1">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-        <select 
-          v-model="filters.brand"
-          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
-        >
-          <option value="" class="text-gray-500">Filter by brands</option>
-          <option v-for="brand in brandOptions" :key="brand" :value="brand" class="text-gray-900">
-            {{ brand }}
-          </option>
-        </select>
-      </div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+        <div class="relative">
+          <div 
+            class="flex items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 cursor-pointer"
+            @click="showDatePicker = true"
+          >
+            <span v-if="!dateRange.start || !dateRange.end" class="text-gray-500">
+              Select date range
+            </span>
+            <span v-else class="text-gray-900">
+              {{ formatDateRange }}
+            </span>
+            <button
+              v-if="dateRange.start && dateRange.end"
+              @click.stop="clearDateRange"
+              class="ml-auto text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+          </div>
 
-      <!-- Product Filter -->
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
-        <select 
-          v-model="filters.product"
-          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
-        >
-          <option value="" class="text-gray-500">Filter by products</option>
-          <option v-for="product in productOptions" :key="product" :value="product" class="text-gray-900">
-            {{ product }}
-          </option>
-        </select>
+          <!-- 日期选择器弹窗 -->
+          <div
+            v-if="showDatePicker"
+            class="absolute z-50 mt-1 p-4 bg-white border border-gray-300 rounded-md shadow-lg"
+            style="min-width: 600px"
+          >
+            <div class="flex flex-col">
+              <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-medium">Select date range</span>
+                <button
+                  @click="clearDateRange"
+                  class="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Clear
+                </button>
+              </div>
+              
+              <!-- 快捷选项 -->
+              <div class="flex gap-2 mb-4">
+                <button
+                  v-for="(option, index) in datePresets"
+                  :key="index"
+                  @click="selectDatePreset(option)"
+                  class="px-3 py-1 text-sm rounded-md hover:bg-gray-100"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
+
+              <!-- 日历组件 -->
+              <v-date-picker
+                v-model="dateRange"
+                is-range
+                :min-date="new Date(2020, 0, 1)"
+                :max-date="new Date()"
+                :columns="2"
+                class="rounded-md"
+              />
+
+              <!-- 操作按钮 -->
+              <div class="flex justify-end gap-2 mt-4">
+                <button
+                  @click="showDatePicker = false"
+                  class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="applyDateRange"
+                  class="px-4 py-2 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- View Count Filter -->
       <div class="flex-1">
         <label class="block text-sm font-medium text-gray-700 mb-1">View Count</label>
-        <select 
-          v-model="filters.viewCount"
-          class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500"
-        >
-          <option value="" class="text-gray-500">Filter by video views</option>
-          <option value="1000000" class="text-gray-900">1M+</option>
-          <option value="500000" class="text-gray-900">500K+</option>
-          <option value="100000" class="text-gray-900">100K+</option>
-          <option value="50000" class="text-gray-900">50K+</option>
-        </select>
+        <div class="relative">
+          <!-- 输入框区域 -->
+          <div 
+            class="flex items-center w-full rounded-md border border-gray-300 bg-white px-3 py-2 cursor-pointer"
+            @click="showViewCountDropdown = true"
+          >
+            <div class="flex flex-1 flex-wrap gap-2 min-h-[28px]">
+              <!-- 已选择的标签 -->
+              <div
+                v-for="(count, index) in selectedViewCounts"
+                :key="index"
+                class="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md text-sm"
+              >
+                <span>{{ formatViewCount(count) }}</span>
+                <button
+                  @click.stop="removeViewCount(count)"
+                  class="text-gray-500 hover:text-gray-700"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <!-- 占位文本 -->
+              <span v-if="!selectedViewCounts.length" class="text-gray-500">
+                Filter by video views
+              </span>
+            </div>
+
+            <!-- 右侧按钮区域 -->
+            <div class="flex items-center gap-1">
+              <button
+                v-if="selectedViewCounts.length"
+                @click.stop="clearViewCounts"
+                class="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+              <svg 
+                class="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth="2" 
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- 下拉选项 -->
+          <div
+            v-if="showViewCountDropdown"
+            class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg"
+          >
+            <div class="py-1">
+              <div
+                v-for="option in availableViewCounts"
+                :key="option.value"
+                @click.stop="selectViewCount(option.value)"
+                class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+              >
+                {{ option.label }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -285,12 +399,20 @@
       :influencers="selectedCreators"
       @close="closeExportModal"
     />
+
+    <!-- 添加点击其他区域关闭下拉框的处理 -->
+    <div
+      v-if="showViewCountDropdown"
+      class="fixed inset-0 z-0"
+      @click="showViewCountDropdown = false"
+    ></div>
   </div>
 </template>
 
 <script>
 import videoAPI from '../services/videoAPI'
 import ExportModal from '../components/ExportModal.vue'
+import { DatePicker } from 'v-calendar'
 
 // 添加 debounce 实现
 function debounce(fn, delay) {
@@ -304,7 +426,8 @@ function debounce(fn, delay) {
 export default {
   name: 'Videos',
   components: {
-    ExportModal
+    ExportModal,
+    'v-date-picker': DatePicker
   },
   data() {
     return {
@@ -325,7 +448,49 @@ export default {
       productOptions: [],
       fetchTimer: null,
       selectedVideos: [],
-      selectedCreators: []
+      selectedCreators: [],
+      showViewCountDropdown: false,
+      selectedViewCounts: [],
+      viewCountOptions: [
+        { value: '0-100', label: '0-100' },
+        { value: '100-500', label: '100-500' },
+        { value: '500-2000', label: '500-2K' },
+        { value: '2000+', label: '2K+' }
+      ],
+      showDatePicker: false,
+      dateRange: {
+        start: null,
+        end: null
+      },
+      datePresets: [
+        { label: 'Today', getValue: () => {
+          const today = new Date();
+          return { start: today, end: today };
+        }},
+        { label: 'Yesterday', getValue: () => {
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          return { start: yesterday, end: yesterday };
+        }},
+        { label: 'Last 7 Days', getValue: () => {
+          const end = new Date();
+          const start = new Date();
+          start.setDate(start.getDate() - 6);
+          return { start, end };
+        }},
+        { label: 'Last 30 Days', getValue: () => {
+          const end = new Date();
+          const start = new Date();
+          start.setDate(start.getDate() - 29);
+          return { start, end };
+        }},
+        { label: 'This Month', getValue: () => {
+          const now = new Date();
+          const start = new Date(now.getFullYear(), now.getMonth(), 1);
+          const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+          return { start, end };
+        }}
+      ]
     }
   },
   computed: {
@@ -339,36 +504,45 @@ export default {
       return Math.ceil(this.total / this.pageSize)
     },
     selectedInfluencers() {
-      // 将视频数据换为导出所需格式
+      // 将视频数据换为导出需格式
       return this.videos.map(video => ({
         handle: video.creators?.handle,
-        // 可以添加其他需要段
+        // 可以添加其他需段
       }))
     },
     
     filteredData() {
       let filtered = [...this.videos];
 
-      // 应用品牌筛选
-      if (this.filters.brand) {
-        filtered = filtered.filter(video => 
-          video.seller_products?.sellers?.name === this.filters.brand
-        );
-      }
-
-      // 应用产品筛选
-      if (this.filters.product) {
-        filtered = filtered.filter(video => 
-          video.seller_products?.title === this.filters.product
-        );
+      // 应用日期范围筛选
+      if (this.dateRange.start && this.dateRange.end) {
+        const startDate = new Date(this.dateRange.start);
+        const endDate = new Date(this.dateRange.end);
+        // 将结束日期设置为当天的最后一刻
+        endDate.setHours(23, 59, 59, 999);
+        
+        filtered = filtered.filter(video => {
+          const postedDate = new Date(video.posted_date);
+          return postedDate >= startDate && postedDate <= endDate;
+        });
       }
 
       // 应用观看次数筛选
-      if (this.filters.viewCount) {
-        const minViews = parseInt(this.filters.viewCount);
-        filtered = filtered.filter(video => 
-          (video.views_count || 0) >= minViews
-        );
+      if (this.selectedViewCounts.length > 0) {
+        filtered = filtered.filter(video => {
+          const viewCount = video.views_count || 0;
+          return this.selectedViewCounts.some(range => {
+            if (range === '2000+') {
+              return viewCount >= 2000;
+            }
+            
+            const [min, max] = range.split('-').map(Number);
+            if (max) {
+              return viewCount >= min && viewCount <= max;
+            }
+            return viewCount >= min;
+          });
+        });
       }
 
       return filtered;
@@ -393,7 +567,7 @@ export default {
       let start = Math.max(2, this.currentPage - 2)
       let end = Math.min(this.totalPages - 1, start + 4)
       
-      // 调整起始位置，确保始终显示5个页码
+      // 调整起始位置，确保始终示5个页码
       if (end - start + 1 < 5) {
         start = Math.max(2, end - 4)
       }
@@ -420,6 +594,25 @@ export default {
     isCurrentPageAllSelected() {
       return this.videos.length > 0 && 
         this.videos.every(video => this.selectedVideos.some(v => v.id === video.id))
+    },
+    availableViewCounts() {
+      return this.viewCountOptions.filter(
+        option => !this.selectedViewCounts.includes(option.value)
+      )
+    },
+    formatDateRange() {
+      if (!this.dateRange.start || !this.dateRange.end) {
+        return '';
+      }
+      const formatDate = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+      };
+      return `${formatDate(this.dateRange.start)} ~ ${formatDate(this.dateRange.end)}`;
     }
   },
   methods: {
@@ -468,7 +661,7 @@ export default {
       }
     },
     handleImageError(e) {
-      // 片加载失败时使用默认图
+      // 片加载失败使用默认图
       if (e.target.classList.contains('rounded-full')) {
         e.target.src = 'https://via.placeholder.com/32x32'
       } else {
@@ -496,27 +689,33 @@ export default {
     },
     async fetchVideos(page = 1) {
       try {
-        this.loading = true
-        this.error = null
-        
-        // 在加载新数据前清空当前数据
-        this.videos = []
+        this.loading = true;
+        this.error = null;
         
         const params = {
-          page: page,
-          pageSize: this.pageSize || 10
-        }
+          page,
+          pageSize: this.pageSize
+        };
         
         if (this.searchQuery?.trim()) {
-          params.search = this.searchQuery.trim()
+          params.search = this.searchQuery.trim();
         }
-        
-        // 添加筛选条件
-        if (this.filters.brand) params.brand = this.filters.brand
-        if (this.filters.product) params.product = this.filters.product
-        if (this.filters.viewCount) params.viewCount = this.filters.viewCount
 
-        const response = await videoAPI.getVideos(params)
+        // 修改日期范围参数的格式
+        if (this.dateRange.start && this.dateRange.end) {
+          // 确保开始日期是当天的开始
+          const startDate = new Date(this.dateRange.start);
+          startDate.setHours(0, 0, 0, 0);
+          
+          // 确保结束日期是当天的结束
+          const endDate = new Date(this.dateRange.end);
+          endDate.setHours(23, 59, 59, 999);
+          
+          params.startDate = startDate.toISOString();
+          params.endDate = endDate.toISOString();
+        }
+
+        const response = await videoAPI.getVideos(params);
         console.log('API Response for page:', page, response)
         
         if (response && (response.data || response.items)) {
@@ -586,7 +785,7 @@ export default {
       const diffTime = Math.abs(now - postedDate)
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
       
-      // 计算月份差异
+      // 算月份差异
       const months = Math.floor(diffDays / 30)
       
       if (months > 0) {
@@ -608,7 +807,7 @@ export default {
     },
     // 应用筛选条件
     applyFilters() {
-      this.fetchVideos(1, true)
+      this.fetchVideos(1)
     },
     // 搜索处理
     handleSearch: debounce(function() {
@@ -688,6 +887,55 @@ export default {
           }
         })
       }
+    },
+    formatViewCount(value) {
+      // 处理范围值
+      if (value.includes('-')) {
+        return value.replace('2000', '2K');
+      }
+      // 处理 2000+ 的情况
+      if (value === '2000+') {
+        return '2K+';
+      }
+      return value;
+    },
+    selectViewCount(value) {
+      if (!this.selectedViewCounts.includes(value)) {
+        this.selectedViewCounts.push(value);
+      }
+      this.showViewCountDropdown = false;
+      this.applyViewCountFilter();
+    },
+    removeViewCount(value) {
+      const index = this.selectedViewCounts.indexOf(value);
+      if (index > -1) {
+        this.selectedViewCounts.splice(index, 1);
+      }
+      this.applyViewCountFilter();
+    },
+    clearViewCounts() {
+      this.selectedViewCounts = [];
+      this.applyViewCountFilter();
+    },
+    applyViewCountFilter() {
+      this.fetchVideos(1);
+    },
+    clearDateRange() {
+      this.dateRange = {
+        start: null,
+        end: null
+      };
+      this.showDatePicker = false;
+      this.fetchVideos(1);
+    },
+    applyDateRange() {
+      if (this.dateRange.start && this.dateRange.end) {
+        this.showDatePicker = false;
+        this.fetchVideos(1);
+      }
+    },
+    selectDatePreset(preset) {
+      this.dateRange = preset.getValue();
     }
   },
   created() {
@@ -705,6 +953,12 @@ export default {
         this.fetchVideos(1)
       }
     }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   }
 }
 </script>
@@ -816,7 +1070,7 @@ button {
   display: block;
 }
 
-/* 添加表格行高样式 */
+/* 添加表��行高样式 */
 th, td {
   height: 55px !important;
 }
@@ -824,5 +1078,54 @@ th, td {
 /* 或者使用 min-height 来确保最小高度 */
 .min-h-16 {
   min-height: 55px;
+}
+
+/* 添加新的样式 */
+.view-count-dropdown {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.view-count-option {
+  transition: background-color 0.2s ease;
+}
+
+.view-count-option:hover {
+  background-color: #f3f4f6;
+}
+
+/* 下拉箭头动画 */
+.dropdown-arrow {
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.selected-tag {
+  transition: all 0.2s ease;
+}
+
+.selected-tag:hover {
+  background-color: #e5e7eb;
+}
+
+/* 日期选择器样式 */
+.v-date-picker {
+  font-family: inherit;
+}
+
+.date-preset-button {
+  @apply px-3 py-1 text-sm rounded-md hover:bg-gray-100;
+}
+
+.date-preset-button.active {
+  @apply bg-primary-600 text-white;
+}
+
+/* 确保日期选择器在其他元素之上 */
+.date-picker-popup {
+  z-index: 1000;
 }
 </style> 
