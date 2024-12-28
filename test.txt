@@ -1,286 +1,49 @@
 {
-  "message": "get-product-videos:: Videos fetched successfully",
-  "data": [
-    {
-      "video_id": "7318558390966291755",
-      "posted_date": "2023-12-31T01:04:40+00:00",
-      "views_count": 25242331,
-      "likes_count": 2650,
-      "description": "🚨🚨🚨‼️",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 58259.5,
-      "creators": {
-        "email": null,
-        "handle": "chiki_baby",
-        "uid_shop": "7494017790901520036"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7318558390966291755.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017790901520036.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
+  "data": {
+    "follower_ages": {
+      "55+": "12.26",
+      "18-24": "10.90",
+      "25-34": "34.09",
+      "35-44": "25.87",
+      "45-54": "16.89"
     },
-    {
-      "video_id": "7364525742618676522",
-      "posted_date": "2024-05-02T22:01:17+00:00",
-      "views_count": 20404684,
-      "likes_count": 4315,
-      "description": "#duet with @Oranga Superfoods si funcionan 🙌🏻 #limpiezade15dias #guthealth #tiktokshop #fyp ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 242476,
-      "creators": {
-        "email": null,
-        "handle": "mrtopshelf7",
-        "uid_shop": "7495663336687045304"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7364525742618676522.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495663336687045304.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
+    "follower_genders": {
+      "male": "30.84",
+      "female": "69.16"
     },
-    {
-      "video_id": "7364827252275580206",
-      "posted_date": "2024-05-03T17:31:27+00:00",
-      "views_count": 19129639,
-      "likes_count": 2935,
-      "description": "#duet with @Don The Franco #limpiezade15dias recomendables, yo la usé hace unos meses y me sacaron hasta una brujería que traía, las las pediré de nuevo porque ya almacené más caca. ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 171669,
-      "creators": {
-        "email": null,
-        "handle": "chicoruizzz",
-        "uid_shop": "7494008472992777223"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7364827252275580206.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494008472992777223.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
+    "follower_locations": {
+      "TEXAS": "27.58",
+      "CALIFORNIA": "21.49",
+      "FLORIDA": "15.34",
+      "NEW YORK": "10.39",
+      "GEORGIA": "6.01"
     },
-    {
-      "video_id": "7319359509816757547",
-      "posted_date": "2024-01-02T04:53:38+00:00",
-      "views_count": 15432752,
-      "likes_count": 798,
-      "description": "Replying to @Lupita Mogollan392  🙏🙏🤩🤩 #fyp #detox",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 28270.5,
-      "creators": {
-        "email": null,
-        "handle": "chiki_baby",
-        "uid_shop": "7494017790901520036"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7319359509816757547.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494017790901520036.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
+    "creator_genders": {
+      "female": "97.76",
+      "male": "2.24"
     },
-    {
-      "video_id": "7358271331114290462",
-      "posted_date": "2024-04-16T01:33:57+00:00",
-      "views_count": 14634290,
-      "likes_count": 22261,
-      "description": "#duet with @oshshoppp Did you hear this? I approve this message. Check out my blog on my YT! #itworks #guthealth #giveitatry #gutcleanse ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 423717,
-      "creators": {
-        "email": null,
-        "handle": "rhythmandcoils",
-        "uid_shop": "7493991659425400291"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7358271331114290462.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7493991659425400291.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
-    },
-    {
-      "video_id": "7353098146576157983",
-      "posted_date": "2024-04-02T02:56:28+00:00",
-      "views_count": 14113605,
-      "likes_count": 11794,
-      "description": "Se las recomiendo bastante!! 🙌🏻 #limpiezade15dias #guthealth #tiktokshop #fyp ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 367653,
-      "creators": {
-        "email": null,
-        "handle": "mrtopshelf7",
-        "uid_shop": "7495663336687045304"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7353098146576157983.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495663336687045304.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
-    },
-    {
-      "video_id": "7360027483275578666",
-      "posted_date": "2024-04-20T19:05:50+00:00",
-      "views_count": 12260737,
-      "likes_count": 11655,
-      "description": "Did you see that video?? #guthealth #skincaretips #tiktokshop #fyp ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 371537,
-      "creators": {
-        "email": null,
-        "handle": "garrettfamilyhustles",
-        "uid_shop": "7494391877089200280"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7360027483275578666.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494391877089200280.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
-    },
-    {
-      "video_id": "7380048968740326698",
-      "posted_date": "2024-06-13T17:59:16+00:00",
-      "views_count": 10849438,
-      "likes_count": 7479,
-      "description": "Yo no creia per so funcionan 🙌🏻 #limpiezade15dias #TikTokShop #fyp #guthealth ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 113181,
-      "creators": {
-        "email": null,
-        "handle": "mrtopshelf7",
-        "uid_shop": "7495663336687045304"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7380048968740326698.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7495663336687045304.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
-    },
-    {
-      "video_id": "7342355838465527082",
-      "posted_date": "2024-03-04T04:11:10+00:00",
-      "views_count": 7753485,
-      "likes_count": 1213,
-      "description": "Respuesta a @Sandra Mejia el mejor producto para limpiar tu estomago de la tienda de tiktokshop #tiktokshopping #tiktokshop #tiendadetiktok ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 68672.3,
-      "creators": {
-        "email": "tipscustomdesigns@gmail.com",
-        "handle": "lopeztips",
-        "uid_shop": "7494010043759888205"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7342355838465527082.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494010043759888205.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
-    },
-    {
-      "video_id": "7412730265006607659",
-      "posted_date": "2024-09-09T19:39:24+00:00",
-      "views_count": 7728776,
-      "likes_count": 611,
-      "description": "This 15 day gut cleanse will CLEAR. YOU. OUT! #fyp #gutcleanse #guthealth ",
-      "photo_downloaded": true,
-      "social_listening_term": null,
-      "revenue": 62212.6,
-      "creators": {
-        "email": "jschindele1@gmail.com",
-        "handle": "reallyreallycoolstuff",
-        "uid_shop": "7494011556215948774"
-      },
-      "seller_products": {
-        "title": "15 Day Cleanse - Gut and Colon Support | Caffeine Free | Advanced Formula with Senna, Cascara Sagrada, & Psyllium Husk | Non-GMO | 30 capsules",
-        "sellers": {
-          "name": "Milamiamor",
-          "seller_id": "7495061443121548254"
-        },
-        "seller_id": "7495061443121548254",
-        "product_id": "1729401873273951198"
-      },
-      "thumbnail_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_videos_photos/7412730265006607659.webp",
-      "creator_profile_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/creator_profile_pics/7494011556215948774.webp",
-      "seller_product_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/seller_products_photos/1729401873273951198.jpg",
-      "seller_photo_url": "https://btsplwsgjvpilxywmaba.supabase.co/storage/v1/object/public/sellers_photos/7495061443121548254.png"
+    "creator_languages": {
+      "en": "97.11",
+      "id": "0.02",
+      "es": "2.40",
+      "vi": "0.02",
+      "km": "0.05",
+      "ar": "0.05",
+      "ms": "0.09",
+      "tl": "0.02",
+      "ne": "0.03",
+      "ilo": "0.02",
+      "fr": "0.05",
+      "fil": "0.02",
+      "bg": "0.02",
+      "hi": "0.02",
+      "ru": "0.02",
+      "ko": "0.02",
+      "pl": "0.02",
+      "ur": "0.03",
+      "uk": "0.02",
+      "ro": "0.02",
+      "so": "0.02"
     }
-  ],
-  "total": 18033
+  }
 }

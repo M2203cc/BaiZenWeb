@@ -33,7 +33,7 @@
             v-for="category in categories" 
             :key="category.category_name"
             class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer"
-            @click="goToCategoryDetail(category.id)"
+            @click="goToCategoryDetail(category)"
           >
             <td class="py-4 px-4 text-gray-700 relative group">
               <span class="block truncate">{{ category.category_name }}</span>
@@ -86,7 +86,17 @@ export default {
         const response = await fetch('http://localhost:8000/categories/')
         const data = await response.json()
         
+        console.log('Categories API response:', data)
+        
         if (data && data.data) {
+          // 检查每个类别对象的结构
+          data.data.forEach(category => {
+            console.log('Category:', {
+              id: category.id,
+              name: category.category_name
+            });
+          });
+          
           this.categories = data.data
         }
       } catch (error) {
@@ -104,8 +114,28 @@ export default {
         .slice(0, 3)
         .map(point => point.selling_point)
     },
-    goToCategoryDetail(categoryId) {
-      this.$router.push(`/categories/${categoryId}`)
+    goToCategoryDetail(category) {
+      console.log('Full category object:', category);
+      console.log('Category ID:', category.id);
+      console.log('Category name:', category.category_name);
+      
+      // 确保有 ID 才进行路由跳转
+      if (!category.id) {
+        console.error('No category ID found:', category);
+        this.error = 'Invalid category selected';
+        return;
+      }
+
+      // 修改路由跳转方式
+      this.$router.push({
+        name: 'CategoryDetail', // 使用命名路由
+        params: { 
+          id: category.id.toString() // 确保 ID 是字符串
+        },
+        query: { 
+          name: category.category_name
+        }
+      })
     }
   }
 }

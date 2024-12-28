@@ -6,7 +6,25 @@
     <!-- 品牌列表部分 -->
     <div class="mt-10">
       <h2 class="text-2xl font-bold text-gray-900">Brands featuring this category</h2>
-      <div class="my-4">
+      
+      <!-- 加载状态 -->
+      <div v-if="loading" class="flex justify-center items-center min-h-[200px]">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      </div>
+
+      <!-- 错误状态 -->
+      <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[200px]">
+        <p class="text-red-500 mb-4">{{ error }}</p>
+        <button 
+          @click="fetchBrandsByCategoryId"
+          class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-500"
+        >
+          Retry
+        </button>
+      </div>
+
+      <!-- 数据展示 -->
+      <div v-else class="my-4">
         <div class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
           <table class="w-full caption-bottom text-sm">
             <thead class="[&_tr]:border-b">
@@ -24,10 +42,10 @@
             </thead>
             <tbody class="[&_tr:last-child]:border-0">
               <tr 
-                v-for="brand in paginatedBrands" 
+                v-for="brand in brands"
                 :key="brand.name"
                 class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-                @click="goToProductDetail(brand)"
+                @click="goToBrandDetail(brand)"
               >
                 <td class="min-h-16 py-2 px-2 align-middle text-md leading-[19.2px] text-secondary-1000 max-w-64">
                   <div class="flex items-center gap-2">
@@ -36,7 +54,12 @@
                       :alt="brand.name"
                       class="rounded-md object-cover w-10 h-10"
                     >
-                    <button class="!ring-0 text-left truncate w-auto" @click.stop="goToProductDetail(brand)">{{ brand.name }}</button>
+                    <button 
+                      class="!ring-0 text-left truncate w-auto" 
+                      @click.stop="goToBrandDetail(brand)"
+                    >
+                      {{ brand.name }}
+                    </button>
                   </div>
                 </td>
                 <td class="min-h-16 py-2 px-2 align-middle text-md leading-[19.2px] text-secondary-1000">
@@ -103,166 +126,168 @@
 <script>
 export default {
   name: 'CategoryDetail',
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
+    }
+  },
   data() {
     return {
+      categoryId: '',
       categoryName: '',
       brands: [],
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
+      loading: false,
+      error: null,
+      totalItems: 0
     }
   },
   computed: {
-    paginatedBrands() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.brands.slice(start, end);
-    },
     totalPages() {
-      return Math.ceil(this.brands.length / this.itemsPerPage);
+      return Math.ceil(this.totalItems / this.itemsPerPage);
     },
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage + 1;
     },
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.totalBrands);
+      return Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
     },
     totalBrands() {
-      return this.brands.length;
+      return this.totalItems;
     },
     displayedPages() {
       const total = this.totalPages;
       const current = this.currentPage;
-      const delta = 1;
-
+      
+      // 如果总页数小于等于7，显示所有页码
+      if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1);
+      }
+      
       let pages = [];
-      const left = current - delta;
-      const right = current + delta;
-
-      if (total <= 5) {
-        for (let i = 1; i <= total; i++) {
-          pages.push(i);
-        }
-        return pages;
+      
+      // 当前页小于等于3的情况：显示1-5 ... 最后页
+      if (current <= 3) {
+        pages = [1, 2, 3, 4, 5, '...', total];
       }
-
-      for (let i = 1; i <= total; i++) {
-        if (
-          i === 1 ||
-          i === total ||
-          (i >= left && i <= right) ||
-          (i <= 2 && current <= 3) ||
-          (i >= total - 1 && current >= total - 2)
-        ) {
-          pages.push(i);
-        } else if (pages[pages.length - 1] !== '...') {
-          pages.push('...');
-        }
+      // 当前页接近末尾的情况：显示1 ... 最后5页
+      else if (current >= total - 2) {
+        pages = [1, '...', total - 4, total - 3, total - 2, total - 1, total];
       }
+      // 当前页在中间的情况：显示1 ... 当前页前后各2页 ... 最后页
+      else {
+        pages = [
+          1,
+          '...',
+          current - 2,
+          current - 1,
+          current,
+          current + 1,
+          current + 2,
+          '...',
+          total
+        ];
+      }
+      
       return pages;
     }
   },
   methods: {
-    goToProductDetail(brand) {
-      // 假设每个品牌都有一个默认的产品ID，这里使用1作为示例
-      // 实际应用中可能需要根据具体业务逻辑来确定产品ID
-      this.$router.push(`/products/${brand.id || 1}`);
+    async fetchBrandsByCategoryId(page = 1) {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        if (!this.categoryId) {
+          throw new Error('Category ID is required');
+        }
+        
+        console.log('Fetching brands for category ID:', this.categoryId, 'Page:', page);
+        
+        const response = await fetch(
+          `http://localhost:8000/categories/${this.categoryId}/brands?page=${page}&per_page=${this.itemsPerPage}`
+        );
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Brands API response data:', result);
+        
+        if (result && result.data) {
+          this.brands = result.data.map(brand => ({
+            id: brand.seller_id,
+            name: brand.name,
+            productCount: brand.num_products,
+            totalSales: brand.total_sales,
+            image: brand.brand_url || 'https://picsum.photos/40/40'
+          }));
+          
+          this.totalItems = result.total || 0;
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error fetching brands:', error);
+        this.error = `Failed to load brands data: ${error.message}`;
+      } finally {
+        this.loading = false;
+      }
     },
-    changePage(page) {
+    goToBrandDetail(brand) {
+      this.$router.push({
+        name: 'BrandDetail',
+        params: { 
+          id: brand.id
+        }
+      });
+    },
+    async changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
+        await this.fetchBrandsByCategoryId(page);
       }
     },
-    prevPage() {
+    async prevPage() {
       if (this.currentPage > 1) {
-        this.currentPage--;
+        await this.changePage(this.currentPage - 1);
       }
     },
-    nextPage() {
+    async nextPage() {
       if (this.currentPage < this.totalPages) {
-        this.currentPage++;
+        await this.changePage(this.currentPage + 1);
       }
     }
   },
   created() {
-    this.categoryName = decodeURIComponent(this.$route.params.name)
+    console.log('Route params:', this.$route.params);
+    console.log('Route query:', this.$route.query);
     
-    // 模拟数据
-    this.brands = [
-      {
-        id: 1,
-        name: 'Halara US',
-        productCount: 920,
-        totalSales: 75297300,
-        image: 'https://picsum.photos/40/40?random=1'
-      },
-      {
-        id: 2,
-        name: 'O QQ',
-        productCount: 84,
-        totalSales: 45656000,
-        image: 'https://picsum.photos/40/40?random=2'
-      },
-      {
-        name: 'FeelinGirl LLC',
-        productCount: 262,
-        totalSales: 33027600,
-        image: 'https://picsum.photos/40/40?random=3'
-      },
-      {
-        name: 'Cider',
-        productCount: 8174,
-        totalSales: 24670300,
-        image: 'https://picsum.photos/40/40?random=4'
-      },
-      {
-        name: 'NcmRyu',
-        productCount: 207,
-        totalSales: 24666400,
-        image: 'https://picsum.photos/40/40?random=5'
-      },
-      {
-        name: 'YOZY',
-        productCount: 4491,
-        totalSales: 22133800,
-        image: 'https://picsum.photos/40/40?random=6'
-      },
-      {
-        name: 'OQQfitness',
-        productCount: 45,
-        totalSales: 19720900,
-        image: 'https://picsum.photos/40/40?random=7'
-      },
-      {
-        name: 'Comfrt',
-        productCount: 36,
-        totalSales: 18809100,
-        image: 'https://picsum.photos/40/40?random=8'
-      },
-      {
-        name: 'CAKES body',
-        productCount: 6,
-        totalSales: 16796900,
-        image: 'https://picsum.photos/40/40?random=9'
-      },
-      {
-        name: 'Kali Rose Boutique',
-        productCount: 1103,
-        totalSales: 15846900,
-        image: 'https://picsum.photos/40/40?random=10'
-      },
-      {
-        name: 'Fashion Brand 11',
-        productCount: 850,
-        totalSales: 14500000,
-        image: 'https://picsum.photos/40/40?random=11'
-      },
-      {
-        name: 'Style Co. 12',
-        productCount: 720,
-        totalSales: 13800000,
-        image: 'https://picsum.photos/40/40?random=12'
-      }
-    ]
+    this.categoryId = this.id || this.$route.params.id;
+    this.categoryName = this.$route.query.name || '';
+    
+    console.log('Extracted categoryId:', this.categoryId);
+    console.log('Extracted categoryName:', this.categoryName);
+    
+    if (!this.categoryId) {
+      console.error('No category ID in route params');
+      this.error = 'Invalid category ID';
+      return;
+    }
+
+    // 确保 categoryId 是数字
+    const numericId = parseInt(this.categoryId);
+    if (isNaN(numericId)) {
+      console.error('Category ID is not a number:', this.categoryId);
+      this.error = 'Invalid category ID format';
+      return;
+    }
+
+    this.categoryId = numericId;
+    this.fetchBrandsByCategoryId(1);
   }
 }
 </script> 
