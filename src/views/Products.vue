@@ -7,12 +7,9 @@
 
     <!-- 产品列表表格 -->
     <div class="relative w-full overflow-x-auto overflow-y-hidden rounded-sm border border-secondary-100 bg-white">
-      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
       <table class="w-full caption-bottom text-sm">
         <thead class="[&_tr]:border-b">
-          <tr class="border-b transition-colors hover:bg-white">
+          <tr class="border-b bg-[#F8F9FB]">
             <th class="min-h-16 py-3 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 min-w-64">
               <div class="flex items-center text-[#6C7381] font-bold text-sm">Product</div>
             </th>
@@ -24,32 +21,53 @@
             </th>
           </tr>
         </thead>
-        <tbody v-if="!loading && products.length > 0" class="[&_tr:last-child]:border-0">
-          <tr 
-            v-for="product in getCurrentPageProducts" 
-            :key="product.id"
-            class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-            @click="viewProductDetail(product)"
-          >
-            <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000 max-w-64">
-              <div class="flex items-center gap-2">
-                <img 
-                  :src="product.image" 
-                  :alt="product.name"
-                  class="rounded-md object-cover w-12 h-12 flex-shrink-0"
-                >
-                <button class="!ring-0 text-left truncate w-auto">
-                  {{ product.name }}
-                </button>
-              </div>
-            </td>
-            <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000">
-              ${{ product.price }}
-            </td>
-            <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000">
-              {{ product.soldCount }}
-            </td>
-          </tr>
+        <tbody class="[&_tr:last-child]:border-0">
+          <!-- Loading State -->
+          <template v-if="loading">
+            <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+              <td class="px-2 align-middle">
+                <div class="flex items-center gap-2">
+                  <div class="h-12 w-12 bg-gray-200 rounded-md flex-shrink-0"></div>
+                  <div class="h-4 w-48 bg-gray-200 rounded"></div>
+                </div>
+              </td>
+              <td class="px-2 align-middle">
+                <div class="h-4 w-16 bg-gray-200 rounded"></div>
+              </td>
+              <td class="px-2 align-middle">
+                <div class="h-4 w-16 bg-gray-200 rounded"></div>
+              </td>
+            </tr>
+          </template>
+          
+          <!-- Content -->
+          <template v-else>
+            <tr 
+              v-for="product in getCurrentPageProducts" 
+              :key="product.id"
+              class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
+              @click="viewProductDetail(product)"
+            >
+              <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000 max-w-64">
+                <div class="flex items-center gap-2">
+                  <img 
+                    :src="product.image" 
+                    :alt="product.name"
+                    class="rounded-md object-cover w-12 h-12 flex-shrink-0"
+                  >
+                  <button class="!ring-0 text-left truncate w-auto">
+                    {{ product.name }}
+                  </button>
+                </div>
+              </td>
+              <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000">
+                ${{ product.price }}
+              </td>
+              <td class="min-h-16 py-3 px-2 align-middle text-md leading-[19.2px] text-secondary-1000">
+                {{ product.soldCount }}
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
 

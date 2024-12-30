@@ -2,13 +2,8 @@
   <div class="px-[50px] py-4">
     <h1 class="text-2xl font-bold mb-6">Categories</h1>
 
-    <!-- 加载状态 -->
-    <div v-if="loading" class="flex justify-center items-center min-h-[200px]">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-    </div>
-
     <!-- 错误状态 -->
-    <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[200px]">
+    <div v-if="error" class="flex flex-col items-center justify-center min-h-[200px]">
       <p class="text-red-500 mb-4">{{ error }}</p>
       <button 
         @click="fetchCategories"
@@ -29,35 +24,57 @@
           </tr>
         </thead>
         <tbody class="[&_tr:last-child]:border-0">
-          <tr 
-            v-for="category in categories" 
-            :key="category.category_name"
-            class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer"
-            @click="goToCategoryDetail(category)"
-          >
-            <td class="py-4 px-4 text-gray-700 relative group">
-              <span class="block truncate">{{ category.category_name }}</span>
-              <!-- 悬停时显示的完整内容 -->
-              <div 
-                class="absolute left-0 bottom-full mb-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md text-sm
-                       invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
-              >
-                {{ category.category_name }}
-              </div>
-            </td>
-            <td class="py-4 px-4 text-gray-600">{{ category.num_products[0]?.count || 0 }}</td>
-            <td class="py-4 px-4">
-              <div class="flex gap-2 flex-wrap">
-                <span 
-                  v-for="(point, index) in getTopSellingPoints(category.selling_points_analysis_json)" 
-                  :key="index"
-                  class="px-3 py-1 rounded-full text-sm bg-purple-50 text-purple-600 border border-purple-100"
+          <!-- Loading State -->
+          <template v-if="loading">
+            <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+              <td class="px-4 align-middle">
+                <div class="h-4 w-48 bg-gray-200 rounded"></div>
+              </td>
+              <td class="px-4 align-middle">
+                <div class="h-4 w-16 bg-gray-200 rounded"></div>
+              </td>
+              <td class="px-4 align-middle">
+                <div class="flex gap-2">
+                  <div class="h-6 w-20 bg-gray-200 rounded-full"></div>
+                  <div class="h-6 w-20 bg-gray-200 rounded-full"></div>
+                  <div class="h-6 w-20 bg-gray-200 rounded-full"></div>
+                </div>
+              </td>
+            </tr>
+          </template>
+          
+          <!-- Content -->
+          <template v-else>
+            <tr 
+              v-for="category in categories" 
+              :key="category.category_name"
+              class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer"
+              @click="goToCategoryDetail(category)"
+            >
+              <td class="py-4 px-4 text-gray-700 relative group">
+                <span class="block truncate">{{ category.category_name }}</span>
+                <!-- 悬停时显示的完整内容 -->
+                <div 
+                  class="absolute left-0 bottom-full mb-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md text-sm
+                         invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
                 >
-                  {{ point }}
-                </span>
-              </div>
-            </td>
-          </tr>
+                  {{ category.category_name }}
+                </div>
+              </td>
+              <td class="py-4 px-4 text-gray-600">{{ category.num_products[0]?.count || 0 }}</td>
+              <td class="py-4 px-4">
+                <div class="flex gap-2 flex-wrap">
+                  <span 
+                    v-for="(point, index) in getTopSellingPoints(category.selling_points_analysis_json)" 
+                    :key="index"
+                    class="px-3 py-1 rounded-full text-sm bg-purple-50 text-purple-600 border border-purple-100"
+                  >
+                    {{ point }}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>

@@ -23,32 +23,17 @@
       </button>
     </div>
 
-    <!-- 基础数据加载状态 -->
-    <div v-if="loading" class="flex flex-col justify-center items-center min-h-[200px] space-y-4">
-      <!-- 主加载动画 -->
-      <div class="relative">
-        <div class="w-16 h-16 border-4 border-gray-200 rounded-full animate-spin">
-          <div class="absolute top-0 left-0 w-16 h-16 border-4 border-primary-600 rounded-full animate-loading"></div>
+    <!-- Brand Header -->
+    <div class="flex flex-col items-center justify-center mb-8">
+      <!-- Loading State -->
+      <template v-if="loading">
+        <div class="w-[128px] h-[128px] mb-4">
+          <div class="w-full h-full bg-gray-200 rounded-lg animate-pulse"></div>
         </div>
-      </div>
-      <!-- 加载文字 -->
-      <div class="text-gray-500 font-medium animate-pulse">Loading brand details...</div>
-    </div>
-
-    <!-- 基础数据错误状态 -->
-    <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[200px]">
-      <p class="text-red-500 mb-4">{{ error }}</p>
-      <button 
-        @click="fetchBrandData"
-        class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-500"
-      >
-        Retry
-      </button>
-    </div>
-
-    <template v-else-if="brand">
-      <!-- Brand Header -->
-      <div class="flex flex-col items-center justify-center mb-8">
+        <div class="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+      </template>
+      <!-- Content -->
+      <template v-else>
         <div class="w-[128px] h-[128px] mb-4">
           <img 
             :src="brand.image" 
@@ -58,208 +43,195 @@
           >
         </div>
         <h1 class="text-2xl font-bold">{{ brand.name }}</h1>
-      </div>
+      </template>
+    </div>
 
-      <!-- Products Section -->
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Products</h2>
-        <div class="relative w-full">
-          <div class="bg-white rounded-sm border border-secondary-100">
-            <!-- Loading Skeleton -->
-            <div v-if="productsLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-            </div>
-            <table class="w-full caption-bottom text-sm">
-              <thead class="[&_tr]:border-b">
-                <tr class="border-b bg-[#FAFAFA]">
-                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[55%]">Product</th>
-                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Price</th>
-                  <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Sold Count</th>
-                </tr>
-              </thead>
-              <tbody class="[&_tr:last-child]:border-0">
-                <!-- Skeleton Rows when loading -->
-                <template v-if="productsLoading">
-                  <tr v-for="i in 10" :key="i" class="border-b">
-                    <td class="min-h-16 py-3 px-2 align-middle">
-                      <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-md bg-gray-200 animate-pulse"></div>
-                        <div class="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                      </div>
-                    </td>
-                    <td class="min-h-16 py-3 px-2 align-middle">
-                      <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-                    </td>
-                    <td class="min-h-16 py-3 px-2 align-middle">
-                      <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-                    </td>
-                  </tr>
-                </template>
-                <!-- Actual Data -->
-                <template v-else>
-                  <tr 
-                    v-for="product in products" 
-                    :key="product.id"
-                    class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer group"
-                    @click="goToProductDetail(product.id)"
-                  >
-                    <td class="min-h-16 py-3 px-2 align-middle relative w-[55%]">
-                      <div class="flex items-center gap-3 max-w-full">
-                        <img 
-                          :src="product.image" 
-                          :alt="product.name"
-                          class="w-10 h-10 rounded-md object-cover flex-shrink-0"
-                        >
-                        <div class="min-w-0 flex-1">
-                          <span class="block truncate">{{ product.name }}</span>
-                        </div>
-                        <!-- 悬浮提示框 -->
-                        <div 
-                          class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
-                                 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
-                        >
-                          {{ product.name }}
-                        </div>
-                      </div>
-                    </td>
-                    <td class="min-h-16 py-3 px-2 align-middle w-[20%]">${{ product.price ? product.price.toFixed(2) : '0.00' }}</td>
-                    <td class="min-h-16 py-3 px-2 align-middle w-[25%]">{{ formatNumber(product.soldCount || 0) }}</td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-
-            <!-- Products Pagination -->
-            <div class="mt-4 flex justify-between items-center p-4">
-              <div class="text-sm text-gray-700">
-                Showing {{ productsStartIndex }} to {{ Math.min(productsEndIndex, totalProducts) }} of {{ totalProducts }}
-              </div>
-
-              <div class="flex-1 flex justify-center">
-                <div class="flex items-center space-x-1">
-                  <button 
-                    @click="prevProductsPage"
-                    :disabled="productsCurrentPage === 1"
-                    class="px-2 py-1 text-gray-600 hover:text-primary-600"
-                  >
-                    <span class="text-sm">‹</span>
-                  </button>
-
-                  <template v-for="n in productsDisplayedPages" :key="n">
-                    <button 
-                      v-if="n !== '...'"
-                      @click="changeProductsPage(n)"
-                      class="px-3 py-1 rounded"
-                      :class="[
-                        productsCurrentPage === n 
-                          ? 'bg-[#6366F1] text-white' 
-                          : 'text-gray-600 hover:text-primary-600'
-                      ]"
-                    >
-                      {{ n }}
-                    </button>
-                    <span v-else class="px-2">...</span>
-                  </template>
-
-                  <button 
-                    @click="nextProductsPage"
-                    :disabled="productsCurrentPage === productsTotalPages"
-                    class="px-2 py-1 text-gray-600 hover:text-primary-600"
-                  >
-                    <span class="text-sm">›</span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="invisible text-sm text-gray-700">
-                Showing {{ productsStartIndex }} to {{ Math.min(productsEndIndex, totalProducts) }} of {{ totalProducts }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Videos Section -->
-      <div class="mb-8">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold">Top videos featuring this brand</h2>
-          <div class="flex items-center space-x-4">
-            <button 
-              v-if="hasSelectedVideos"
-              @click="openExportModal"
-              class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-            >
-              Add Creators to List
-            </button>
-            <button 
-              v-if="hasSelectedVideos"
-              @click="clearSelection"
-              class="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Clear Selection
-            </button>
-          </div>
-        </div>
-
-        <!-- Videos Content -->
-        <div v-if="videos.length > 0" class="relative w-full rounded-sm border border-secondary-100 bg-white">
-          <!-- Loading Skeleton -->
-          <div v-if="videosLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-          </div>
+    <!-- Products Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold mb-4">Products</h2>
+      <div class="relative w-full">
+        <div class="bg-white rounded-sm border border-secondary-100">
           <table class="w-full caption-bottom text-sm">
             <thead class="[&_tr]:border-b">
               <tr class="border-b bg-[#FAFAFA]">
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[5%]">
-                  <input 
-                    type="checkbox" 
-                    class="rounded border-gray-300"
-                    :checked="isCurrentPageAllSelected"
-                    @change="selectAll"
-                  >
-                </th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[10%]">Thumbnail</th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Creator</th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Posted Time</th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Views</th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[15%]">Likes</th>
-                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Product</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[55%]">Product</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[20%]">Price</th>
+                <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-secondary-800 w-[25%]">Sold Count</th>
               </tr>
             </thead>
             <tbody class="[&_tr:last-child]:border-0">
-              <!-- Skeleton Rows when loading -->
-              <template v-if="videosLoading">
-                <tr v-for="i in 10" :key="i" class="border-b h-[90px]">
-                  <td class="py-3 px-2 align-middle">
-                    <div class="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
-                  </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="w-[63px] h-[112px] bg-gray-200 rounded-md animate-pulse"></div>
-                  </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="flex items-center gap-2">
-                      <div class="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-                      <div class="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+              <!-- Loading State -->
+              <template v-if="productsLoading">
+                <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+                  <td class="px-2 align-middle">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-12 rounded-md bg-gray-200 flex-shrink-0"></div>
+                      <div class="h-4 bg-gray-200 rounded w-3/4"></div>
                     </div>
                   </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                  <td class="px-2 align-middle">
+                    <div class="h-4 bg-gray-200 rounded w-16"></div>
                   </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-                  </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-                  </td>
-                  <td class="py-3 px-2 align-middle">
-                    <div class="flex items-center gap-2">
-                      <div class="w-10 h-10 bg-gray-200 rounded-md animate-pulse"></div>
-                      <div class="h-4 bg-gray-200 rounded w-40 animate-pulse"></div>
-                    </div>
+                  <td class="px-2 align-middle">
+                    <div class="h-4 bg-gray-200 rounded w-20"></div>
                   </td>
                 </tr>
               </template>
               <!-- Actual Data -->
+              <template v-else>
+                <tr 
+                  v-for="product in products" 
+                  :key="product.id"
+                  class="border-b transition-colors duration-200 ease-curve hover:bg-secondary-100 cursor-pointer group"
+                  @click="goToProductDetail(product.id)"
+                >
+                  <td class="min-h-16 py-3 px-2 align-middle relative w-[55%]">
+                    <div class="flex items-center gap-3 max-w-full">
+                      <img 
+                        :src="product.image" 
+                        :alt="product.name"
+                        class="w-10 h-10 rounded-md object-cover flex-shrink-0"
+                      >
+                      <div class="min-w-0 flex-1">
+                        <span class="block truncate">{{ product.name }}</span>
+                      </div>
+                      <!-- 悬浮提示框 -->
+                      <div 
+                        class="absolute left-0 top-full mt-2 p-2 bg-gray-900 text-white rounded-md shadow-lg z-10 max-w-md 
+                               invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+                      >
+                        {{ product.name }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="min-h-16 py-3 px-2 align-middle w-[20%]">${{ product.price ? product.price.toFixed(2) : '0.00' }}</td>
+                  <td class="min-h-16 py-3 px-2 align-middle w-[25%]">{{ formatNumber(product.soldCount || 0) }}</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+
+          <!-- Products Pagination -->
+          <div class="mt-4 flex justify-between items-center p-4">
+            <div class="text-sm text-gray-700">
+              Showing {{ productsStartIndex }} to {{ Math.min(productsEndIndex, totalProducts) }} of {{ totalProducts }}
+            </div>
+
+            <div class="flex-1 flex justify-center">
+              <div class="flex items-center space-x-1">
+                <button 
+                  @click="prevProductsPage"
+                  :disabled="productsCurrentPage === 1"
+                  class="px-2 py-1 text-gray-600 hover:text-primary-600"
+                >
+                  <span class="text-sm">‹</span>
+                </button>
+
+                <template v-for="n in productsDisplayedPages" :key="n">
+                  <button 
+                    v-if="n !== '...'"
+                    @click="changeProductsPage(n)"
+                    class="px-3 py-1 rounded"
+                    :class="[
+                      productsCurrentPage === n 
+                        ? 'bg-[#6366F1] text-white' 
+                        : 'text-gray-600 hover:text-primary-600'
+                    ]"
+                  >
+                    {{ n }}
+                  </button>
+                  <span v-else class="px-2">...</span>
+                </template>
+
+                <button 
+                  @click="nextProductsPage"
+                  :disabled="productsCurrentPage === productsTotalPages"
+                  class="px-2 py-1 text-gray-600 hover:text-primary-600"
+                >
+                  <span class="text-sm">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="invisible text-sm text-gray-700">
+              Showing {{ productsStartIndex }} to {{ Math.min(productsEndIndex, totalProducts) }} of {{ totalProducts }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Videos Section -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">Top videos featuring this brand</h2>
+        <div class="flex items-center space-x-4">
+          <button 
+            v-if="hasSelectedVideos"
+            @click="openExportModal"
+            class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+          >
+            Add Creators to List
+          </button>
+          <button 
+            v-if="hasSelectedVideos"
+            @click="clearSelection"
+            class="px-4 py-2 text-gray-600 hover:text-gray-800"
+          >
+            Clear Selection
+          </button>
+        </div>
+      </div>
+
+      <!-- Videos Table -->
+      <div class="relative w-full rounded-sm border border-secondary-100 bg-white">
+        <table class="w-full caption-bottom text-sm">
+          <thead class="[&_tr]:border-b">
+            <tr class="border-b bg-[#FAFAFA]">
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Thumbnail</th>
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Creator</th>
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Posted Time</th>
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Views</th>
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Likes</th>
+              <th class="h-12 py-2 px-2 text-left align-middle text-md leading-[19.2px] text-gray-600">Product</th>
+            </tr>
+          </thead>
+          <tbody class="[&_tr:last-child]:border-0">
+            <!-- Loading State -->
+            <template v-if="videosLoading">
+              <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+                <td class="px-2 align-middle">
+                  <div class="h-[40px] w-[30px] bg-gray-200 rounded-md"></div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-gray-200 rounded-full flex-shrink-0"></div>
+                    <div class="h-4 w-32 bg-gray-200 rounded"></div>
+                  </div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-gray-200 rounded-md flex-shrink-0"></div>
+                    <div class="h-4 w-32 bg-gray-200 rounded"></div>
+                  </div>
+                </td>
+              </tr>
+            </template>
+            
+            <!-- Content -->
+            <template v-else>
+              <tr v-if="videos.length === 0">
+                <td colspan="6" class="text-center py-8 text-gray-500"></td>
+              </tr>
               <template v-else>
                 <tr 
                   v-for="video in videos" 
@@ -327,126 +299,123 @@
                   </td>
                 </tr>
               </template>
-            </tbody>
-          </table>
+            </template>
+          </tbody>
+        </table>
 
-          <!-- Videos Pagination -->
-          <div class="mt-4 flex justify-between items-center p-4">
-            <div class="text-sm text-gray-700">
-              Showing {{ videosStartIndex }} to {{ Math.min(videosEndIndex, totalVideos) }} of {{ totalVideos }}
-            </div>
-
-            <div class="flex-1 flex justify-center">
-              <div class="flex items-center space-x-1">
-                <button 
-                  @click="prevVideosPage"
-                  :disabled="videosCurrentPage === 1"
-                  class="px-2 py-1 text-gray-600 hover:text-primary-600"
-                >
-                  <span class="text-sm">‹</span>
-                </button>
-
-                <template v-for="n in videosDisplayedPages" :key="n">
-                  <button 
-                    v-if="n !== '...'"
-                    @click="changeVideosPage(n)"
-                    class="px-3 py-1 rounded"
-                    :class="[
-                      videosCurrentPage === n 
-                        ? 'bg-[#6366F1] text-white' 
-                        : 'text-gray-600 hover:text-primary-600'
-                    ]"
-                  >
-                    {{ n }}
-                  </button>
-                  <span v-else class="px-2">...</span>
-                </template>
-
-                <button 
-                  @click="nextVideosPage"
-                  :disabled="videosCurrentPage === videosTotalPages"
-                  class="px-2 py-1 text-gray-600 hover:text-primary-600"
-                >
-                  <span class="text-sm">›</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="invisible text-sm text-gray-700">
-              Showing {{ videosStartIndex }} to {{ Math.min(videosEndIndex, totalVideos) }} of {{ totalVideos }}
-            </div>
-          </div>
-        </div>
-        <div v-else class="text-center text-gray-500 py-8">
-          No videos available
-        </div>
-      </div>
-
-      <!-- Creator Demographics Section -->
-      <CreatorDemographics 
-        v-if="creatorDemographics"
-        class="mb-8"
-        :gender-data="creatorDemographics.gender"
-        :language-data="creatorDemographics.language"
-      />
-
-      <!-- Audience Demographics Section -->
-      <AudienceDemographics 
-        v-if="audienceDemographics"
-        class="mb-8"
-        :gender-data="audienceDemographics.gender"
-        :age-data="audienceDemographics.age"
-        :locations-data="audienceDemographics.locations"
-      />
-
-      <!-- Modal -->
-      <div v-if="showCreateListModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-[500px]">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Create New List</h3>
-            <button @click="showCreateListModal = false" class="text-gray-500 hover:text-gray-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+        <!-- Videos Pagination -->
+        <div class="mt-4 flex justify-between items-center p-4">
+          <div class="text-sm text-gray-700">
+            Showing {{ videosStartIndex }} to {{ Math.min(videosEndIndex, totalVideos) }} of {{ totalVideos }}
           </div>
 
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">List Name</label>
-              <input 
-                v-model="listName"
-                type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500"
+          <div class="flex-1 flex justify-center">
+            <div class="flex items-center space-x-1">
+              <button 
+                @click="prevVideosPage"
+                :disabled="videosCurrentPage === 1"
+                class="px-2 py-1 text-gray-600 hover:text-primary-600"
               >
+                <span class="text-sm">‹</span>
+              </button>
+
+              <template v-for="n in videosDisplayedPages" :key="n">
+                <button 
+                  v-if="n !== '...'"
+                  @click="changeVideosPage(n)"
+                  class="px-3 py-1 rounded"
+                  :class="[
+                    videosCurrentPage === n 
+                      ? 'bg-[#6366F1] text-white' 
+                      : 'text-gray-600 hover:text-primary-600'
+                  ]"
+                >
+                  {{ n }}
+                </button>
+                <span v-else class="px-2">...</span>
+              </template>
+
+              <button 
+                @click="nextVideosPage"
+                :disabled="videosCurrentPage === videosTotalPages"
+                class="px-2 py-1 text-gray-600 hover:text-primary-600"
+              >
+                <span class="text-sm">›</span>
+              </button>
             </div>
           </div>
 
-          <div class="mt-6 flex justify-end">
-            <button 
-              @click="showCreateListModal = false"
-              class="mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-            >
-              Cancel
-            </button>
-            <button 
-              @click="handleCreateList"
-              class="px-4 py-2 text-sm text-white bg-primary-600 hover:bg-primary-700 rounded-md"
-            >
-              Create
-            </button>
+          <div class="invisible text-sm text-gray-700">
+            Showing {{ videosStartIndex }} to {{ Math.min(videosEndIndex, totalVideos) }} of {{ totalVideos }}
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- 添加导出模态框组件 -->
-      <ExportModal
-        v-if="showExportModal"
-        :show="showExportModal"
-        :influencers="selectedCreators"
-        @close="closeExportModal"
-      />
-    </template>
+    <!-- Creator Demographics Section -->
+    <CreatorDemographics 
+      v-if="creatorDemographics"
+      class="mb-8"
+      :gender-data="creatorDemographics.gender"
+      :language-data="creatorDemographics.language"
+    />
+
+    <!-- Audience Demographics Section -->
+    <AudienceDemographics 
+      v-if="audienceDemographics"
+      class="mb-8"
+      :gender-data="audienceDemographics.gender"
+      :age-data="audienceDemographics.age"
+      :locations-data="audienceDemographics.locations"
+    />
+
+    <!-- Modal -->
+    <div v-if="showCreateListModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-[500px]">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold">Create New List</h3>
+          <button @click="showCreateListModal = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">List Name</label>
+            <input 
+              v-model="listName"
+              type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500"
+            >
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <button 
+            @click="showCreateListModal = false"
+            class="mr-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="handleCreateList"
+            class="px-4 py-2 text-sm text-white bg-primary-600 hover:bg-primary-700 rounded-md"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加导出模态框组件 -->
+    <ExportModal
+      v-if="showExportModal"
+      :show="showExportModal"
+      :influencers="selectedCreators"
+      @close="closeExportModal"
+    />
   </div>
 </template>
 

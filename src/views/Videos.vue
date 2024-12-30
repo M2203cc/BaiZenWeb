@@ -217,107 +217,147 @@
     <div class="relative w-full overflow-x-auto rounded-sm border border-secondary-100 bg-white">
         <table class="w-full caption-bottom text-sm">
           <thead class="[&_tr]:border-b">
-          <tr class="border-b">
-            <th class="py-3 px-2 text-left align-middle">
-              <input 
-                type="checkbox" 
-                class="rounded border-gray-300"
-                :checked="isCurrentPageAllSelected"
-                @change="selectAll"
-              >
-            </th>
-            <th class="py-3 px-2 text-left align-middle">Thumbnail</th>
-            <th class="py-3 px-2 text-left align-middle">Creator</th>
-            <th class="py-3 px-2 text-left align-middle">Posted Time</th>
-            <th class="py-3 px-2 text-left align-middle">Views</th>
-            <th class="py-3 px-2 text-left align-middle">Likes</th>
-            <th class="py-3 px-2 text-left align-middle">Description</th>
-            <th class="py-3 px-2 text-left align-middle">Product</th>
-            <th class="py-3 px-2 text-left align-middle">Brand</th>
-            </tr>
-          </thead>
-          <tbody class="[&_tr:last-child]:border-0">
-          <tr 
-            v-for="video in filteredVideos" 
-            :key="`${currentPage}-${video.id}`"
-            class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
-            @click="goToVideoDetail(video)"
-            >
-              <td class="py-3 px-2 align-middle" @click.stop>
+            <tr class="border-b bg-[#F8F9FB]">
+              <th class="py-3 px-2 text-left align-middle">
                 <input 
                   type="checkbox" 
                   class="rounded border-gray-300"
-                  :checked="selectedVideos.some(v => v.id === video.id)"
-                  @change="handleVideoSelect(video, $event)"
+                  :checked="isCurrentPageAllSelected"
+                  @change="selectAll"
                 >
-              </td>
-              <td class="py-3 px-2 align-middle">
-              <div class="flex items-center gap-3">
-                <img 
-                  :key="`${currentPage}-${video.id}-thumb`"
-                  :src="video.thumbnail_url || 'https://via.placeholder.com/160x120'" 
-                  :alt="video.description"
-                  class="w-[60px] h-[80px] rounded-md object-cover"
-                  @error="handleImageError"
-                >
-              </div>
-              </td>
-              <td class="py-3 px-2 align-middle">
-                <div class="flex items-center gap-2 relative creator-tooltip">
-                  <img 
-                    :key="`${currentPage}-${video.id}-creator`"
-                    :src="video.creatorAvatar || 'https://via.placeholder.com/40x40'" 
-                    :alt="video.creator"
-                    class="w-10 h-10 rounded-md object-cover"
-                    @error="handleImageError"
-                  >
-                  <span class="truncate max-w-[150px]">{{ video.creator }}</span>
-                  <div class="tooltip-content">{{ video.creator }}</div>
-                </div>
-              </td>
-              <td class="py-3 px-2 align-middle">{{ getTimeAgo(video.posted_date) }}</td>
-              <td class="py-3 px-2 align-middle">{{ formatNumber(video.views_count || 0) }}</td>
-              <td class="py-3 px-2 align-middle">{{ formatNumber(video.likes_count || 0) }}</td>
-              <td class="py-3 px-2 align-middle max-w-xs">
-                <div class="relative description-tooltip">
-                  <p class="truncate">{{ video.description || 'No description' }}</p>
-                  <div class="tooltip-content">{{ video.description || 'No description' }}</div>
+              </th>
+              <th class="py-3 px-2 text-left align-middle">Thumbnail</th>
+              <th class="py-3 px-2 text-left align-middle">Creator</th>
+              <th class="py-3 px-2 text-left align-middle">Posted Time</th>
+              <th class="py-3 px-2 text-left align-middle">Views</th>
+              <th class="py-3 px-2 text-left align-middle">Likes</th>
+              <th class="py-3 px-2 text-left align-middle">Description</th>
+              <th class="py-3 px-2 text-left align-middle">Product</th>
+              <th class="py-3 px-2 text-left align-middle">Brand</th>
+            </tr>
+          </thead>
+          <tbody class="[&_tr:last-child]:border-0">
+            <!-- Loading State -->
+            <template v-if="loading">
+              <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+                <td class="px-2 align-middle">
+                  <div class="h-4 w-4 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle">
+                  <div class="h-[40px] w-[30px] bg-gray-200 rounded-md"></div>
+                </td>
+                <td class="px-2 align-middle min-w-[200px]">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-gray-200 rounded-full flex-shrink-0"></div>
+                    <div class="h-4 w-32 bg-gray-200 rounded flex-1"></div>
                   </div>
                 </td>
-              <td class="py-3 px-2 align-middle">
-                <div class="flex items-center gap-2 relative product-tooltip">
+                <td class="px-2 align-middle min-w-[120px]">
+                  <div class="h-4 w-24 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle min-w-[80px]">
+                  <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle min-w-[80px]">
+                  <div class="h-4 w-16 bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle min-w-[300px]">
+                  <div class="h-4 w-full max-w-[400px] bg-gray-200 rounded"></div>
+                </td>
+                <td class="px-2 align-middle min-w-[200px]">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-gray-200 rounded-md flex-shrink-0"></div>
+                    <div class="h-4 w-32 bg-gray-200 rounded flex-1"></div>
+                  </div>
+                </td>
+                <td class="px-2 align-middle min-w-[200px]">
+                  <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-gray-200 rounded-md flex-shrink-0"></div>
+                    <div class="h-4 w-24 bg-gray-200 rounded flex-1"></div>
+                  </div>
+                </td>
+              </tr>
+            </template>
+
+            <!-- Content -->
+            <template v-else>
+              <tr 
+                v-for="video in filteredVideos" 
+                :key="`${currentPage}-${video.id}`"
+                class="border-b transition-colors hover:bg-secondary-100 cursor-pointer"
+                @click="goToVideoDetail(video)"
+              >
+                <td class="py-3 px-2 align-middle" @click.stop>
+                  <input 
+                    type="checkbox" 
+                    class="rounded border-gray-300"
+                    :checked="selectedVideos.some(v => v.id === video.id)"
+                    @change="handleVideoSelect(video, $event)"
+                  >
+                </td>
+                <td class="py-3 px-2 align-middle">
+                <div class="flex items-center gap-3">
                   <img 
-                    :key="`${currentPage}-${video.id}-product`"
-                    :src="video.productImage || 'https://via.placeholder.com/40x40'" 
-                    :alt="video.product"
-                    class="w-10 h-10 rounded-md object-cover"
+                    :key="`${currentPage}-${video.id}-thumb`"
+                    :src="video.thumbnail_url || 'https://via.placeholder.com/160x120'" 
+                    :alt="video.description"
+                    class="w-[60px] h-[80px] rounded-md object-cover"
                     @error="handleImageError"
                   >
-                  <span class="truncate max-w-[150px]">{{ video.product }}</span>
-                  <div class="tooltip-content">{{ video.product }}</div>
                 </div>
-              </td>
-              <td class="py-3 px-2 align-middle">
-                <div class="flex items-center gap-2 relative brand-tooltip">
-                  <img 
-                    :key="`${currentPage}-${video.id}-brand`"
-                    :src="video.brandImage || 'https://via.placeholder.com/40x40'" 
-                    :alt="video.brand"
-                    class="w-10 h-10 rounded-md object-cover"
-                    @error="handleImageError"
-                  >
-                  <span class="truncate">{{ video.brand }}</span>
-                  <div class="tooltip-content">{{ video.brand }}</div>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td class="py-3 px-2 align-middle">
+                  <div class="flex items-center gap-2 relative creator-tooltip">
+                    <img 
+                      :key="`${currentPage}-${video.id}-creator`"
+                      :src="video.creatorAvatar || 'https://via.placeholder.com/40x40'" 
+                      :alt="video.creator"
+                      class="w-10 h-10 rounded-md object-cover"
+                      @error="handleImageError"
+                    >
+                    <span class="truncate max-w-[150px]">{{ video.creator }}</span>
+                    <div class="tooltip-content">{{ video.creator }}</div>
+                  </div>
+                </td>
+                <td class="py-3 px-2 align-middle">{{ getTimeAgo(video.posted_date) }}</td>
+                <td class="py-3 px-2 align-middle">{{ formatNumber(video.views_count || 0) }}</td>
+                <td class="py-3 px-2 align-middle">{{ formatNumber(video.likes_count || 0) }}</td>
+                <td class="py-3 px-2 align-middle max-w-xs">
+                  <div class="relative description-tooltip">
+                    <p class="truncate">{{ video.description || 'No description' }}</p>
+                    <div class="tooltip-content">{{ video.description || 'No description' }}</div>
+                    </div>
+                  </td>
+                <td class="py-3 px-2 align-middle">
+                  <div class="flex items-center gap-2 relative product-tooltip">
+                    <img 
+                      :key="`${currentPage}-${video.id}-product`"
+                      :src="video.productImage || 'https://via.placeholder.com/40x40'" 
+                      :alt="video.product"
+                      class="w-10 h-10 rounded-md object-cover"
+                      @error="handleImageError"
+                    >
+                    <span class="truncate max-w-[150px]">{{ video.product }}</span>
+                    <div class="tooltip-content">{{ video.product }}</div>
+                  </div>
+                </td>
+                <td class="py-3 px-2 align-middle">
+                  <div class="flex items-center gap-2 relative brand-tooltip">
+                    <img 
+                      :key="`${currentPage}-${video.id}-brand`"
+                      :src="video.brandImage || 'https://via.placeholder.com/40x40'" 
+                      :alt="video.brand"
+                      class="w-10 h-10 rounded-md object-cover"
+                      @error="handleImageError"
+                    >
+                    <span class="truncate">{{ video.brand }}</span>
+                    <div class="tooltip-content">{{ video.brand }}</div>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
-
-      <!-- Loading State -->
-      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
 
       <!-- Error State -->
       <div v-if="error" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">

@@ -22,9 +22,6 @@
 
     <!-- 品牌列表表格 -->
     <div class="bg-white rounded-lg shadow overflow-hidden relative">
-      <div v-if="loading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -39,35 +36,56 @@
             </th>
           </tr>
         </thead>
-        <tbody v-show="!loading && brands.length > 0" class="bg-white divide-y divide-gray-200">
-          <tr 
-            v-for="brand in brands" 
-            :key="brand.id"
-            class="hover:bg-gray-50 cursor-pointer"
-            @click="viewBrandDetails(brand.id)"
-          >
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10">
-                  <img
-                    :src="brand.brand_url"
-                    :alt="brand.name"
-                    class="h-10 w-10 rounded-lg object-cover"
-                    @error="handleImageError"
-                  />
+        <tbody class="bg-white divide-y divide-gray-200">
+          <!-- Loading State -->
+          <template v-if="loading">
+            <tr v-for="i in 10" :key="i" class="border-b animate-pulse h-[55px]">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="h-8 w-8 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                  <div class="ml-4 h-4 w-32 bg-gray-200 rounded"></div>
                 </div>
-                <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900">{{ brand.name }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="h-4 w-16 bg-gray-200 rounded"></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="h-4 w-24 bg-gray-200 rounded"></div>
+              </td>
+            </tr>
+          </template>
+          
+          <!-- Content -->
+          <template v-else>
+            <tr 
+              v-for="brand in brands" 
+              :key="brand.id"
+              class="hover:bg-gray-50 cursor-pointer"
+              @click="viewBrandDetails(brand.id)"
+            >
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <img
+                      :src="brand.brand_url"
+                      :alt="brand.name"
+                      class="h-10 w-10 rounded-lg object-cover"
+                      @error="handleImageError"
+                    />
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ brand.name }}</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ brand.num_products }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              ${{ formatNumber(brand.total_sales) }}
-            </td>
-          </tr>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ brand.num_products }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${{ formatNumber(brand.total_sales) }}
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>
