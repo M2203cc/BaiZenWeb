@@ -28,6 +28,9 @@ export default defineConfig({
           })
         }
       }
+    },
+    hmr: {
+      overlay: false
     }
   }
 }) 

@@ -192,7 +192,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import VChart from 'vue-echarts'
-import videoAPI from '../services/videoAPI'
+import { videoAPI } from '@/services/videoAPI'
 
 // 注册必要的组件
 use([

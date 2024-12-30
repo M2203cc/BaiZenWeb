@@ -4,8 +4,8 @@
     {
       "video_id": "7403257014471642399",
       "posted_date": "2024-08-15T06:58:30+00:00",
-      "views_count": 52586494,
-      "likes_count": 4126502,
+      "views_count": 52728351,
+      "likes_count": 4134881,
       "description": "Replying to @user#1loving5u we appreciate the question! Hope this answers some of yalls question 🫶🏼",
       "photo_downloaded": true,
       "social_listening_term": null,
@@ -68,7 +68,7 @@
     {
       "video_id": "7403088230809177386",
       "posted_date": "2024-08-14T20:03:39+00:00",
-      "views_count": 45619411,
+      "views_count": 45619680,
       "likes_count": 2652,
       "description": "SELF CARE NIGHTS WITH BIORÉ🫧✨🤍  This was so satisfying 10/10 recommend these besties!! @Biore Skincare #biorepartner   ",
       "photo_downloaded": true,
@@ -100,7 +100,7 @@
     {
       "video_id": "7364092687093583150",
       "posted_date": "2024-05-01T18:00:58+00:00",
-      "views_count": 45142189,
+      "views_count": 45142207,
       "likes_count": 61898,
       "description": "I should probably bolt them down next time. To buy C4 Click the link on my video to get some from TikTok Shop!  #C4Energy #C4UltimatePartner #BallsOutEnergy @C4 Energy ",
       "photo_downloaded": true,
@@ -132,12 +132,12 @@
     {
       "video_id": "7362770509936741674",
       "posted_date": "2024-04-28T04:30:22+00:00",
-      "views_count": 43975238,
+      "views_count": 43982305,
       "likes_count": 8139,
       "description": "These nippy covers are a holy grail product. #beautyhacks #braalternative #travelmusthaves #siliconenippycover #summermusthaves #weddingseason #fashionhacks ",
       "photo_downloaded": true,
       "social_listening_term": null,
-      "revenue": 512587,
+      "revenue": 512617,
       "analysis_json": null,
       "social_listening_analysis_json": null,
       "seller_products": {
@@ -292,12 +292,12 @@
     {
       "video_id": "7412156494310903070",
       "posted_date": "2024-09-08T06:33:12+00:00",
-      "views_count": 33503830,
+      "views_count": 33762791,
       "likes_count": 32504,
       "description": "Put my stickers on my Trekking the National Parks water bottle! 🥾🏕️@Underdog Games #asmr #nationalparks #hiketok #outdoors #nationalpark #nationalparkgeek #stickers #trekkingthenationalparks ",
       "photo_downloaded": true,
       "social_listening_term": null,
-      "revenue": 158641,
+      "revenue": 159460,
       "analysis_json": null,
       "social_listening_analysis_json": null,
       "seller_products": {
@@ -322,5 +322,5 @@
       }
     }
   ],
-  "total": 7249578
+  "total": 7592160
 }

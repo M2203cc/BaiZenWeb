@@ -24,7 +24,7 @@
     <!-- Filters Section -->
     <div class="flex flex-wrap gap-4 mb-6">
       <!-- Date Range Filter -->
-      <div class="flex-1">
+      <div class="w-[300px]">
         <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
         <div class="relative">
           <div 
@@ -79,9 +79,16 @@
               <v-date-picker
                 v-model="dateRange"
                 is-range
-                :min-date="new Date(2020, 0, 1)"
+                :min-date="getMinDate()"
                 :max-date="new Date()"
                 :columns="2"
+                :disabled-dates="[
+                  {
+                    start: new Date(0),
+                    end: getMinDate()
+                  }
+                ]"
+                :initial-page="new Date()"
                 class="rounded-md"
               />
 
@@ -106,7 +113,7 @@
       </div>
 
       <!-- View Count Filter -->
-      <div class="flex-1">
+      <div class="w-[400px]">
         <label class="block text-sm font-medium text-gray-700 mb-1">View Count</label>
         <div class="relative">
           <!-- 输入框区域 -->
@@ -168,12 +175,19 @@
           >
             <div class="py-1">
               <div
-                v-for="option in availableViewCounts"
+                v-for="option in filteredAvailableViewCounts"
                 :key="option.value"
                 @click.stop="selectViewCount(option.value)"
                 class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
               >
-                {{ option.label }}
+                {{ formatViewCount(option.value) }}
+              </div>
+              <!-- 添加一个提示，当所有选项都被选中时显示 -->
+              <div
+                v-if="filteredAvailableViewCounts.length === 0"
+                class="px-4 py-2 text-sm text-gray-500"
+              >
+                No more options available
               </div>
             </div>
           </div>
@@ -309,7 +323,7 @@
       <div v-if="error" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
         {{ error }}
         <button 
-          @click="fetchVideos(currentPage)" 
+          @click="fetchVideos()" 
           class="ml-4 text-sm underline hover:text-red-800"
         >
           Retry
@@ -392,12 +406,17 @@
       <div class="w-[250px]"></div>
     </div>
 
-    <!-- Export Modal -->
+    <!-- ExportModal 组件 -->
     <ExportModal
       v-if="showExportModal"
       :show="showExportModal"
-      :influencers="selectedCreators"
+      :influencers="selectedVideos.map(video => ({
+        id: video.video_id,
+        name: video.creator,
+        avatar: video.creatorAvatar
+      }))"
       @close="closeExportModal"
+      @export="handleCreateList"
     />
 
     <!-- 添加点击其他区域关闭下拉框的处理 -->
@@ -409,558 +428,402 @@
   </div>
 </template>
 
-<script>
-import videoAPI from '../services/videoAPI'
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { videoAPI } from '@/services/videoAPI'
 import ExportModal from '../components/ExportModal.vue'
 import { DatePicker } from 'v-calendar'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
-// 添加 debounce 实现
-function debounce(fn, delay) {
-  let timeoutId
-  return function (...args) {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => fn.apply(this, args), delay)
+// 初始化响应式数据
+const videos = ref([])
+const loading = ref(false)
+const error = ref(null)
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const selectedVideos = ref([])
+const showExportModal = ref(false)
+const searchQuery = ref('')
+const selectedCreators = ref([])
+const listName = ref('')
+
+// 设置初始日期范围为当前月
+const initializeDateRange = () => {
+  const now = new Date()
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  return {
+    start: firstDayOfMonth,
+    end: now
   }
 }
 
-export default {
-  name: 'Videos',
-  components: {
-    ExportModal,
-    'v-date-picker': DatePicker
-  },
-  data() {
-    return {
-      videos: [],
-      loading: false,
-      error: null,
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
-      searchQuery: '',
-      showExportModal: false,
-      filters: {
-        brand: '',
-        product: '',
-        viewCount: ''
-      },
-      brandOptions: [],
-      productOptions: [],
-      fetchTimer: null,
-      selectedVideos: [],
-      selectedCreators: [],
-      showViewCountDropdown: false,
-      selectedViewCounts: [],
-      viewCountOptions: [
-        { value: '0-100', label: '0-100' },
-        { value: '100-500', label: '100-500' },
-        { value: '500-2000', label: '500-2K' },
-        { value: '2000+', label: '2K+' }
-      ],
-      showDatePicker: false,
-      dateRange: {
-        start: null,
-        end: null
-      },
-      datePresets: [
-        { label: 'Today', getValue: () => {
-          const today = new Date();
-          return { start: today, end: today };
-        }},
-        { label: 'Yesterday', getValue: () => {
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          return { start: yesterday, end: yesterday };
-        }},
-        { label: 'Last 7 Days', getValue: () => {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 6);
-          return { start, end };
-        }},
-        { label: 'Last 30 Days', getValue: () => {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 29);
-          return { start, end };
-        }},
-        { label: 'This Month', getValue: () => {
-          const now = new Date();
-          const start = new Date(now.getFullYear(), now.getMonth(), 1);
-          const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          return { start, end };
-        }}
-      ]
-    }
-  },
-  computed: {
-    startIndex() {
-      return (this.currentPage - 1) * this.pageSize + 1
-    },
-    endIndex() {
-      return Math.min(this.startIndex + this.pageSize - 1, this.total)
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.pageSize)
-    },
-    selectedInfluencers() {
-      // 将视频数据换为导出需格式
-      return this.videos.map(video => ({
-        handle: video.creators?.handle,
-        // 可以添加其他需段
-      }))
-    },
+// 日期相关的响应式数据
+const dateRange = ref(initializeDateRange())
+const showDatePicker = ref(false)
+
+// 视图数相关的响应式数据
+const showViewCountDropdown = ref(false)
+const selectedViewCounts = ref([])
+
+// 视图数预设选项
+const availableViewCounts = [
+  { label: '0-1K', value: [0, 1000] },
+  { label: '1K-10K', value: [1000, 10000] },
+  { label: '10K-1M', value: [10000, 1000000] },
+  { label: '1M+', value: [1000000, Infinity] }
+]
+
+// 日期预设选项
+const datePresets = [
+  { label: 'Last 7 days', value: 7 },
+  { label: 'Last 14 days', value: 14 },
+  { label: 'This month', value: 'thisMonth' },
+  { label: 'Last month', value: 'lastMonth' }
+]
+
+// 计算最小允许日期（上个月的第一天）
+const getMinDate = () => {
+  const date = new Date()
+  date.setDate(1) // 设置为当月第一天
+  date.setMonth(date.getMonth() - 1) // 设置为上个月
+  return date
+}
+
+// 计算属性
+const hasSelectedVideos = computed(() => selectedVideos.value.length > 0)
+const isCurrentPageAllSelected = computed(() => {
+  return videos.value.length > 0 && 
+         videos.value.every(video => selectedVideos.value.some(v => v.id === video.id))
+})
+
+const filteredVideos = computed(() => {
+  return videos.value
+})
+
+// 添加分页相关的计算属性
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value))
+
+// 计算可见页码范围
+const visiblePages = computed(() => {
+  const maxVisiblePages = 5 // 最多显示5个页码
+  const currentPageNum = currentPage.value
+  const lastPage = totalPages.value
+  
+  if (lastPage <= maxVisiblePages) {
+    // 如果总页数小于等于最大可见页数，返回2到最后一页的页码
+    // 因为第1页会单独显示
+    return Array.from({ length: lastPage - 1 }, (_, i) => i + 2)
+  }
+  
+  // 计算页码范围
+  let startPage = Math.max(currentPageNum - Math.floor(maxVisiblePages / 2), 2) // 从第2页开始
+  let endPage = startPage + maxVisiblePages - 1
+  
+  // 调整范围确保不超出总页数
+  if (endPage > lastPage) {
+    endPage = lastPage
+    startPage = Math.max(endPage - maxVisiblePages + 1, 2) // 确保从第2页开始
+  }
+  
+  return Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  )
+})
+
+// 是否显示左侧省略号
+const showLeftEllipsis = computed(() => {
+  return visiblePages.value.length > 0 && visiblePages.value[0] > 2 // 修改为2
+})
+
+// 是否显示右侧省略号
+const showRightEllipsis = computed(() => {
+  return visiblePages.value[visiblePages.value.length - 1] < totalPages.value
+})
+
+// 获取视频列表方法
+const fetchVideos = async () => {
+  try {
+    loading.value = true
+    error.value = null
     
-    filteredData() {
-      let filtered = [...this.videos];
-
-      // 应用日期范围筛选
-      if (this.dateRange.start && this.dateRange.end) {
-        const startDate = new Date(this.dateRange.start);
-        const endDate = new Date(this.dateRange.end);
-        // 将结束日期设置为当天的最后一刻
-        endDate.setHours(23, 59, 59, 999);
-        
-        filtered = filtered.filter(video => {
-          const postedDate = new Date(video.posted_date);
-          return postedDate >= startDate && postedDate <= endDate;
-        });
-      }
-
-      // 应用观看次数筛选
-      if (this.selectedViewCounts.length > 0) {
-        filtered = filtered.filter(video => {
-          const viewCount = video.views_count || 0;
-          return this.selectedViewCounts.some(range => {
-            if (range === '2000+') {
-              return viewCount >= 2000;
-            }
-            
-            const [min, max] = range.split('-').map(Number);
-            if (max) {
-              return viewCount >= min && viewCount <= max;
-            }
-            return viewCount >= min;
-          });
-        });
-      }
-
-      return filtered;
-    },
-
-    filteredVideos() {
-      // 如果没有筛选条件，使用 API 返回的 total
-      if (!this.filters.brand && !this.filters.product && !this.filters.viewCount) {
-        return this.videos;
-      }
-
-      // 选条件时，更新 total 为筛选后的数量
-      this.total = this.filteredData.length;
-
-      // 返回当前页的数据
-      const start = (this.currentPage - 1) * this.pageSize;
-      const end = start + this.pageSize;
-      return this.filteredData.slice(start, end);
-    },
-
-    visiblePages() {
-      let start = Math.max(2, this.currentPage - 2)
-      let end = Math.min(this.totalPages - 1, start + 4)
-      
-      // 调整起始位置，确保始终示5个页码
-      if (end - start + 1 < 5) {
-        start = Math.max(2, end - 4)
-      }
-      
-      const pages = []
-      for (let i = start; i <= end; i++) {
-        pages.push(i)
-      }
-      return pages
-    },
-
-    showLeftEllipsis() {
-      return this.visiblePages.length > 0 && this.visiblePages[0] > 2
-    },
-
-    showRightEllipsis() {
-      return this.visiblePages.length > 0 && 
-             this.visiblePages[this.visiblePages.length - 1] < this.totalPages - 1
-    },
-
-    hasSelectedVideos() {
-      return this.selectedVideos.length > 0
-    },
-    isCurrentPageAllSelected() {
-      return this.videos.length > 0 && 
-        this.videos.every(video => this.selectedVideos.some(v => v.id === video.id))
-    },
-    availableViewCounts() {
-      return this.viewCountOptions.filter(
-        option => !this.selectedViewCounts.includes(option.value)
-      )
-    },
-    formatDateRange() {
-      if (!this.dateRange.start || !this.dateRange.end) {
-        return '';
-      }
-      const formatDate = (date) => {
-        if (!date) return '';
-        return new Date(date).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit'
-        });
-      };
-      return `${formatDate(this.dateRange.start)} ~ ${formatDate(this.dateRange.end)}`;
+    const params = {
+      page: currentPage.value,
+      page_size: pageSize.value,
+      search: searchQuery.value,
+      start_date: dateRange.value.start,
+      end_date: dateRange.value.end,
+      view_counts: selectedViewCounts.value
     }
-  },
-  methods: {
-    formatNumber(num) {
-      if (!num) return '0'
-      if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M'
-      }
-      if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K'
-      }
-      return num.toString()
-    },
-    formatDate(dateString) {
-      if (!dateString) return 'Unknown'
-      try {
-        const date = new Date(dateString)
-        const now = new Date()
-        const diff = now - date
-        
-        // 如果是无效日期
-        if (isNaN(date.getTime())) return 'Unknown'
-        
-        // 小于1小时
-        if (diff < 3600000) {
-          const minutes = Math.floor(diff / 60000)
-          return `${minutes} minutes ago`
-        }
-        
-        // 小于24小时
-        if (diff < 86400000) {
-          const hours = Math.floor(diff / 3600000)
-          return `${hours} hours ago`
-        }
-        
-        // 小于30天
-        if (diff < 2592000000) {
-          const days = Math.floor(diff / 86400000)
-          return `${days} days ago`
-        }
-        
-        // 大于30天
-        return date.toLocaleDateString()
-      } catch (e) {
-        return 'Unknown'
-      }
-    },
-    handleImageError(e) {
-      // 片加载失败使用默认图
-      if (e.target.classList.contains('rounded-full')) {
-        e.target.src = 'https://via.placeholder.com/32x32'
-      } else {
-        e.target.src = 'https://via.placeholder.com/160x120'
-      }
-    },
-    async fetchFiltersOptions() {
-      // 只在第一次加载获取筛选选项
-      if (this.brandOptions.length === 0 && this.productOptions.length === 0) {
-        const brands = new Set()
-        const products = new Set()
-        
-        this.videos.forEach(video => {
-          if (video.seller_products?.sellers?.name) {
-            brands.add(video.seller_products.sellers.name)
-          }
-          if (video.seller_products?.title) {
-            products.add(video.seller_products.title)
-          }
-        })
-        
-        this.brandOptions = Array.from(brands)
-        this.productOptions = Array.from(products)
-      }
-    },
-    async fetchVideos(page = 1) {
-      try {
-        this.loading = true;
-        this.error = null;
-        
-        const params = {
-          page,
-          pageSize: this.pageSize
-        };
-        
-        if (this.searchQuery?.trim()) {
-          params.search = this.searchQuery.trim();
-        }
+    
+    const response = await videoAPI.getVideosByDate(params)
+    
+    if (response.data) {
+      videos.value = response.data
+      total.value = response.total
+    } else {
+      // 处理空响应
+      videos.value = []
+      total.value = 0
+      error.value = response.message || 'No data available'
+    }
+  } catch (err) {
+    // 处理错误状态
+    videos.value = []
+    total.value = 0
+    error.value = err.message || 'Failed to fetch videos'
+    console.error('Error fetching videos:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
-        // 修改日期范围参数的格式
-        if (this.dateRange.start && this.dateRange.end) {
-          // 确保开始日期是当天的开始
-          const startDate = new Date(this.dateRange.start);
-          startDate.setHours(0, 0, 0, 0);
-          
-          // 确保结束日期是当天的结束
-          const endDate = new Date(this.dateRange.end);
-          endDate.setHours(23, 59, 59, 999);
-          
-          params.startDate = startDate.toISOString();
-          params.endDate = endDate.toISOString();
-        }
+// 修改分页方法
+const goToPage = async (page) => {
+  if (page === currentPage.value || page < 1 || page > totalPages.value) {
+    return
+  }
+  
+  currentPage.value = page
+  await fetchVideos()
+}
 
-        const response = await videoAPI.getVideos(params);
-        console.log('API Response for page:', page, response)
-        
-        if (response && (response.data || response.items)) {
-          const items = response.data || response.items || []
-          // 使用 nextTick 确保 DOM 更新
-          await this.$nextTick()
-          
-          this.videos = items.map(video => ({
-            id: video.id || video.video_id,
-            thumbnail_url: video.thumbnail_url || video.cover_image_url,
-            creator: video.creators?.handle || 'Unknown Creator',
-            creatorAvatar: video.creator_profile_url,
-            views_count: video.views_count || video.stats?.play_count || 0,
-            likes_count: video.likes_count || video.stats?.digg_count || 0,
-            description: video.description || 'No description',
-            posted_date: video.posted_date || video.create_time || video.created_at,
-            product: video.seller_products?.title || 'Unknown Product',
-            productImage: video.seller_product_photo_url,
-            brand: video.seller_products?.sellers?.name || 'Unknown Brand',
-            brandImage: video.seller_photo_url
-          }))
-          
-          this.total = response.total || response.meta?.total || items.length
-          this.currentPage = page
-        } else {
-          throw new Error('Invalid response format')
+// 选择方法
+const selectAll = (event) => {
+  const isChecked = event.target.checked
+  const currentPageVideoIds = videos.value.map(video => video.video_id)
+  
+  if (isChecked) {
+    // 添加当前页未选中的视频
+    videos.value.forEach(video => {
+      if (!selectedVideos.value.some(v => v.video_id === video.video_id)) {
+        selectedVideos.value.push(video)
+        if (!selectedCreators.value.includes(video.creator)) {
+          selectedCreators.value.push(video.creator)
         }
-      } catch (error) {
-        console.error('Error in fetchVideos:', error)
-        this.error = error.message || 'Failed to load videos'
-        this.videos = []
-        this.total = 0
-      } finally {
-        this.loading = false
       }
-    },
-    goToVideoDetail(video) {
-      // 阻止事件冒泡，避免触发选择事件
-      event?.stopPropagation()
-      
-      if (video && video.id) {
-        this.$router.push({
-          name: 'VideoDetail',
-          params: { id: video.id }
-        })
+    })
+  } else {
+    // 只移除当前页的选中项
+    selectedVideos.value = selectedVideos.value.filter(video => 
+      !currentPageVideoIds.includes(video.video_id)
+    )
+    
+    // 重新计算selectedCreators
+    const remainingCreators = new Set(
+      selectedVideos.value.map(video => video.creator)
+    )
+    selectedCreators.value = Array.from(remainingCreators)
+  }
+}
+
+const handleVideoSelect = (video, event) => {
+  event.stopPropagation()
+  
+  const index = selectedVideos.value.findIndex(v => v.video_id === video.video_id)
+  if (index === -1) {
+    selectedVideos.value.push(video)
+    if (!selectedCreators.value.includes(video.creator)) {
+      selectedCreators.value.push(video.creator)
+    }
+  } else {
+    selectedVideos.value.splice(index, 1)
+    const hasOtherVideos = selectedVideos.value.some(v => 
+      v.creator === video.creator
+    )
+    if (!hasOtherVideos) {
+      const creatorIndex = selectedCreators.value.indexOf(video.creator)
+      if (creatorIndex !== -1) {
+        selectedCreators.value.splice(creatorIndex, 1)
       }
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        const newPage = this.currentPage - 1
-        this.fetchVideos(newPage)
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        const newPage = this.currentPage + 1
-        this.fetchVideos(newPage)
-      }
-    },
-    searchVideos() {
-      this.fetchVideos(1)
-    },
-    getTimeAgo(date) {
+    }
+  }
+}
+
+// 修改 ExportModal 相关的方法
+const openExportModal = () => {
+  if (selectedCreators.value.length === 0) {
+    error.value = 'Please select at least one video first'
+    return
+  }
+  showExportModal.value = true
+}
+
+const closeExportModal = () => {
+  showExportModal.value = false
+  listName.value = ''
+}
+
+// 清除选择
+const clearSelection = () => {
+  selectedVideos.value = []
+  selectedCreators.value = []
+}
+
+// 图片错误处理
+const handleImageError = (event) => {
+  event.target.src = 'https://via.placeholder.com/40x40'
+}
+
+// 监听日期范围变化
+watch(dateRange, () => {
+  fetchVideos()
+})
+
+// 组件挂载时获取数据
+onMounted(() => {
+  fetchVideos()
+})
+
+// 在其他 const 声明之后添加这个函数
+const getTimeAgo = (date) => {
       if (!date) return 'Unknown date'
       const now = new Date()
       const postedDate = new Date(date)
       const diffTime = Math.abs(now - postedDate)
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
       
-      // 算月份差异
+  if (diffDays > 30) {
       const months = Math.floor(diffDays / 30)
-      
-      if (months > 0) {
-        if (months === 1) {
-          return 'a month ago'
-        }
-        return `${months} months ago`
+    return months === 1 ? 'a month ago' : `${months} months ago`
       } else {
-        if (diffDays === 1) {
-          return '1 day ago'
-        }
-        return `${diffDays} days ago`
-      }
-    },
-    goToPage(page) {
-      if (page !== this.currentPage) {
-        this.fetchVideos(page)
-      }
-    },
-    // 应用筛选条件
-    applyFilters() {
-      this.fetchVideos(1)
-    },
-    // 搜索处理
-    handleSearch: debounce(function() {
-      this.fetchVideos(1)
-    }, 300),
-    // 处理视频选择
-    handleVideoSelect(video, event) {
-      // 阻止点击事件冒泡，避免触发行点击事件
-      event.stopPropagation()
-      
-      const index = this.selectedVideos.findIndex(v => v.id === video.id)
-      if (index === -1) {
-        this.selectedVideos.push(video)
-        // 如果创建者还没有被选中，添加到选中列表
-        if (!this.selectedCreators.includes(video.creator)) {
-          this.selectedCreators.push(video.creator)
-        }
-      } else {
-        this.selectedVideos.splice(index, 1)
-        // 检查是否需要从创建者列表中移除
-        const hasOtherVideos = this.selectedVideos.some(v => v.creator === video.creator)
-        if (!hasOtherVideos) {
-          const creatorIndex = this.selectedCreators.indexOf(video.creator)
-          if (creatorIndex !== -1) {
-            this.selectedCreators.splice(creatorIndex, 1)
-          }
-        }
-      }
-    },
-    // 打开导出模态框
-    openExportModal() {
-      if (this.selectedCreators.length === 0) {
-        alert('Please select at least one video first')
-        return
-      }
-      this.showExportModal = true
-    },
-    // 关闭导出模态框
-    closeExportModal() {
-      this.showExportModal = false
-    },
-    // 清除选择
-    clearSelection() {
-      this.selectedVideos = []
-      this.selectedCreators = []
-    },
-    // 修改全选方法
-    selectAll(event) {
-      const isChecked = event.target.checked
-      
-      // 先获取当前页的所有视频ID
-      const currentPageVideoIds = this.videos.map(video => video.id)
-      
-      if (isChecked) {
-        // 选中当前页所有视频
-        this.videos.forEach(video => {
-          // 如果视频还没有被选中，则添加到选中列表
-          if (!this.selectedVideos.some(v => v.id === video.id)) {
-            this.selectedVideos.push(video)
-            // 如果创建者还没有被选中，添加到选中列表
-            if (!this.selectedCreators.includes(video.creator)) {
-              this.selectedCreators.push(video.creator)
-            }
-          }
-        })
-      } else {
-        // 只取消选中当前页的视频
-        this.selectedVideos = this.selectedVideos.filter(video => 
-          !currentPageVideoIds.includes(video.id)
-        )
-        
-        // 更新创建者列表
-        this.selectedCreators = []
-        this.selectedVideos.forEach(video => {
-          if (!this.selectedCreators.includes(video.creator)) {
-            this.selectedCreators.push(video.creator)
-          }
-        })
-      }
-    },
-    formatViewCount(value) {
-      // 处理范围值
-      if (value.includes('-')) {
-        return value.replace('2000', '2K');
-      }
-      // 处理 2000+ 的情况
-      if (value === '2000+') {
-        return '2K+';
-      }
-      return value;
-    },
-    selectViewCount(value) {
-      if (!this.selectedViewCounts.includes(value)) {
-        this.selectedViewCounts.push(value);
-      }
-      this.showViewCountDropdown = false;
-      this.applyViewCountFilter();
-    },
-    removeViewCount(value) {
-      const index = this.selectedViewCounts.indexOf(value);
-      if (index > -1) {
-        this.selectedViewCounts.splice(index, 1);
-      }
-      this.applyViewCountFilter();
-    },
-    clearViewCounts() {
-      this.selectedViewCounts = [];
-      this.applyViewCountFilter();
-    },
-    applyViewCountFilter() {
-      this.fetchVideos(1);
-    },
-    clearDateRange() {
-      this.dateRange = {
-        start: null,
-        end: null
-      };
-      this.showDatePicker = false;
-      this.fetchVideos(1);
-    },
-    applyDateRange() {
-      if (this.dateRange.start && this.dateRange.end) {
-        this.showDatePicker = false;
-        this.fetchVideos(1);
-      }
-    },
-    selectDatePreset(preset) {
-      this.dateRange = preset.getValue();
-    }
-  },
-  created() {
-    this.fetchVideos(1)
-  },
-  watch: {
-    searchQuery(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.fetchVideos(1)
-      }
-    },
-    'filters': {
-      deep: true,
-      handler() {
-        this.fetchVideos(1)
-      }
-    }
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside);
+    return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`
   }
 }
+
+// 添加格式化数字的函数
+const formatNumber = (num) => {
+  if (!num) return '0'
+  if (num >= 1000000) {
+    return Math.floor(num / 1000000) + 'M'
+  } else if (num >= 1000) {
+    return Math.floor(num / 1000) + 'K'
+  }
+  return Math.floor(num).toString()
+}
+
+// 添加日期格式化函数
+const formatDateRange = computed(() => {
+  if (!dateRange.value.start || !dateRange.value.end) return ''
+  const start = new Date(dateRange.value.start)
+  const end = new Date(dateRange.value.end)
+  return `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
+})
+
+
+// 修改日期预设选择方法
+const selectDatePreset = (preset) => {
+  const now = new Date()
+  let start = new Date()
+  let end = now
+
+  switch (preset.value) {
+    case 'thisMonth':
+      start = new Date(now.getFullYear(), now.getMonth(), 1)
+      break
+    case 'lastMonth':
+      start = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      end = new Date(now.getFullYear(), now.getMonth(), 0) // 上月最后一天
+      break
+    default:
+      start = new Date(now)
+      start.setDate(start.getDate() - preset.value)
+  }
+
+  // 确保日期在允许范围内
+  const minDate = getMinDate()
+  if (start < minDate) {
+    start = new Date(minDate)
+  }
+
+  dateRange.value = { start, end }
+  fetchVideos()
+}
+
+const clearDateRange = () => {
+  dateRange.value = initializeDateRange() // 重置为当前月
+  showDatePicker.value = false
+  fetchVideos()
+}
+
+const applyDateRange = () => {
+  if (!dateRange.value.start || !dateRange.value.end) {
+    dateRange.value = initializeDateRange() // 如果没有选择，重置为当前月
+  }
+  showDatePicker.value = false
+  fetchVideos()
+}
+
+// 修改格式化函数以处理范围值
+const formatViewCount = (range) => {
+  if (Array.isArray(range)) {
+    if (range[1] === Infinity) {
+      return `${formatNumber(range[0])}+`
+    }
+    return `${formatNumber(range[0])}-${formatNumber(range[1])}`
+  }
+  return formatNumber(range)
+}
+
+// 修改选择视图数的方法
+const selectViewCount = (range) => {
+  const rangeKey = JSON.stringify(range) // 使用字符串作为键来比较数组
+  if (!selectedViewCounts.value.some(v => JSON.stringify(v) === rangeKey)) {
+    selectedViewCounts.value.push(range)
+    fetchVideos()
+  }
+  showViewCountDropdown.value = false
+}
+
+// 修改移除视图数的方法
+const removeViewCount = (range) => {
+  const rangeKey = JSON.stringify(range)
+  selectedViewCounts.value = selectedViewCounts.value.filter(
+    v => JSON.stringify(v) !== rangeKey
+  )
+  fetchVideos()
+}
+
+// 修改过滤可用选项的计算属性
+const filteredAvailableViewCounts = computed(() => {
+  return availableViewCounts.filter(option => 
+    !selectedViewCounts.value.some(
+      selected => JSON.stringify(selected) === JSON.stringify(option.value)
+    )
+  )
+})
+
+// 添加视频详情导航方法
+const goToVideoDetail = (video) => {
+  router.push(`/videos/${video.video_id}`)
+}
+
+// 添加创建列表的方法
+const handleCreateList = async ({ creators, name }) => {
+  try {
+    const listData = {
+      name: name,
+      type: 'Filters',
+      description: 'Exported from videos',
+      creators: creators.map(c => c.name), // 使用 creator.name 而不是 handle
+      creatorUrls: creators.reduce((acc, c) => {
+        acc[c.name] = `/videos/${c.id}`
+        return acc
+      }, {})
+    }
+    
+    await store.dispatch('createList', listData)
+    closeExportModal()
+    router.push('/lists')
+  } catch (error) {
+    console.error('Failed to create list:', error)
+  }
+}
+
+const router = useRouter()
+const store = useStore()
 </script>
 
 <style scoped>
@@ -1070,7 +933,7 @@ button {
   display: block;
 }
 
-/* 添加表��行高样式 */
+/* 添加表行高样式 */
 th, td {
   height: 55px !important;
 }

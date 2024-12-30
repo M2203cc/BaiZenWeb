@@ -1,109 +1,93 @@
-// 基本的 videoAPI 实现
-const cookies = {
-  '_gcl_au': '1.1.582945540.1733194843',
-  'sb-btsplwsgjvpilxywmaba-auth-token': '["eyJhbGciOiJIUzI1NiIsImtpZCI6IjkvdHdyWllvN1ZsOFZ6czEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2J0c3Bsd3NnanZwaWx4eXdtYWJhLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI1NzhjYmI1YS0wN2U2LTQ4MTctYjI3Ni1hNWI3ZWJkZjU4ODkiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM0OTM3MjQ3LCJpYXQiOjE3MzQ5MzM2NDcsImVtYWlsIjoibTIyMDNjQHByb3Rvbi5tZSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZW1haWwiOiJtMjIwM2NAcHJvdG9uLm1lIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjU3OGNiYjVhLTA3ZTYtNDgxNy1iMjc2LWE1YjdlYmRmNTg4OSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMzMTk0ODUzfV0sInNlc3Npb25faWQiOiI4MDZhZTY3NC0yZDhlLTQxODctYjE5Yi00MzBlYTFjZDc2OTkiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.j06DTqs7cd9HyHoJUx-ilzIoZF3W7iDnTJHm0SzV4fE","pQ5Cfu_W5ettVg6ZW8MPZQ",null,null,null]'
-}
+import axios from 'axios'
+import { formatDistanceToNow } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
 
+const BASE_URL = 'http://localhost:8000'
+
+// 将所有方法和工具函数放在一个对象中
 const videoAPI = {
-  async getVideos(params) {
-    const queryString = new URLSearchParams(params).toString()
+  // 获取视频列表
+  async getVideosByDate(params = {}) {
     try {
-      const response = await fetch(`/api/content-analysis/videos?${queryString}`, {
-        method: 'GET',
-        headers: {
-          'accept': '*/*',
-          'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-          'dnt': '1',
-          'referer': 'https://app.euka.ai/content-analysis/videos',
-          'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"Windows"',
-          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-          'x-requested-with': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      })
+      // 处理日期格式
+      const formattedParams = {
+        ...params,
+        start_date: params.start_date ? params.start_date.toISOString().split('T')[0] : null,
+        end_date: params.end_date ? params.end_date.toISOString().split('T')[0] : null,
+        // 处理视图范围参数
+        view_counts: params.view_counts ? params.view_counts.map(range => ({
+          min: range[0],
+          max: range[1] === Infinity ? null : range[1]
+        })) : null
+      }
 
-      console.log('Response Status:', response.status)
+      const response = await axios.get(`${BASE_URL}/videos/by-date`, { 
+        params: formattedParams,
+        // 添加错误处理配置
+        validateStatus: function (status) {
+          return status >= 200 && status < 500
+        }
+      })
       
-      const text = await response.text()
-      console.log('Raw Response:', text)
-      
-      try {
-        const data = JSON.parse(text)
-        console.log('Parsed Data:', data)
-        return data
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError)
-        throw new Error('Invalid JSON response')
+      if (response.status === 200) {
+        return {
+          message: response.data.message,
+          data: response.data.data.map(video => ({
+            id: video.video_id,
+            video_id: video.video_id,
+            thumbnail_url: video.thumbnail_url,
+            creator: video.creators?.handle || 'Unknown',
+            creatorAvatar: video.creator_profile_url,
+            posted_date: video.posted_date,
+            views_count: video.views_count,
+            likes_count: video.likes_count,
+            description: video.description,
+            product: video.seller_products?.title,
+            productImage: video.seller_product_photo_url,
+            brand: video.seller_products?.sellers?.name,
+            brandImage: video.seller_photo_url
+          })),
+          total: response.data.total
+        }
+      } else {
+        throw new Error(response.data.message || 'Failed to fetch videos')
       }
     } catch (error) {
-      console.error('Error in getVideos:', error)
-      throw error
+      console.error('获取视频列表失败:', error)
+      // 返回一个默认的空结果而不是抛出错误
+      return {
+        message: error.message || 'Failed to fetch videos',
+        data: [],
+        total: 0
+      }
     }
   },
 
-  // 添加获取视频详情的方法
-  async getVideoDetails(videoId) {
-    try {
-      const response = await fetch(`/api/content-analysis/videos/${videoId}`, {
-        method: 'GET',
-        headers: {
-          'accept': '*/*',
-          'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-          'dnt': '1',
-          'referer': 'https://app.euka.ai/content-analysis/videos',
-          'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"Windows"',
-          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-          'x-requested-with': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      })
-
-      console.log('Video Details Response Status:', response.status)
-      
-      const text = await response.text()
-      console.log('Raw Video Details Response:', text)
-      
-      try {
-        const data = JSON.parse(text)
-        console.log('Parsed Video Details:', data)
-        return data
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError)
-        throw new Error('Invalid JSON response')
-      }
-    } catch (error) {
-      console.error('Error fetching video details:', error)
-      throw error
+  // 格式化数字显示
+  formatNumber(num) {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M'
     }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K'
+    }
+    return num.toString()
   },
 
-  // 修改获取视频人口统计数据的方法
-  async getVideoDemographics(videoId) {
+  // 获取视频详情
+  async getVideoDetail(videoId) {
     try {
-      const response = await fetch(`/api/content-analysis/demographics?video-ids=${videoId}`, {
-        method: 'GET',
-        headers: {
-          'accept': '*/*',
-          'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-          'dnt': '1',
-          'referer': 'https://app.euka.ai/content-analysis/videos',
-          'sec-ch-ua': '"Chromium";v="125", "Not.A/Brand";v="24"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"macOS"',
-          'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-        },
-        credentials: 'include'
-      })
-      return response.json()
+      const response = await axios.get(`${BASE_URL}/videos/${videoId}`)
+      return response.data
     } catch (error) {
-      console.error('Error fetching demographics:', error)
+      console.error('获取视频详情失败:', error)
       throw error
     }
   }
 }
 
-export default videoAPI 
+// 导出默认对象
+export default videoAPI
+
+// 同时提供具名导出
+export { videoAPI }
