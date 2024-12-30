@@ -12,13 +12,26 @@
 
     <!-- Content -->
     <div v-else-if="video">
-      <!-- 返回按钮 -->
-      <div class="at-btnholder mb-4">
+      <!-- Back Button -->
+      <div class="mb-6">
         <button 
-          class="text-12xl leading-[19.2px] inline-flex items-center justify-center whitespace-nowrap rounded-[10px] transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed border bg-transparent border-secondary-400 hover:bg-secondary-100 disabled:bg-transparent disabled:text-secondary-400 disabled:border-secondary-600 text-primary-500 focus:bg-primary-100 focus:border-primary-500 active:bg-primary-100 p-2 mr-2 h-auto"
-          @click="$router.go(-1)"
+          @click="$router.back()"
+          class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
-          Back
+          <svg 
+            class="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span>Back</span>
         </button>
       </div>
 
@@ -31,21 +44,11 @@
             <div class="w-[500px]">
               <!-- 视频缩略图 -->
               <div class="relative group w-[280px] mx-auto">
-                <div class="absolute w-full h-full flex items-center justify-center bg-secondary-100/40 opacity-0 transition-all duration-300 ease-curve group-hover:opacity-100">
-                  <a 
-                    target="_blank" 
-                    class="flex items-center justify-center p-4 rounded-full bg-black/60 !ring-0"
-                    :href="`https://tiktok.com/@${video?.creator || ''}/video/${video?.id || ''}`"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play text-white">
-                      <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                    </svg>
-                  </a>
-                </div>
                 <img 
-                  :src="video.thumbnail" 
+                  :src="video.thumbnail_url" 
                   :alt="video.description"
                   class="w-full aspect-[9/16] rounded-[12px]"
+                  @error="handleImageError"
                 >
               </div>
 
@@ -54,37 +57,31 @@
                 <!-- Creator -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Creator:</span>
-                  <span class="text-gray-900">{{ video.creator }}</span>
+                  <span class="text-gray-900">{{ video.creators?.handle }}</span>
                 </div>
                 
                 <!-- Posted Time -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Posted:</span>
-                  <span class="text-gray-900">{{ video.postedTime }}</span>
+                  <span class="text-gray-900">{{ formatTimeAgo(video.posted_date) }}</span>
                 </div>
                 
                 <!-- Views -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Views:</span>
-                  <span class="text-gray-900">{{ formatNumber(video.views) }}</span>
+                  <span class="text-gray-900">{{ formatNumber(video.views_count) }}</span>
                 </div>
                 
                 <!-- Likes -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Likes:</span>
-                  <span class="text-gray-900">{{ formatNumber(video.likes) }}</span>
+                  <span class="text-gray-900">{{ formatNumber(video.likes_count) }}</span>
                 </div>
                 
                 <!-- Product -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Product:</span>
-                  <span class="text-gray-900 text-right flex-1 ml-4 truncate">{{ video.product }}</span>
-                </div>
-                
-                <!-- Brand -->
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Brand:</span>
-                  <span class="text-gray-900">{{ video.brand }}</span>
+                  <span class="text-gray-900">{{ video.seller_products?.sellers?.name }}</span>
                 </div>
               </div>
             </div>
@@ -96,83 +93,73 @@
               </h2>
               <div class="w-full bg-white p-5 rounded-[5px] gap-2.5 border border-[#919EAB]">
                 <!-- Key Idea -->
-                <div v-if="insights.keyIdea">
+                <div v-if="video.analysis_json?.key_idea">
                   <h2 class="text-xl font-semibold text-gray-900">Key idea</h2>
-                  <p class="mt-3 text-gray-700">{{ insights.keyIdea }}</p>
+                  <p class="mt-3 text-gray-700">{{ video.analysis_json.key_idea }}</p>
                 </div>
 
                 <!-- Top Hooks -->
-                <div v-if="insights.topHooks?.length" class="flex gap-2 flex-col">
-                  <h2 class="text-xl font-semibold mb-2 mt-5">Top Hooks</h2>
-                  <div class="grid grid-flow-row lg:grid-flow-col gap-4 p-4 border-2 border-secondary-100 rounded-lg grid-cols-1 grid-rows-none !grid-flow-row">
-                    <div v-for="(hook, index) in insights.topHooks" :key="index" class="flex items-center gap-4">
+                <div v-if="video.analysis_json?.hooks?.length" class="mt-5">
+                  <h2 class="text-xl font-semibold mb-2">Top Hooks</h2>
+                  <div class="grid grid-flow-row gap-4">
+                    <div 
+                      v-for="(hook, index) in video.analysis_json.hooks" 
+                      :key="index"
+                      class="flex items-center gap-4"
+                    >
                       <span class="w-3">{{ index + 1 }}</span>
-                      <button class="py-2.5 text-12xl leading-[19.2px] items-center justify-center whitespace-nowrap transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-textPrimary hover:shadow-light-2 hover:bg-secondary-200 disabled:bg-secondary-100 disabled:text-secondary-800 disabled:shadow-none bg-secondary-100 focus:bg-secondary-100 active:bg-secondary-100 h-9 rounded-md px-3 block truncate max-w-full">
+                      <div class="py-2.5 px-3 bg-secondary-100 rounded-md text-sm">
                         {{ hook }}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Top Selling Points -->
-                <div v-if="insights.topSellingPoints?.length" class="flex gap-2 flex-col">
-                  <h2 class="text-xl font-semibold mb-2 mt-5">Top Selling Points</h2>
-                  <div class="grid grid-flow-row lg:grid-flow-col gap-4 p-4 border-2 border-secondary-100 rounded-lg grid-cols-1 grid-rows-none !grid-flow-row">
-                    <div v-for="(point, index) in insights.topSellingPoints" :key="index" class="flex items-center gap-4">
+                <div v-if="video.analysis_json?.selling_points?.length" class="mt-5">
+                  <h2 class="text-xl font-semibold mb-2">Top Selling Points</h2>
+                  <div class="grid grid-flow-row gap-4">
+                    <div 
+                      v-for="(point, index) in video.analysis_json.selling_points" 
+                      :key="index"
+                      class="flex items-center gap-4"
+                    >
                       <span class="w-3">{{ index + 1 }}</span>
-                      <button class="py-2.5 text-12xl leading-[19.2px] items-center justify-center whitespace-nowrap transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-textPrimary hover:shadow-light-2 hover:bg-secondary-200 disabled:bg-secondary-100 disabled:text-secondary-800 disabled:shadow-none bg-secondary-100 focus:bg-secondary-100 active:bg-secondary-100 h-9 rounded-md px-3 block truncate max-w-full">
+                      <div class="py-2.5 px-3 bg-secondary-100 rounded-md text-sm">
                         {{ point }}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Transcript -->
-                <div v-if="insights.transcript" class="mt-5">
+                <div v-if="video.analysis_json?.transcript" class="mt-5">
                   <h2 class="text-xl font-semibold text-gray-900">Transcript</h2>
-                  <p class="mt-3 text-gray-700 whitespace-pre-line">{{ insights.transcript }}</p>
+                  <p class="mt-3 text-gray-700 whitespace-pre-line">{{ video.analysis_json.transcript }}</p>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 下半部分：Audience Demographics -->
-          <div class="mt-16">
-            <h2 class="text-2xl font-bold mb-8">Audience Demographics</h2>
-            <div class="grid grid-cols-3 gap-8">
-              <!-- Gender Distribution -->
-              <div class="text-center">
-                <h3 class="text-lg font-semibold mb-6">Gender</h3>
-                <v-chart 
-                  class="h-[250px]" 
-                  :option="genderChartOption" 
-                  :loading="!demographics?.gender"
-                  autoresize 
-                />
-              </div>
-
-              <!-- Age Distribution -->
-              <div class="text-center">
-                <h3 class="text-lg font-semibold mb-6">Age</h3>
-                <v-chart 
-                  class="h-[250px]" 
-                  :option="ageChartOption" 
-                  :loading="!demographics?.age"
-                  autoresize 
-                />
-              </div>
-
-              <!-- Top Locations -->
-              <div class="text-center">
-                <h3 class="text-lg font-semibold mb-6">Top 5 Locations</h3>
-                <v-chart 
-                  class="h-[250px]" 
-                  :option="locationChartOption" 
-                  :loading="!demographics?.locations"
-                  autoresize 
-                />
-              </div>
-            </div>
+          <div class="mt-8">
+            <h2 class="text-[20px] leading-7 -tracking-[0.26px] font-bold text-[#303030] mb-[9px]">
+              Audience Demographics
+            </h2>
+            <AudienceDemographics
+              v-if="demographics"
+              :gender-data="{ 
+                male: parseFloat(demographics.gender.male),
+                female: parseFloat(demographics.gender.female)
+              }"
+              :age-data="Object.fromEntries(
+                Object.entries(demographics.age).map(([key, value]) => [key, parseFloat(value)])
+              )"
+              :locations-data="Object.entries(demographics.locations)
+                .map(([name, value]) => ({ name, value: parseFloat(value) }))
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 5)"
+            />
           </div>
         </div>
       </div>
@@ -181,195 +168,35 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-import { use } from 'echarts/core'
-import { PieChart, BarChart } from 'echarts/charts'
-import {
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  GridComponent
-} from 'echarts/components'
-import { CanvasRenderer } from 'echarts/renderers'
-import VChart from 'vue-echarts'
+import { defineComponent, computed, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { videoAPI } from '@/services/videoAPI'
-
-// 注册必要的组件
-use([
-  PieChart,
-  BarChart,
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-  GridComponent,
-  CanvasRenderer
-])
+import AudienceDemographics from '@/components/AudienceDemographics.vue'
 
 export default defineComponent({
   name: 'VideoDetail',
   components: {
-    VChart
+    AudienceDemographics
   },
-  data() {
-    return {
-      video: null,
-      insights: {
-        keyIdea: '',
-        topHooks: [],
-        topSellingPoints: [],
-        transcript: ''
-      },
-      loading: true,
-      error: null,
-      demographics: null
-    }
-  },
-  computed: {
-    // 性别分布图表配置
-    genderChartOption() {
-      if (!this.demographics?.gender) return {}
-      
-      const data = [
-        { name: 'Female', value: this.demographics.gender.female },
-        { name: 'Male', value: this.demographics.gender.male }
-      ]
-      
-      return {
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}: {c}%'
-        },
-        legend: {
-          orient: 'horizontal',
-          bottom: '0',
-          icon: 'circle',
-          textStyle: { color: '#666' }
-        },
-        series: [{
-          type: 'pie',
-          radius: ['40%', '60%'],
-          center: ['50%', '40%'],
-          data: data.map(item => ({
-            ...item,
-            itemStyle: {
-              color: item.name === 'Female' ? '#FF85C0' : '#5B8FF9',
-              borderWidth: 0
-            }
-          })),
-          label: { show: false }
-        }]
-      }
-    },
-    
-    // 年龄分布图表配置
-    ageChartOption() {
-      if (!this.demographics?.age) return {}
-      
-      const ageOrder = ['18-24', '25-34', '35-44', '45-54', '55+']
-      const colors = ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F']
-      
-      const data = ageOrder.map((age, index) => ({
-        name: age,
-        value: Number(this.demographics.age[age] || 0),
-        itemStyle: { 
-          color: colors[index],
-          borderWidth: 0
-        }
-      }))
-      
-      return {
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}: {c}%'
-        },
-        legend: {
-          orient: 'horizontal',
-          bottom: '0',
-          icon: 'circle',
-          textStyle: { color: '#666' }
-        },
-        series: [{
-          type: 'pie',
-          radius: ['40%', '60%'],
-          center: ['50%', '40%'],
-          data: data,
-          label: { show: false }
-        }]
-      }
-    },
-    
-    // 地区分布图表配置
-    locationChartOption() {
-      if (!this.demographics?.locations) return {}
-      
-      const locationData = Object.entries(this.demographics.locations)
-        .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .slice(0, 5)
-      
-      return {
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' }
-        },
-        grid: {
-          top: '5%',
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'value',
-          axisLabel: { 
-            formatter: '{value}%',
-            color: '#666'
-          },
-          splitLine: { show: false },
-          axisLine: { show: false }
-        },
-        yAxis: {
-          type: 'category',
-          data: locationData.map(([name]) => name),
-          axisLine: { show: false },
-          axisTick: { show: false },
-          axisLabel: { color: '#666' }
-        },
-        series: [{
-          type: 'bar',
-          data: locationData.map(([_, value]) => ({
-            value: Number(value),
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                { offset: 0, color: '#1890FF' },
-                { offset: 1, color: '#36CBCB' }
-              ]),
-              borderWidth: 0
-            }
-          })),
-          barWidth: '60%'
-        }]
-      }
-    },
-    hasContentInsights() {
-      return !!(this.insights.keyIdea || 
-                this.insights.topHooks?.length || 
-                this.insights.topSellingPoints?.length)
-    }
-  },
-  methods: {
-    formatNumber(num) {
-      if (!num) return '0'
-      if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'M'
-      } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'K'
-      }
-      return num.toString()
-    },
-    getTimeAgo(date) {
+  setup() {
+    const route = useRoute()
+    const video = ref(null)
+    const loading = ref(true)
+    const error = ref(null)
+    const demographics = ref(null)
+
+    // 计算属性
+    const hasContentInsights = computed(() => {
+      return !!(
+        video.value?.analysis_json?.key_idea ||
+        video.value?.analysis_json?.hooks?.length ||
+        video.value?.analysis_json?.selling_points?.length ||
+        video.value?.analysis_json?.transcript
+      )
+    })
+
+    // 格式化时间的方法
+    const formatTimeAgo = (date) => {
       if (!date) return 'Unknown date'
       const now = new Date()
       const postedDate = new Date(date)
@@ -377,93 +204,97 @@ export default defineComponent({
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
       
       const months = Math.floor(diffDays / 30)
-      
       if (months > 0) {
         return months === 1 ? 'a month ago' : `${months} months ago`
-      } else {
-        return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`
       }
-    },
-    async fetchVideoDetails() {
+      return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`
+    }
+
+    // 格式化数字的方法
+    const formatNumber = (num) => {
+      if (!num) return '0'
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M'
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K'
+      }
+      return num.toString()
+    }
+
+    // 获取视频详情的方法
+    const fetchVideoDetails = async () => {
       try {
-        this.loading = true
-        this.error = null
+        loading.value = true
+        error.value = null
         
-        const videoId = this.$route.params.id
+        const videoId = route.params.id
         if (!videoId) {
           throw new Error('Video ID is required')
         }
 
-        // 获取视频详情
-        const response = await videoAPI.getVideoDetails(videoId)
-        
+        const response = await videoAPI.getVideoDetail(videoId)
         if (response && response.data) {
-          this.video = {
-            id: response.data.id || response.data.video_id,
-            thumbnail: response.data.thumbnail_url || response.data.cover_image_url,
-            creator: response.data.creators?.handle || 'Unknown Creator',
-            creatorAvatar: response.data.creator_profile_url,
-            views: response.data.views_count || response.data.stats?.play_count || 0,
-            likes: response.data.likes_count || response.data.stats?.digg_count || 0,
-            description: response.data.description || 'No description',
-            postedTime: this.getTimeAgo(response.data.posted_date || response.data.create_time || response.data.created_at),
-            product: response.data.seller_products?.title || 'Unknown Product',
-            productImage: response.data.seller_product_photo_url,
-            brand: response.data.seller_products?.sellers?.name || 'Unknown Brand',
-            brandImage: response.data.seller_photo_url,
-            follower_genders: response.data.follower_genders || {},
-            follower_ages: response.data.follower_ages || {},
-            follower_locations: response.data.follower_locations || {}
-          }
-
-          // 处理 insights 数据
-          if (response.data.analysis_json) {
-            this.insights = {
-              keyIdea: response.data.analysis_json.key_idea || '',
-              topHooks: response.data.analysis_json.hooks || [],
-              topSellingPoints: response.data.analysis_json.selling_points || [],
-              transcript: response.data.analysis_json.transcript || ''
-            }
-          }
-
-          // 获取人口统计数据
-          try {
-            const demographicsResponse = await videoAPI.getVideoDemographics(videoId)
-            console.log('Demographics response:', demographicsResponse)
-            
-            if (demographicsResponse && demographicsResponse.data) {
-              this.demographics = {
-                gender: {
-                  female: Number(demographicsResponse.data.follower_genders?.female || 0),
-                  male: Number(demographicsResponse.data.follower_genders?.male || 0)
-                },
-                age: demographicsResponse.data.follower_ages || {},
-                locations: demographicsResponse.data.follower_locations || {}
-              }
-            }
-          } catch (demoError) {
-            console.error('Error fetching demographics:', demoError)
-            this.demographics = null
-          }
+          video.value = response.data
+          await fetchDemographics(videoId)
+          // 打印成功获取的数据以便调试
+          console.log('Successfully fetched video data:', video.value)
+        } else {
+          throw new Error('Invalid response format')
         }
-      } catch (error) {
-        console.error('Error fetching video details:', error)
-        this.error = error.message || 'Failed to load video details'
+      } catch (err) {
+        console.error('Error fetching video details:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status
+        })
+        
+        // 根据不同错误类型显示不同的错误信息
+        if (err.response?.status === 404) {
+          error.value = '视频不存在或已被删除'
+        } else if (err.response?.status === 500) {
+          error.value = '服务器错误，请稍后重试'
+        } else {
+          error.value = err.response?.data?.detail || 
+                       err.message || 
+                       '加载视频详情失败'
+        }
       } finally {
-        this.loading = false
+        loading.value = false
       }
     }
-  },
-  created() {
-    this.fetchVideoDetails()
+
+    // 在组件挂载时获取数据
+    onMounted(() => {
+      fetchVideoDetails()
+    })
+
+    // 获取人口统计数据的方法
+    const fetchDemographics = async (videoId) => {
+      try {
+        const response = await videoAPI.getVideoDemographics(videoId)
+        if (response && response.data && response.data.data) {  // 注意这里要访问 response.data.data
+          demographics.value = {
+            gender: response.data.data.follower_genders,
+            age: response.data.data.follower_ages,
+            locations: response.data.data.follower_locations
+          }
+          console.log('Demographics data:', demographics.value)
+        }
+      } catch (err) {
+        console.error('Error fetching demographics:', err)
+      }
+    }
+
+    return {
+      video,
+      loading,
+      error,
+      demographics,
+      hasContentInsights,
+      formatTimeAgo,
+      formatNumber,
+      fetchVideoDetails
+    }
   }
 })
-</script>
-
-<style scoped>
-.v-chart {
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-}
-</style> 
+</script> 

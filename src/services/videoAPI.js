@@ -21,7 +21,7 @@ const videoAPI = {
         })) : null
       }
 
-      const response = await axios.get(`${BASE_URL}/videos/by-date`, { 
+      const response = await axios.get(`http://localhost:8000/videos/by-date`, { 
         params: formattedParams,
         // 添加错误处理配置
         validateStatus: function (status) {
@@ -74,13 +74,74 @@ const videoAPI = {
     return num.toString()
   },
 
+  // 添加重试函数
+  async retryRequest(fn, retries = 3, delay = 1000) {
+    let lastError
+    
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await fn()
+      } catch (error) {
+        lastError = error
+        console.log(`Retry attempt ${i + 1} failed`)
+        if (i < retries - 1) {
+          await new Promise(resolve => setTimeout(resolve, delay))
+        }
+      }
+    }
+    
+    throw lastError
+  },
+
   // 获取视频详情
   async getVideoDetail(videoId) {
+    return this.retryRequest(async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/videos/${videoId}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          timeout: 10000,  // 10秒超时
+          validateStatus: function (status) {
+            return status >= 200 && status < 500  // 允许任何非500的状态码
+          }
+        })
+
+        // 打印响应信息以便调试
+        console.log('API Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: response.data
+        })
+
+        if (response.status === 200 && response.data) {
+          return response.data
+        } else {
+          throw new Error(
+            response.data?.detail || 
+            response.data?.message || 
+            'Failed to fetch video details'
+          )
+        }
+      } catch (error) {
+        console.error('获取视频详情失败:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        })
+        throw error
+      }
+    })
+  },
+
+  // 添加获取视频人口统计数据的方法
+  async getVideoDemographics(videoId) {
     try {
-      const response = await axios.get(`${BASE_URL}/videos/${videoId}`)
-      return response.data
+      const response = await axios.get(`${BASE_URL}/videos/${videoId}/demographics`)
+      return response
     } catch (error) {
-      console.error('获取视频详情失败:', error)
+      console.error('Error fetching video demographics:', error)
       throw error
     }
   }
