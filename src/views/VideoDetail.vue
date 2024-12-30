@@ -78,18 +78,12 @@
                 <!-- Product -->
                 <div class="flex justify-between items-center">
                   <span class="text-gray-600">Product:</span>
-                  <span class="text-gray-900 text-right flex-1 ml-4 truncate">{{ video.product }}</span>
-                </div>
-                
-                <!-- Brand -->
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Brand:</span>
-                  <span class="text-gray-900">{{ video.brand }}</span>
+                  <span class="text-gray-900">{{ video.product }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- 右侧 Content Insights -->
+            <!-- Content Insights 部分 -->
             <div v-if="hasContentInsights" class="flex-1">
               <h2 class="text-16xl leading-7 -tracking-[0.26px] font-bold text-[#303030] mb-[9px]">
                 Content Insights
@@ -102,27 +96,27 @@
                 </div>
 
                 <!-- Top Hooks -->
-                <div v-if="insights.topHooks?.length" class="flex gap-2 flex-col">
-                  <h2 class="text-xl font-semibold mb-2 mt-5">Top Hooks</h2>
-                  <div class="grid grid-flow-row lg:grid-flow-col gap-4 p-4 border-2 border-secondary-100 rounded-lg grid-cols-1 grid-rows-none !grid-flow-row">
+                <div v-if="insights.topHooks?.length" class="mt-5">
+                  <h2 class="text-xl font-semibold mb-2">Top Hooks</h2>
+                  <div class="grid grid-flow-row gap-4">
                     <div v-for="(hook, index) in insights.topHooks" :key="index" class="flex items-center gap-4">
                       <span class="w-3">{{ index + 1 }}</span>
-                      <button class="py-2.5 text-12xl leading-[19.2px] items-center justify-center whitespace-nowrap transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-textPrimary hover:shadow-light-2 hover:bg-secondary-200 disabled:bg-secondary-100 disabled:text-secondary-800 disabled:shadow-none bg-secondary-100 focus:bg-secondary-100 active:bg-secondary-100 h-9 rounded-md px-3 block truncate max-w-full">
+                      <div class="py-2.5 px-3 bg-secondary-100 rounded-md text-sm">
                         {{ hook }}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Top Selling Points -->
-                <div v-if="insights.topSellingPoints?.length" class="flex gap-2 flex-col">
-                  <h2 class="text-xl font-semibold mb-2 mt-5">Top Selling Points</h2>
-                  <div class="grid grid-flow-row lg:grid-flow-col gap-4 p-4 border-2 border-secondary-100 rounded-lg grid-cols-1 grid-rows-none !grid-flow-row">
+                <div v-if="insights.topSellingPoints?.length" class="mt-5">
+                  <h2 class="text-xl font-semibold mb-2">Top Selling Points</h2>
+                  <div class="grid grid-flow-row gap-4">
                     <div v-for="(point, index) in insights.topSellingPoints" :key="index" class="flex items-center gap-4">
                       <span class="w-3">{{ index + 1 }}</span>
-                      <button class="py-2.5 text-12xl leading-[19.2px] items-center justify-center whitespace-nowrap transition-all duration-200 ease-curve !ring-0 !ring-offset-0 disabled:cursor-not-allowed text-textPrimary hover:shadow-light-2 hover:bg-secondary-200 disabled:bg-secondary-100 disabled:text-secondary-800 disabled:shadow-none bg-secondary-100 focus:bg-secondary-100 active:bg-secondary-100 h-9 rounded-md px-3 block truncate max-w-full">
+                      <div class="py-2.5 px-3 bg-secondary-100 rounded-md text-sm">
                         {{ point }}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -227,12 +221,12 @@ export default defineComponent({
   computed: {
     // 性别分布图表配置
     genderChartOption() {
-      if (!this.demographics?.gender) return {}
+      if (!this.demographics?.gender) return {};
       
       const data = [
         { name: 'Female', value: this.demographics.gender.female },
         { name: 'Male', value: this.demographics.gender.male }
-      ]
+      ];
       
       return {
         backgroundColor: 'transparent',
@@ -259,15 +253,15 @@ export default defineComponent({
           })),
           label: { show: false }
         }]
-      }
+      };
     },
     
     // 年龄分布图表配置
     ageChartOption() {
-      if (!this.demographics?.age) return {}
+      if (!this.demographics?.age) return {};
       
-      const ageOrder = ['18-24', '25-34', '35-44', '45-54', '55+']
-      const colors = ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F']
+      const ageOrder = ['18-24', '25-34', '35-44', '45-54', '55+'];
+      const colors = ['#5B8FF9', '#FFD666', '#5AD8A6', '#8B7CE1', '#FF9F7F'];
       
       const data = ageOrder.map((age, index) => ({
         name: age,
@@ -276,7 +270,7 @@ export default defineComponent({
           color: colors[index],
           borderWidth: 0
         }
-      }))
+      }));
       
       return {
         backgroundColor: 'transparent',
@@ -297,16 +291,16 @@ export default defineComponent({
           data: data,
           label: { show: false }
         }]
-      }
+      };
     },
     
     // 地区分布图表配置
     locationChartOption() {
-      if (!this.demographics?.locations) return {}
+      if (!this.demographics?.locations) return {};
       
       const locationData = Object.entries(this.demographics.locations)
         .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .slice(0, 5)
+        .slice(0, 5);
       
       return {
         backgroundColor: 'transparent',
@@ -351,7 +345,7 @@ export default defineComponent({
           })),
           barWidth: '60%'
         }]
-      }
+      };
     },
     hasContentInsights() {
       return !!(this.insights.keyIdea || 
@@ -369,88 +363,100 @@ export default defineComponent({
       }
       return num.toString()
     },
-    getTimeAgo(date) {
-      if (!date) return 'Unknown date'
-      const now = new Date()
-      const postedDate = new Date(date)
-      const diffTime = Math.abs(now - postedDate)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    getTimeAgo(dateString) {
+      if (!dateString) return 'Unknown date';
       
-      const months = Math.floor(diffDays / 30)
+      const now = new Date();
+      const date = new Date(dateString);
+      const diffTime = now - date;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      if (months > 0) {
-        return months === 1 ? 'a month ago' : `${months} months ago`
+      if (diffDays === 1) {
+        return '1 day ago';
+      } else if (diffDays < 30) {
+        return `${diffDays} days ago`;
       } else {
-        return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`
+        const months = Math.floor(diffDays / 30);
+        if (months === 1) {
+          return 'a month ago';
+        }
+        return `${months} months ago`;
       }
     },
     async fetchVideoDetails() {
       try {
-        this.loading = true
-        this.error = null
+        this.loading = true;
+        this.error = null;
         
-        const videoId = this.$route.params.id
+        const videoId = this.$route.params.id;
         if (!videoId) {
-          throw new Error('Video ID is required')
+          throw new Error('Video ID is required');
         }
 
         // 获取视频详情
-        const response = await videoAPI.getVideoDetails(videoId)
+        const response = await videoAPI.getVideoDetails(videoId);
         
         if (response && response.data) {
+          const data = response.data;
+          
           this.video = {
-            id: response.data.id || response.data.video_id,
-            thumbnail: response.data.thumbnail_url || response.data.cover_image_url,
-            creator: response.data.creators?.handle || 'Unknown Creator',
-            creatorAvatar: response.data.creator_profile_url,
-            views: response.data.views_count || response.data.stats?.play_count || 0,
-            likes: response.data.likes_count || response.data.stats?.digg_count || 0,
-            description: response.data.description || 'No description',
-            postedTime: this.getTimeAgo(response.data.posted_date || response.data.create_time || response.data.created_at),
-            product: response.data.seller_products?.title || 'Unknown Product',
-            productImage: response.data.seller_product_photo_url,
-            brand: response.data.seller_products?.sellers?.name || 'Unknown Brand',
-            brandImage: response.data.seller_photo_url,
-            follower_genders: response.data.follower_genders || {},
-            follower_ages: response.data.follower_ages || {},
-            follower_locations: response.data.follower_locations || {}
-          }
+            id: data.video_id,
+            thumbnail: data.thumbnail_url,
+            creator: data.creators?.handle || 'Unknown Creator',
+            views: data.views_count || 0,
+            likes: data.likes_count || 0,
+            postedTime: this.getTimeAgo(data.posted_date),
+            product: data.seller_products?.sellers?.name || 'Unknown Product'
+          };
 
-          // 处理 insights 数据
-          if (response.data.analysis_json) {
+          // 只有当 analysis_json 存在且有数据时才设置 insights
+          if (data.analysis_json) {
+            const hasKeyIdea = !!data.analysis_json.key_idea;
+            const hasHooks = Array.isArray(data.analysis_json.hooks) && data.analysis_json.hooks.length > 0;
+            const hasSellingPoints = Array.isArray(data.analysis_json.selling_points) && data.analysis_json.selling_points.length > 0;
+            const hasTranscript = !!data.analysis_json.transcript;
+
+            // 只添加有数据的字段
             this.insights = {
-              keyIdea: response.data.analysis_json.key_idea || '',
-              topHooks: response.data.analysis_json.hooks || [],
-              topSellingPoints: response.data.analysis_json.selling_points || [],
-              transcript: response.data.analysis_json.transcript || ''
-            }
-          }
-
-          // 获取人口统计数据
-          try {
-            const demographicsResponse = await videoAPI.getVideoDemographics(videoId)
-            console.log('Demographics response:', demographicsResponse)
-            
-            if (demographicsResponse && demographicsResponse.data) {
-              this.demographics = {
-                gender: {
-                  female: Number(demographicsResponse.data.follower_genders?.female || 0),
-                  male: Number(demographicsResponse.data.follower_genders?.male || 0)
-                },
-                age: demographicsResponse.data.follower_ages || {},
-                locations: demographicsResponse.data.follower_locations || {}
-              }
-            }
-          } catch (demoError) {
-            console.error('Error fetching demographics:', demoError)
-            this.demographics = null
+              ...(hasKeyIdea && { keyIdea: data.analysis_json.key_idea }),
+              ...(hasHooks && { topHooks: data.analysis_json.hooks }),
+              ...(hasSellingPoints && { topSellingPoints: data.analysis_json.selling_points }),
+              ...(hasTranscript && { transcript: data.analysis_json.transcript })
+            };
+          } else {
+            this.insights = {};
           }
         }
+
+        // 获取人口统计数据
+        try {
+          const demographicsResponse = await videoAPI.getVideoDemographics(videoId);
+          if (demographicsResponse && demographicsResponse.data) {
+            const demoData = demographicsResponse.data;
+            this.demographics = {
+              gender: {
+                female: Number(demoData.follower_genders?.female || 0),
+                male: Number(demoData.follower_genders?.male || 0)
+              },
+              age: {
+                '18-24': Number(demoData.follower_ages?.['18-24'] || 0),
+                '25-34': Number(demoData.follower_ages?.['25-34'] || 0),
+                '35-44': Number(demoData.follower_ages?.['35-44'] || 0),
+                '45-54': Number(demoData.follower_ages?.['45-54'] || 0),
+                '55+': Number(demoData.follower_ages?.['55+'] || 0)
+              },
+              locations: demoData.follower_locations || {}
+            };
+          }
+        } catch (demoError) {
+          console.error('Error fetching demographics:', demoError);
+          this.demographics = null;
+        }
       } catch (error) {
-        console.error('Error fetching video details:', error)
-        this.error = error.message || 'Failed to load video details'
+        console.error('Error fetching video details:', error);
+        this.error = error.message || 'Failed to load video details';
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     }
   },
