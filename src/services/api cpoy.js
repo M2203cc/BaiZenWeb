@@ -2,8 +2,8 @@ import axios from 'axios'
 
 // 创建 axios 实例
 const api = axios.create({
-  // baseURL: 'http://192.168.0.123:8080/api',
-  baseURL: 'http://127.0.0.1:8080',
+  baseURL: 'http://192.168.0.123:8080/api',
+  // baseURL: 'http://127.0.0.1:8080',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,34 +11,19 @@ const api = axios.create({
   }
 })
 
-
-// export const influencersAPI = {
-//   async searchInfluencers(params) {
-//     try {
-//       const response = await api.post('/influencers/search', params)
-//       console.log("-----------------------",response.data)
-//       return response.data
-//     } catch (error) {
-//       console.error('Failed to fetch influencers:', error);
-//       throw error;
-//     }
-//   }
-// }
-
-
-
-
 export const influencersAPI = {
-  async getInfluencers(filters) {
+  async getInfluencers(page = 1, pageSize = 12) {
     try {
-      // 发送 POST 请求，将 params 作为请求体传递
-      const response = await api.post('/influencers/search', filters); // 这里 params 会自动被序列化成 JSON 格式
-
-      console.log('Response:', response.data);  // 打印响应内容
+      const response = await api.post('/getdata/tkPersons', {}, {
+      // const response = await api.post('/influencers/search', {}, {
+        params: {
+          page,
+          size: pageSize
+        }
+      });
       return response.data;
-  
     } catch (error) {
-      console.error('Error fetching influencers:', error);
+      console.error('Failed to fetch influencers:', error);
       throw error;
     }
   },
